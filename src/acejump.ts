@@ -2,7 +2,8 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import * as _ from "lodash";
 
-class PlaceHolder {
+export class PlaceHolder {
+    index: number;
     placeholder: string;
     line: number;
     character: number;
@@ -11,11 +12,31 @@ class PlaceHolder {
 export class AceJump {
 
     characters: string[] = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
+    // characters: string[] = ["A", "B", "C"]
+    preparedCharacters: string[] = [];
     placeholders: PlaceHolder[];
 
     decorations: vscode.TextEditorDecorationType[] = [];
 
-    constructor(context: vscode.ExtensionContext) {
+    constructor() {
+
+        let firstLevel: string[] = [];
+        let secondLevel: string[] = [];
+        let thirdLevel: string[] = [];
+
+        for (let i = 0; i < this.characters.length; i++) {
+            firstLevel.push(this.characters[i]);
+            for (let y = 0; y < this.characters.length; y++) {
+                secondLevel.push(this.characters[i] + this.characters[y]);
+                for (let z = 0; z < this.characters.length; z++) {
+                    thirdLevel.push(this.characters[i] + this.characters[y] + this.characters[z]);
+                }
+            }
+        }
+        this.preparedCharacters = this.preparedCharacters.concat(firstLevel, secondLevel, thirdLevel)
+    }
+
+    configure = (context: vscode.ExtensionContext) => {
 
         let disposables: vscode.Disposable[] = [];
 
@@ -37,17 +58,38 @@ export class AceJump {
             return; // No open text editor
         }
 
-        let allText = editor.document.getText();
+        let textToCheck: string;
+        let startLine: number;
+        let lastLine: number;
+
+        if (!editor.selection.isEmpty) {
+            textToCheck = editor.document.getText(editor.selection);
+
+            if (editor.selection.anchor.line > editor.selection.active.line) {
+                startLine = editor.selection.active.line;
+                lastLine = editor.selection.anchor.line;
+            }
+            else {
+                startLine = editor.selection.anchor.line;
+                lastLine = editor.selection.active.line;
+            }
+        }
+        else {
+            textToCheck = editor.document.getText();
+
+            startLine = 0;
+            lastLine = editor.document.lineCount;
+        }
 
         vscode.window.showInputBox({
             prompt: "type letter",
             ignoreFocusOut: true,
             validateInput: (value: string) => {
 
-                // if (value && value.length > 1)
-                //     return "only one char";
+                if (value && value.length > 1)
+                    return "only one char";
 
-                if (allText.indexOf(value) === -1)
+                if (textToCheck.indexOf(value) === -1)
                     return "this is missing";
 
                 return "";
@@ -57,49 +99,72 @@ export class AceJump {
 
                 if (!value) return;
 
-                // if (value && value.length > 1)
-                //     value = value.substring(0, 1);
+                if (value && value.length > 1)
+                    value = value.substring(0, 1);
 
                 let lineIndexes: { [key: number]: number[]; } = {};
 
-                for (let i = 0; i < editor.document.lineCount; i++) {
+                for (let i = startLine; i < lastLine; i++) {
                     let line = editor.document.lineAt(i);
                     lineIndexes[i] = this.indexesOf(line.text, value);
                 }
 
+                let brokeCycle: boolean = false;
                 _.forOwn<number[]>(lineIndexes, (lineIndex, key) => {
                     let line = parseInt(key);
 
                     _.each(lineIndex, (character) => {
                         let placeholder = this.nextPlaceholder(_.last(this.placeholders));
-                        this.placeholders.push({ placeholder: placeholder, line: line, character: character });
 
-                        this.addDecoration(editor, placeholder, new vscode.Range(line, character, line, character));
-                    });
-                });
+                        placeholder.line = line;
+                        placeholder.character = character;
 
-                vscode.window.showInputBox({
-                    ignoreFocusOut: true,
-                    prompt: "ace jump to",
-                    validateInput: (value: string) => {
-
-                        if (!_.find(this.placeholders, placeholder => placeholder.placeholder === value.toUpperCase())) {
-                            return "no placeholder available";
+                        if (placeholder.index >= this.preparedCharacters.length) {
+                            brokeCycle = true;
+                            return false;
                         }
 
-                        return "";
-                    }
-                })
-                    .then((value: string) => {
-                        this.removeDecorations(editor);
-
-                        if (!value) return;
-
-                        let placeHolder = _.find(this.placeholders, placeholder => placeholder.placeholder === value.toUpperCase())
-                        editor.selection = new vscode.Selection(new vscode.Position(placeHolder.line, placeHolder.character), new vscode.Position(placeHolder.line, placeHolder.character));
-                    }, () => {
-                        this.removeDecorations(editor);
+                        this.placeholders.push(placeholder);
                     });
+
+                    if (brokeCycle)
+                        return false;
+                });
+
+                if (this.placeholders.length === 0) return;
+                if (this.placeholders.length === 1) {
+                    let placeholder = _.first(this.placeholders);
+                    this.setSelection(editor, placeholder);
+                }
+                else {
+
+                    _.each(this.placeholders, (placeholder) => {
+                        this.addDecoration(editor, placeholder.placeholder, new vscode.Range(placeholder.line, placeholder.character, placeholder.line, placeholder.character + 1));
+                    })
+
+                    vscode.window.showInputBox({
+                        ignoreFocusOut: true,
+                        prompt: "ace jump to",
+                        validateInput: (value: string) => {
+
+                            if (!_.find(this.placeholders, placeholder => placeholder.placeholder === value.toUpperCase())) {
+                                return "no placeholder available";
+                            }
+
+                            return "";
+                        }
+                    })
+                        .then((value: string) => {
+                            this.removeDecorations(editor);
+
+                            if (!value) return;
+
+                            let placeholder = _.find(this.placeholders, placeholder => placeholder.placeholder === value.toUpperCase())
+                            this.setSelection(editor, placeholder);
+                        }, () => {
+                            this.removeDecorations(editor);
+                        });
+                }
             });
     };
 
@@ -132,53 +197,60 @@ export class AceJump {
 
     }
 
-    indexesOf = (str: string, searchStr: string) => {
-        if (searchStr.length === 0) {
+    indexesOf = (str: string, char: string) => {
+        if (char.length === 0) {
             return [];
         }
 
-        var indices = [];
-        if (searchStr.length === 1) { // faster with 1 char
-            for (var i = 0; i < str.length; i++) {
-                if (str[i] === searchStr) indices.push(i);
-            }
-            return indices;
-        }
-        else {
+        let indices = [];
+        //splitted by spaces
+        let words = str.split(" ");
+        //current line index
+        let index = 0;
 
-            let startIndex = 0, index;
+        for (var i = 0; i < words.length; i++) {
 
-            while ((index = str.indexOf(searchStr, startIndex)) > -1) {
+            if (words[i][0] && words[i][0].toLowerCase() === char.toLowerCase()) {
                 indices.push(index);
-                startIndex = index + searchStr.length;
-            }
-        }
+            };
 
+            // increment by word and white space
+            index += words[i].length + 1;
+        }
         return indices;
     }
 
-    nextPlaceholder = (current: PlaceHolder): string => {
-        if (!current)
-            return this.characters[0];
+    nextPlaceholder = (current: PlaceHolder): PlaceHolder => {
+        let result = new PlaceHolder();
+        result.index = 0;
 
-        let placeholder = current.placeholder;
-        let remaining = "";
-        if (current.placeholder.length > 1) {
-            placeholder = current.placeholder.substr(placeholder.length - 1);
-            remaining = current.placeholder.substr(0, current.placeholder.length - 1);
+        if (current) {
+            result.index = current.index + 1;
         }
 
-        let index = this.characters.indexOf(placeholder);
+        result.placeholder = this.preparedCharacters[result.index];
 
-        if (index + 1 >= this.characters.length) {
-            let result = "";
-            for (let i = 0; i < current.placeholder.length + 1; i++)
-                result += this.characters[0];
+        return result;
+    }
 
-            return result;
+    isLastChar = (char: string) => {
+
+        let index = this.characters.indexOf(char);
+        return index + 1 >= this.characters.length;
+    }
+
+    nextChar = (char: string) => {
+
+        if (this.isLastChar(char)) {
+            return this.characters[0];
         }
         else {
-            return remaining + this.characters[index + 1];
+            let index = this.characters.indexOf(char);
+            return this.characters[index + 1];
         }
+    }
+
+    setSelection = (editor: vscode.TextEditor, placeholder: PlaceHolder) => {
+        editor.selection = new vscode.Selection(new vscode.Position(placeholder.line, placeholder.character), new vscode.Position(placeholder.line, placeholder.character));
     }
 }
