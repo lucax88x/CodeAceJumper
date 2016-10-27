@@ -1,9 +1,8 @@
+import { InlineInput } from './inline-input';
 import * as vscode from 'vscode';
 import * as _ from 'lodash';
 
-import { PlaceHolderCalculus, PlaceHolder } from './placeholder-calculus';
-
-
+import { PlaceHolder, PlaceHolderCalculus } from './placeholder-calculus';
 
 class Selection {
     text: string;
@@ -11,7 +10,12 @@ class Selection {
     lastLine: number;
 }
 
-export interface ILineIndexes { [key: number]: number[]; }
+export interface IIndexes { [key: number]: number[]; }
+
+interface ILineIndexes {
+    indexes: IIndexes;
+    hasIndexes: boolean;
+}
 
 export class AceJump {
     decorations: vscode.TextEditorDecorationType[] = [];
@@ -35,69 +39,66 @@ export class AceJump {
         let editor = vscode.window.activeTextEditor;
 
         if (!editor) {
-            return; // No open text editor
+            return;
         }
 
         let selection: Selection = this.getSelection(editor);
 
-        vscode.window.showInputBox({
-            prompt: "type",
-            ignoreFocusOut: true,
-            validateInput: (value: string) => {
+        const promise = new Promise<PlaceHolder>((resolve, reject) => {
+            vscode.window.setStatusBarMessage("AceJump: Type");
+            new InlineInput().show(editor, (v) => v)
+                .then((value: string) => {
+                    if (!value) {
+                        reject();
+                        return;
+                    };
 
-                if (value && value.length > 1)
-                    return "only one char";
+                    if (value && value.length > 1)
+                        value = value.substring(0, 1);
 
-                if (selection.text.indexOf(value) === -1)
-                    return "this is missing";
+                    let lineIndexes: ILineIndexes = this.find(editor, selection, value);
+                    if (!lineIndexes.hasIndexes) {
+                        reject("AceJump: no matches");
+                        return;
+                    }
 
-                return "";
-            }
+                    let placeholders: PlaceHolder[] = this.placeholderCalculus.buildPlaceholders(lineIndexes.indexes);
+
+                    if (placeholders.length === 0) return;
+                    if (placeholders.length === 1) {
+                        let placeholder = _.first(placeholders);
+                        resolve(placeholder);
+                    }
+                    else {
+
+                        _.each(placeholders, (placeholder) => {
+                            this.addDecoration(editor, placeholder.placeholder, new vscode.Range(placeholder.line, placeholder.character, placeholder.line, placeholder.character + 1));
+                        })
+
+                        vscode.window.setStatusBarMessage("AceJump: Jump To");
+                        new InlineInput().show(editor, (v) => v)
+                            .then((value: string) => {
+                                this.removeDecorations(editor);
+
+                                if (!value) return;
+
+                                let placeholder = _.find(placeholders, placeholder => placeholder.placeholder === value.toUpperCase())
+                                resolve(placeholder);
+                            }).catch(() => {
+                                this.removeDecorations(editor);
+                                reject();
+                            });
+                    }
+                }).catch(() => {
+                    reject();
+                });
         })
-            .then((value: string) => {
-
-                if (!value) return;
-
-                if (value && value.length > 1)
-                    value = value.substring(0, 1);
-
-                let lineIndexes: ILineIndexes = this.find(editor, selection, value);
-                let placeholders: PlaceHolder[] = this.placeholderCalculus.buildPlaceholders(lineIndexes);
-
-                if (placeholders.length === 0) return;
-                if (placeholders.length === 1) {
-                    let placeholder = _.first(placeholders);
-                    this.setSelection(editor, placeholder);
-                }
-                else {
-
-                    _.each(placeholders, (placeholder) => {
-                        this.addDecoration(editor, placeholder.placeholder, new vscode.Range(placeholder.line, placeholder.character, placeholder.line, placeholder.character + 1));
-                    })
-
-                    vscode.window.showInputBox({
-                        ignoreFocusOut: true,
-                        prompt: "ace jump to",
-                        validateInput: (value: string) => {
-
-                            if (!_.find(placeholders, placeholder => placeholder.placeholder === value.toUpperCase())) {
-                                return "no placeholder available";
-                            }
-
-                            return "";
-                        }
-                    })
-                        .then((value: string) => {
-                            this.removeDecorations(editor);
-
-                            if (!value) return;
-
-                            let placeholder = _.find(placeholders, placeholder => placeholder.placeholder === value.toUpperCase())
-                            this.setSelection(editor, placeholder);
-                        }, () => {
-                            this.removeDecorations(editor);
-                        });
-                }
+            .then((placeholder: PlaceHolder) => {
+                this.setSelection(editor, placeholder);
+                vscode.window.setStatusBarMessage("AceJump: Jumped!", 2000);
+            })
+            .catch((reason?: string) => {
+                vscode.window.setStatusBarMessage((reason) ? reason : "AceJump: canceled");
             });
     };
 
@@ -133,7 +134,6 @@ export class AceJump {
             after: {
                 contentText: content,
                 backgroundColor: "yellow",
-                textDecoration: "underline",
                 border: "dotted thin black",
                 color: "black",
                 margin: `0 0 0 ${content.length * -7}px`,
@@ -161,17 +161,25 @@ export class AceJump {
     }
 
     private find = (editor: vscode.TextEditor, selection: Selection, value: string): ILineIndexes => {
-        let lineIndexes: ILineIndexes = {};
+        let lineIndexes: ILineIndexes = {
+            hasIndexes: false,
+            indexes: {}
+        };
 
         for (let i = selection.startLine; i < selection.lastLine; i++) {
             let line = editor.document.lineAt(i);
-            lineIndexes[i] = this.indexesOf(line.text, value);
+            let indexes = this.indexesOf(line.text, value);
+
+            if (!lineIndexes.hasIndexes && indexes.length > 0)
+                lineIndexes.hasIndexes = true;
+
+            lineIndexes.indexes[i] = indexes;
         }
 
         return lineIndexes;
     }
 
-    private indexesOf = (str: string, char: string) => {
+    private indexesOf = (str: string, char: string): number[] => {
         if (char.length === 0) {
             return [];
         }

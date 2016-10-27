@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as _ from 'lodash';
 
-import { ILineIndexes } from './acejump';
+import { IIndexes } from './acejump';
 
 
 export class PlaceHolder {
@@ -33,12 +33,12 @@ export class PlaceHolderCalculus {
         this.preparedCharacters = this.preparedCharacters.concat(firstLevel, secondLevel, thirdLevel)
     }
 
-    buildPlaceholders = (lineIndexes: ILineIndexes): PlaceHolder[] => {
+    buildPlaceholders = (lineIndexes: IIndexes): PlaceHolder[] => {
 
         let placeholders: PlaceHolder[] = [];
 
         let brokeCycle: boolean = false;
-        _.forOwn<ILineIndexes>(lineIndexes, (lineIndex, key) => {
+        _.forOwn<IIndexes>(lineIndexes, (lineIndex, key) => {
             let line = parseInt(key);
 
             _.each(lineIndex, (character) => {
