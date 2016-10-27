@@ -71,12 +71,11 @@ export class AceJump {
             return;
         }
 
-        let selection: Selection = this.getSelection(editor);
-
         const promise = new Promise<PlaceHolder>((resolve, reject) => {
             vscode.window.setStatusBarMessage("AceJump: Type");
-            new InlineInput().show(editor, (v) => v)
+            let firstInlineInput = new InlineInput().show(editor, (v) => v)
                 .then((value: string) => {
+
                     if (!value) {
                         reject();
                         return;
@@ -84,6 +83,8 @@ export class AceJump {
 
                     if (value && value.length > 1)
                         value = value.substring(0, 1);
+
+                    let selection: Selection = this.getSelection(editor);
 
                     let lineIndexes: ILineIndexes = this.find(editor, selection, value);
                     if (!lineIndexes.hasIndexes) {
