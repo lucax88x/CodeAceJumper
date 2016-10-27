@@ -19,12 +19,17 @@ interface ILineIndexes {
 
 class Config {
     placeholder: PlaceHolderConfig = new PlaceHolderConfig();
+    finder: FinderConfig = new FinderConfig();
 }
 
 class PlaceHolderConfig {
     backgroundColor: string;
     color: string;
     border: string;
+}
+
+class FinderConfig {
+    pattern: string;
 }
 
 export class AceJump {
@@ -54,6 +59,8 @@ export class AceJump {
         this.config.placeholder.backgroundColor = config.get<string>("placeholder.backgroundColor");
         this.config.placeholder.color = config.get<string>("placeholder.color");
         this.config.placeholder.border = config.get<string>("placeholder.border");
+
+        this.config.finder.pattern = config.get<string>("finder.pattern");
     }
 
     private jump = () => {
@@ -208,7 +215,7 @@ export class AceJump {
 
         let indices = [];
         //splitted by spaces
-        let words = str.split(" ");
+        let words = str.split(new RegExp(this.config.finder.pattern));
         //current line index
         let index = 0;
 

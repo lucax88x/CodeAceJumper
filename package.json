@@ -43,7 +43,11 @@
         "aceJump.placeholder.border": {
           "type": "string",
           "default": "dotted thin black"
-        }
+        },
+        "aceJump.finder.pattern": {
+          "type": "string",
+          "default": "[ ,-.{_(\\[]"
+        }        
       }
     }
   },
