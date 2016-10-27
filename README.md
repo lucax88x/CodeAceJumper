@@ -1,10 +1,12 @@
-# codeacejumper README
+# Code Ace Jumper
 
 This extensions provides you easy Ace Jump (aka fast cursor movement without touching mouse) functions for your Visual Studio Code
 
 ## Features
 
-.gif
+- Ace jumps to all matching initial letter on all the word on the document (a word can be separated by whitespaces, dot, squares, etc [configurable])
+
+![](https://media.giphy.com/media/l0HlFPNndZgxEHV6w/source.gif)
 
 ## Commands
 
