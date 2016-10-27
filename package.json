@@ -27,7 +27,25 @@
         "key": "escape",
         "when": "editorTextFocus && aceJumpInput"
       }
-    ]
+    ],
+    "configuration": {
+      "title": "Ace Jump",
+      "type": "object",
+      "properties": {
+        "aceJump.placeholder.backgroundColor": {
+          "type": "string",
+          "default": "yellow"
+        },
+        "aceJump.placeholder.color": {
+          "type": "string",
+          "default": "black"
+        },
+        "aceJump.placeholder.border": {
+          "type": "string",
+          "default": "dotted thin black"
+        }
+      }
+    }
   },
   "scripts": {
     "vscode:prepublish": "tsc -p ./",

@@ -17,10 +17,14 @@ To set up the a keybinding, add the following to your keybindings.json (File -> 
 
 otherwise you can just open command Ace Jump
 
-## Known Issues
+## Extension Settings
 
-Colors may not be updated for the theme used
+This extension contributes the following settings:
 
+* `aceJump.placeholder.backgroundColor`: placeholder background color, defaults to yellow
+* `aceJump.placeholder.color`: placeholder background color, defaults to black
+* `aceJump.placeholder.border`: placeholder background color, defaults to dotted thin black
+ 
 ### 1.0.0
 
 Initial release

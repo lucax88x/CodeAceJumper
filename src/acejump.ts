@@ -17,9 +17,20 @@ interface ILineIndexes {
     hasIndexes: boolean;
 }
 
+class Config {
+    placeholder: PlaceHolderConfig = new PlaceHolderConfig();
+}
+
+class PlaceHolderConfig {
+    backgroundColor: string;
+    color: string;
+    border: string;
+}
+
 export class AceJump {
     decorations: vscode.TextEditorDecorationType[] = [];
     placeholderCalculus: PlaceHolderCalculus = new PlaceHolderCalculus();
+    config: Config = new Config();
 
     configure = (context: vscode.ExtensionContext) => {
 
@@ -32,6 +43,17 @@ export class AceJump {
         for (let i = 0; i < disposables.length; i++) {
             context.subscriptions.push(disposables[i]);
         }
+
+        vscode.workspace.onDidChangeConfiguration(this.loadConfig);
+        this.loadConfig();
+    }
+
+    private loadConfig = () => {
+        let config = vscode.workspace.getConfiguration("aceJump");
+
+        this.config.placeholder.backgroundColor = config.get<string>("placeholder.backgroundColor");
+        this.config.placeholder.color = config.get<string>("placeholder.color");
+        this.config.placeholder.border = config.get<string>("placeholder.border");
     }
 
     private jump = () => {
@@ -133,9 +155,9 @@ export class AceJump {
 
             after: {
                 contentText: content,
-                backgroundColor: "yellow",
-                border: "dotted thin black",
-                color: "black",
+                backgroundColor: this.config.placeholder.backgroundColor,
+                border: this.config.placeholder.border,
+                color: this.config.placeholder.color,
                 margin: `0 0 0 ${content.length * -7}px`,
                 // height: '13px',
                 width: `${(content.length * 7) + 5}px`
