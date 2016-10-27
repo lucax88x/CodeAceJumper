@@ -2,6 +2,7 @@
   "name": "codeacejumper",
   "displayName": "Code Ace Jumper",
   "description": "Visual Studio Code Ace Jump",
+  "icon": "images/ace-jumper.png",
   "version": "1.0.0",
   "publisher": "LucaTrazzi",
   "engines": {
@@ -47,7 +48,7 @@
         "aceJump.finder.pattern": {
           "type": "string",
           "default": "[ ,-.{_(\\[]"
-        }        
+        }
       }
     }
   },
