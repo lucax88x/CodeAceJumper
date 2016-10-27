@@ -1,30 +1,25 @@
-// The module 'assert' provides assertion methods from node
 import * as assert from 'assert';
-
-// You can import and use all API from the 'vscode' module
-// as well as import your extension to test it
 import * as vscode from 'vscode';
 import * as myExtension from '../src/extension';
-import { AceJump, PlaceHolder } from '../src/acejump';
+import { PlaceHolderCalculus, PlaceHolder } from '../src/placeholder-calculus';
 
 
-// Defines a Mocha test suite to group tests of similar kind together
-suite("AceJump Tests", () => {
+suite("PlaceHolderCalculus Tests", () => {
 
-    let aceJump = new AceJump();
+    let placeHolderCalculus = new PlaceHolderCalculus();
 
 
     suite("Placeholder building Tests", () => {
 
         function buildTest(pre: string, expected: string) {
             let placeholder: PlaceHolder = new PlaceHolder();
-            placeholder.index = aceJump.preparedCharacters.indexOf(pre);
+            placeholder.index = placeHolderCalculus.getIndexByChar(pre);
 
-            assert.equal(aceJump.nextPlaceholder(placeholder).placeholder, expected);
+            assert.equal(placeHolderCalculus.nextPlaceholder(placeholder).placeholder, expected);
         }
 
         test("first placeholder should be A", () => {
-            assert.equal(aceJump.nextPlaceholder(null).placeholder, "A");
+            assert.equal(placeHolderCalculus.nextPlaceholder(null).placeholder, "A");
         });
 
         test("next placeholder to A should be B", () => {
