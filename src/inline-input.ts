@@ -34,6 +34,10 @@ export class InlineInput {
 
         const promise = new Promise<string>((resolve, reject) => {
             this.input = new Input({ validateInput: validateInput, resolve: resolve, reject: reject });
+
+            vscode.window.onDidChangeActiveTextEditor(() => {
+                this.cancel(editor);
+            });
         });
 
         this.registerCommand('type', this.onType);
