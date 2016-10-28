@@ -10,7 +10,7 @@ This extensions provides you with easy Ace Jump feature for Visual Studio Code. 
 
 ## Commands
 
-To set up the a keybinding, add the following to your keybindings.json (File -> Preferences -> Keyboard Shortcuts):
+To configure the keybinding, add the following lines to `keybindings.json` (`File` -> `Preferences` -> `Keyboard Shortcuts`):
 
     {
         "key": "alt+enter",
