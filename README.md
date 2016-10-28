@@ -1,6 +1,6 @@
 # Code Ace Jumper
 
-This extensions provides you easy Ace Jump (aka fast cursor movement without touching mouse) functions for your Visual Studio Code
+This extensions provides you with easy Ace Jump feature for Visual Studio Code. Ace Jump is fast cursor movement without touching neither the mouse nor cursor keys.
 
 ## Features
 
