@@ -23,10 +23,10 @@ otherwise you can just open command Ace Jump
 
 This extension contributes the following settings:
 
-* `aceJump.placeholder.backgroundColor`: placeholder background color, defaults to yellow
-* `aceJump.placeholder.color`: placeholder background color, defaults to black
-* `aceJump.placeholder.border`: placeholder background color, defaults to dotted thin black
-* `aceJump.finder.pattern`: regex pattern for the findings, pattern should be only 1 character which can split a word, for example a dot, or a square, defaults to [ ,-.{_(\\[]
+* `aceJump.placeholder.backgroundColor`: placeholder background color; defaults to yellow
+* `aceJump.placeholder.color`: placeholder background color; defaults to black
+* `aceJump.placeholder.border`: placeholder background color; defaults to dotted thin black
+* `aceJump.finder.pattern`: regex pattern for the matching word separators; pattern should represent the single character which can split a word, for example a dot, or a square; defaults to `[ ,-.{_(\\[]`
  
 ### 1.0.0
 
