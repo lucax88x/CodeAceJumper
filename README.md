@@ -4,7 +4,7 @@ This extensions provides you with easy Ace Jump feature for Visual Studio Code. 
 
 ## Features
 
-- Ace jumps to all matching initial letter on all the word on the document (a word can be separated by whitespaces, dot, squares, etc [configurable])
+- When a key is specified, Code Ace Jumper matches each word's initial letter in the document. Words are identified by their separators (whitespaces, dots, squares, etc) which can be easily configured. Each initial letter is then marked with a unique char: by hitting a key, the cursor will be instantly moved in the corresponding position.
 
 ![](https://media.giphy.com/media/l0HlFPNndZgxEHV6w/source.gif)
 
