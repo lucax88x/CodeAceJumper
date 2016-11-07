@@ -6,48 +6,156 @@ import { PlaceHolderCalculus, PlaceHolder } from '../src/placeholder-calculus';
 
 suite("PlaceHolderCalculus Tests", () => {
 
-    let placeHolderCalculus = new PlaceHolderCalculus();
+    let placeHolderCalculus = new PlaceHolderCalculus(["a", "b", "c"]);
 
 
     suite("Placeholder building Tests", () => {
 
-        function buildTest(pre: string, expected: string) {
-            let placeholder: PlaceHolder = new PlaceHolder();
-            placeholder.index = placeHolderCalculus.getIndexByChar(pre);
+        test("one row with 3 letters give 'a b c'", () => {
+            let placeholders = placeHolderCalculus.buildPlaceholders({
+                count: 3,
+                indexes: {
+                    0: [0, 1, 2]
+                }
+            });
 
-            assert.equal(placeHolderCalculus.nextPlaceholder(placeholder).placeholder, expected);
-        }
+            assert.equal(placeholders.length, 3);
 
-        test("first placeholder should be A", () => {
-            assert.equal(placeHolderCalculus.nextPlaceholder(null).placeholder, "A");
+            assert.equal(placeholders[0].placeholder, "a");
+            assert.equal(placeholders[1].placeholder, "b");
+            assert.equal(placeholders[2].placeholder, "c");
         });
 
-        test("next placeholder to A should be B", () => {
-            buildTest("A", "B");
+        test("one row with 4 letters give 'a a b c'", () => {
+            let placeholders = placeHolderCalculus.buildPlaceholders({
+                count: 4,
+                indexes: {
+                    0: [0, 1, 2, 3]
+                }
+            });
+
+            assert.equal(placeholders.length, 4);
+
+            assert.equal(placeholders[0].placeholder, "a");
+            assert.equal(placeholders[1].placeholder, "a");
+            assert.equal(placeholders[2].placeholder, "b");
+            assert.equal(placeholders[3].placeholder, "c");
         });
 
-        test("next placeholder to Z should be AA", () => {
-            buildTest("Z", "AA");
+        test("one row with 5 letters give 'a a a b c'", () => {
+            let placeholders = placeHolderCalculus.buildPlaceholders({
+                count: 5,
+                indexes: {
+                    0: [0, 1, 2, 3, 4]
+                }
+            });
+
+            assert.equal(placeholders.length, 5);
+
+            assert.equal(placeholders[0].placeholder, "a");
+            assert.equal(placeholders[1].placeholder, "a");
+            assert.equal(placeholders[2].placeholder, "a");
+            assert.equal(placeholders[3].placeholder, "b");
+            assert.equal(placeholders[4].placeholder, "c");
         });
 
-        test("next placeholder to AD should be AE", () => {
-            buildTest("AD", "AE");
+        test("one row with 6 letters give 'a a a b b c'", () => {
+            let placeholders = placeHolderCalculus.buildPlaceholders({
+                count: 6,
+                indexes: {
+                    0: [0, 1, 2, 3, 4, 5]
+                }
+            });
+
+            assert.equal(placeholders.length, 6);
+
+            assert.equal(placeholders[0].placeholder, "a");
+            assert.equal(placeholders[1].placeholder, "a");
+            assert.equal(placeholders[2].placeholder, "a");
+            assert.equal(placeholders[3].placeholder, "b");
+            assert.equal(placeholders[4].placeholder, "b");
+            assert.equal(placeholders[5].placeholder, "c");
         });
 
-        test("next placeholder to AZ should be BA", () => {
-            buildTest("AZ", "BA");
+        test("one row with 7 letters give 'a a a b b b c'", () => {
+            let placeholders = placeHolderCalculus.buildPlaceholders({
+                count: 7,
+                indexes: {
+                    0: [0, 1, 2, 3, 4, 5, 6]
+                }
+            });
+
+            assert.equal(placeholders.length, 7);
+
+            assert.equal(placeholders[0].placeholder, "a");
+            assert.equal(placeholders[1].placeholder, "a");
+            assert.equal(placeholders[2].placeholder, "a");
+            assert.equal(placeholders[3].placeholder, "b");
+            assert.equal(placeholders[4].placeholder, "b");
+            assert.equal(placeholders[5].placeholder, "b");
+            assert.equal(placeholders[6].placeholder, "c");
         });
 
-        test("next placeholder to BE should be BF", () => {
-            buildTest("BE", "BF");
+        test("one row with 8 letters give 'a a a b b b c c'", () => {
+            let placeholders = placeHolderCalculus.buildPlaceholders({
+                count: 8,
+                indexes: {
+                    0: [0, 1, 2, 3, 4, 5, 6, 7]
+                }
+            });
+
+            assert.equal(placeholders.length, 8);
+
+            assert.equal(placeholders[0].placeholder, "a");
+            assert.equal(placeholders[1].placeholder, "a");
+            assert.equal(placeholders[2].placeholder, "a");
+            assert.equal(placeholders[3].placeholder, "b");
+            assert.equal(placeholders[4].placeholder, "b");
+            assert.equal(placeholders[5].placeholder, "b");
+            assert.equal(placeholders[6].placeholder, "c");
+            assert.equal(placeholders[7].placeholder, "c");
         });
 
-        test("next placeholder to GAA should be GAB", () => {
-            buildTest("GAA", "GAB");
+        test("one row with 9 letters give 'a a a b b b c c c'", () => {
+            let placeholders = placeHolderCalculus.buildPlaceholders({
+                count: 9,
+                indexes: {
+                    0: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+                }
+            });
+
+            assert.equal(placeholders.length, 9);
+
+            assert.equal(placeholders[0].placeholder, "a");
+            assert.equal(placeholders[1].placeholder, "a");
+            assert.equal(placeholders[2].placeholder, "a");
+            assert.equal(placeholders[3].placeholder, "b");
+            assert.equal(placeholders[4].placeholder, "b");
+            assert.equal(placeholders[5].placeholder, "b");
+            assert.equal(placeholders[6].placeholder, "c");
+            assert.equal(placeholders[7].placeholder, "c");
+            assert.equal(placeholders[8].placeholder, "c");
         });
 
-        test("next placeholder to ZZY should be ZZZ", () => {
-            buildTest("ZZY", "ZZZ");
+        test("one row with 10 letters give 'a a a b b b c c c'", () => {
+            let placeholders = placeHolderCalculus.buildPlaceholders({
+                count: 10,
+                indexes: {
+                    0: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+                }
+            });
+
+            assert.equal(placeholders.length, 9);
+
+            assert.equal(placeholders[0].placeholder, "a");
+            assert.equal(placeholders[1].placeholder, "a");
+            assert.equal(placeholders[2].placeholder, "a");
+            assert.equal(placeholders[3].placeholder, "b");
+            assert.equal(placeholders[4].placeholder, "b");
+            assert.equal(placeholders[5].placeholder, "b");
+            assert.equal(placeholders[6].placeholder, "c");
+            assert.equal(placeholders[7].placeholder, "c");
+            assert.equal(placeholders[8].placeholder, "c");
         });
     });
 

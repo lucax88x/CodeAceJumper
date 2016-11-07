@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as _ from 'lodash';
 
-import { IIndexes } from './acejump';
+import { ILineIndexes, IIndexes } from './acejump';
 
 
 export class PlaceHolder {
@@ -9,74 +9,119 @@ export class PlaceHolder {
     placeholder: string;
     line: number;
     character: number;
+
+    root: PlaceHolder;
+    childrens: PlaceHolder[] = [];
 }
 
 export class PlaceHolderCalculus {
-    private characters: string[] = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
-    private preparedCharacters: string[] = [];
+    private static characters: string[] = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
+    // private characters: string[] = ["a", "b", "c"]
 
-    constructor() {
-
-        let firstLevel: string[] = [];
-        let secondLevel: string[] = [];
-        let thirdLevel: string[] = [];
-
-        for (let i = 0; i < this.characters.length; i++) {
-            firstLevel.push(this.characters[i]);
-            for (let y = 0; y < this.characters.length; y++) {
-                secondLevel.push(this.characters[i] + this.characters[y]);
-                for (let z = 0; z < this.characters.length; z++) {
-                    thirdLevel.push(this.characters[i] + this.characters[y] + this.characters[z]);
-                }
-            }
-        }
-        this.preparedCharacters = this.preparedCharacters.concat(firstLevel, secondLevel, thirdLevel)
+    constructor(private characters: string[] = PlaceHolderCalculus.characters) {
     }
 
-    buildPlaceholders = (lineIndexes: IIndexes): PlaceHolder[] => {
+    buildPlaceholders = (lineIndexes: ILineIndexes): PlaceHolder[] => {
 
         let placeholders: PlaceHolder[] = [];
+        let count: number = 0;
+        let candidate: number = 1;
+        let map: PlaceHolder[][] = [];
+        let breakCycles: boolean = false;
 
-        let brokeCycle: boolean = false;
-        _.forOwn<IIndexes>(lineIndexes, (lineIndex, key) => {
+        for (let key in lineIndexes.indexes) {
             let line = parseInt(key);
+            let lineIndex = lineIndexes.indexes[key];
 
-            _.each(lineIndex, (character) => {
-                let placeholder = this.nextPlaceholder(_.last(placeholders));
+            for (let i = 0; i < lineIndex.length; i++) {
+
+                if (count + 1 > Math.pow(this.characters.length, 2)) {
+                    breakCycles = true;
+                    break;
+                }
+
+                let character = lineIndex[i];
+
+                if (count >= this.characters.length) {
+                    for (let y = candidate; y < placeholders.length; y++) {
+
+                        let movingPlaceholder = placeholders[y];
+
+                        let previousIndex = movingPlaceholder.index - 1;
+
+                        if (map[previousIndex].length < this.characters.length) {
+                            _.remove(map[movingPlaceholder.index], item => item === movingPlaceholder);
+
+                            movingPlaceholder.index = previousIndex;
+
+                            map[movingPlaceholder.index].push(movingPlaceholder);
+                        }
+
+                        movingPlaceholder.placeholder = this.characters[movingPlaceholder.index];
+                    }
+                    candidate++;
+                }
+
+                let placeholder = new PlaceHolder();
+
+                placeholder.index = 0;
+
+                let last = _.last(placeholders);
+
+                if (last)
+                    placeholder.index = last.index + 1;
+
+                if (placeholder.index >= this.characters.length)
+                    placeholder.index = this.characters.length - 1;
+
+                placeholder.placeholder = this.characters[placeholder.index];
 
                 placeholder.line = line;
                 placeholder.character = character;
 
-                if (placeholder.index >= this.preparedCharacters.length) {
-                    brokeCycle = true;
-                    return false;
-                }
+                if (!map[placeholder.index])
+                    map[placeholder.index] = [];
 
                 placeholders.push(placeholder);
-            });
+                map[placeholder.index].push(placeholder);
 
-            if (brokeCycle)
-                return false;
+                count++;
+            }
+
+            if (breakCycles)
+                break;
+        }
+
+        // we assign root to other placeholders   
+        _.each(_.filter(map, item => item.length > 1), mappedPlaceholders => {
+            let root = mappedPlaceholders[0];
+
+            for (let y = 0; y < mappedPlaceholders.length; y++) {
+
+                let mappedPlaceholder: PlaceHolder = mappedPlaceholders[y];
+
+                // first mappedPlaceholder is the root!
+                if (y > 0)
+                    mappedPlaceholder.root = root;
+
+                let placeholder = new PlaceHolder();
+
+                placeholder.index = y;
+                placeholder.placeholder = this.characters[placeholder.index];
+
+                placeholder.line = mappedPlaceholder.line;
+                placeholder.character = mappedPlaceholder.character;
+
+                // add a copy of placeholder as children of root
+                root.childrens.push(placeholder);
+            }
         });
 
         return placeholders;
     }
 
     getIndexByChar = (char: string): number => {
-        return this.preparedCharacters.indexOf(char);
-    }
-
-    nextPlaceholder = (current: PlaceHolder): PlaceHolder => {
-        let result = new PlaceHolder();
-        result.index = 0;
-
-        if (current) {
-            result.index = current.index + 1;
-        }
-
-        result.placeholder = this.preparedCharacters[result.index];
-
-        return result;
+        return this.characters.indexOf(char);
     }
 
     private isLastChar = (char: string) => {
