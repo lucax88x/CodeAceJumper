@@ -31,3 +31,9 @@ This extension contributes the following settings:
 ### 1.0.0
 
 Initial release
+
+### 1.1.0
+
+New group system when we have more matches than the alphabet can have (26)
+
+for details, [see](https://github.com/lucax88x/CodeAceJumper/issues/6)
