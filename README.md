@@ -37,3 +37,7 @@ Initial release
 New group system when we have more matches than the alphabet can have (26)
 
 for details, [see](https://github.com/lucax88x/CodeAceJumper/issues/6)
+
+### 1.1.1
+
+using SVG instead of TEXT for the decorations, this means a HUGE performance boost
