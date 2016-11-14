@@ -1,7 +1,9 @@
-import { InlineInput } from './inline-input';
 import * as vscode from 'vscode';
 import * as _ from 'lodash';
 
+import { PlaceHolderDecorator } from './placeholder-decorator';
+import { Config } from './config';
+import { InlineInput } from './inline-input';
 import { PlaceHolder, PlaceHolderCalculus } from './placeholder-calculus';
 
 class Selection {
@@ -17,25 +19,10 @@ export interface ILineIndexes {
     indexes: IIndexes;
 }
 
-class Config {
-    placeholder: PlaceHolderConfig = new PlaceHolderConfig();
-    finder: FinderConfig = new FinderConfig();
-}
-
-class PlaceHolderConfig {
-    backgroundColor: string;
-    color: string;
-    border: string;
-}
-
-class FinderConfig {
-    pattern: string;
-}
-
 export class AceJump {
-    decorations: vscode.TextEditorDecorationType[] = [];
-    placeholderCalculus: PlaceHolderCalculus = new PlaceHolderCalculus();
     config: Config = new Config();
+    placeholderCalculus: PlaceHolderCalculus = new PlaceHolderCalculus();
+    placeHolderDecorator: PlaceHolderDecorator = new PlaceHolderDecorator();
 
     isJumping: boolean = false;
 
@@ -72,6 +59,9 @@ export class AceJump {
         this.config.placeholder.border = config.get<string>("placeholder.border");
 
         this.config.finder.pattern = config.get<string>("finder.pattern");
+
+        this.placeholderCalculus.load(this.config);
+        this.placeHolderDecorator.load(this.config);
     }
 
     private jump = (): Promise<void> => {
@@ -162,38 +152,6 @@ export class AceJump {
         return selection;
     }
 
-    private addDecoration = (editor: vscode.TextEditor, placeholder: PlaceHolder) => {
-
-        let range = new vscode.Range(placeholder.line, placeholder.character, placeholder.line, placeholder.character + 1);
-        let content = placeholder.placeholder;
-
-        let decoration = vscode.window.createTextEditorDecorationType({
-
-            after: {
-                contentText: content,
-                backgroundColor: this.config.placeholder.backgroundColor,
-                border: this.config.placeholder.border,
-                color: this.config.placeholder.color,
-                margin: `0 0 0 ${content.length * -7}px`,
-                // height: '13px',
-                width: `${(content.length * 7) + 5}px`
-
-            }
-        });
-
-        this.decorations.push(decoration);
-
-        editor.setDecorations(decoration, [range]);
-    }
-
-    private removeDecorations = (editor: vscode.TextEditor) => {
-        _.each(this.decorations, (item) => {
-            editor.setDecorations(item, []);
-            item.dispose();
-        });
-
-    }
-
     private setSelection = (editor: vscode.TextEditor, placeholder: PlaceHolder) => {
         editor.selection = new vscode.Selection(new vscode.Position(placeholder.line, placeholder.character), new vscode.Position(placeholder.line, placeholder.character));
     }
@@ -242,14 +200,13 @@ export class AceJump {
     private prepareForJumpTo = (editor: vscode.TextEditor, placeholders: PlaceHolder[]) => {
 
         return new Promise<PlaceHolder>((resolve, reject) => {
-            _.each(placeholders, (placeholder) => {
-                this.addDecoration(editor, placeholder);
-            })
+
+            this.placeHolderDecorator.addDecorations(editor, placeholders);
 
             vscode.window.setStatusBarMessage("AceJump: Jump To");
             new InlineInput().show(editor, (v) => v)
                 .then((value: string) => {
-                    this.removeDecorations(editor);
+                    this.placeHolderDecorator.removeDecorations(editor);
 
                     if (!value) return;
 
@@ -272,7 +229,7 @@ export class AceJump {
                         resolve(placeholder);
                     }
                 }).catch(() => {
-                    this.removeDecorations(editor);
+                    this.placeHolderDecorator.removeDecorations(editor);
                     reject();
                 });
         });

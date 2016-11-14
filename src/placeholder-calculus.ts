@@ -1,3 +1,4 @@
+import { Config } from './config';
 import * as vscode from 'vscode';
 import * as _ from 'lodash';
 
@@ -10,15 +11,16 @@ export class PlaceHolder {
     line: number;
     character: number;
 
-    root: PlaceHolder;
+    root?: PlaceHolder;
     childrens: PlaceHolder[] = [];
 }
 
 export class PlaceHolderCalculus {
-    private static characters: string[] = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
-    // private characters: string[] = ["a", "b", "c"]
 
-    constructor(private characters: string[] = PlaceHolderCalculus.characters) {
+    private config: Config;
+
+    load = (config: Config) => {
+        this.config = config
     }
 
     buildPlaceholders = (lineIndexes: ILineIndexes): PlaceHolder[] => {
@@ -35,21 +37,21 @@ export class PlaceHolderCalculus {
 
             for (let i = 0; i < lineIndex.length; i++) {
 
-                if (count + 1 > Math.pow(this.characters.length, 2)) {
+                if (count + 1 > Math.pow(this.config.characters.length, 2)) {
                     breakCycles = true;
                     break;
                 }
 
                 let character = lineIndex[i];
 
-                if (count >= this.characters.length) {
+                if (count >= this.config.characters.length) {
                     for (let y = candidate; y < placeholders.length; y++) {
 
                         let movingPlaceholder = placeholders[y];
 
                         let previousIndex = movingPlaceholder.index - 1;
 
-                        if (map[previousIndex].length < this.characters.length) {
+                        if (map[previousIndex].length < this.config.characters.length) {
                             _.remove(map[movingPlaceholder.index], item => item === movingPlaceholder);
 
                             movingPlaceholder.index = previousIndex;
@@ -57,7 +59,7 @@ export class PlaceHolderCalculus {
                             map[movingPlaceholder.index].push(movingPlaceholder);
                         }
 
-                        movingPlaceholder.placeholder = this.characters[movingPlaceholder.index];
+                        movingPlaceholder.placeholder = this.config.characters[movingPlaceholder.index];
                     }
                     candidate++;
                 }
@@ -71,10 +73,10 @@ export class PlaceHolderCalculus {
                 if (last)
                     placeholder.index = last.index + 1;
 
-                if (placeholder.index >= this.characters.length)
-                    placeholder.index = this.characters.length - 1;
+                if (placeholder.index >= this.config.characters.length)
+                    placeholder.index = this.config.characters.length - 1;
 
-                placeholder.placeholder = this.characters[placeholder.index];
+                placeholder.placeholder = this.config.characters[placeholder.index];
 
                 placeholder.line = line;
                 placeholder.character = character;
@@ -107,7 +109,7 @@ export class PlaceHolderCalculus {
                 let placeholder = new PlaceHolder();
 
                 placeholder.index = y;
-                placeholder.placeholder = this.characters[placeholder.index];
+                placeholder.placeholder = this.config.characters[placeholder.index];
 
                 placeholder.line = mappedPlaceholder.line;
                 placeholder.character = mappedPlaceholder.character;
@@ -121,23 +123,23 @@ export class PlaceHolderCalculus {
     }
 
     getIndexByChar = (char: string): number => {
-        return this.characters.indexOf(char);
+        return this.config.characters.indexOf(char);
     }
 
     private isLastChar = (char: string) => {
 
-        let index = this.characters.indexOf(char);
-        return index + 1 >= this.characters.length;
+        let index = this.config.characters.indexOf(char);
+        return index + 1 >= this.config.characters.length;
     }
 
     private nextChar = (char: string) => {
 
         if (this.isLastChar(char)) {
-            return this.characters[0];
+            return this.config.characters[0];
         }
         else {
-            let index = this.characters.indexOf(char);
-            return this.characters[index + 1];
+            let index = this.config.characters.indexOf(char);
+            return this.config.characters[index + 1];
         }
     }
 }

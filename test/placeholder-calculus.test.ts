@@ -1,13 +1,17 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
 import * as myExtension from '../src/extension';
-import { PlaceHolderCalculus, PlaceHolder } from '../src/placeholder-calculus';
-
+import { PlaceHolder, PlaceHolderCalculus } from '../src/placeholder-calculus';
+import { Config } from '../src/config';
 
 suite("PlaceHolderCalculus Tests", () => {
 
-    let placeHolderCalculus = new PlaceHolderCalculus(["a", "b", "c"]);
+    let config = new Config();
 
+    config.characters = ["a", "b", "c"];
+
+    let placeHolderCalculus = new PlaceHolderCalculus();
+    placeHolderCalculus.load(config);
 
     suite("Placeholder building Tests", () => {
 
