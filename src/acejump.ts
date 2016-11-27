@@ -59,6 +59,7 @@ export class AceJump {
         this.config.placeholder.border = config.get<string>("placeholder.border");
 
         this.config.finder.pattern = config.get<string>("finder.pattern");
+        this.config.finder.range = config.get<number>("finder.range");
 
         this.placeholderCalculus.load(this.config);
         this.placeHolderDecorator.load(this.config);
@@ -143,10 +144,10 @@ export class AceJump {
             }
         }
         else {
-            selection.text = editor.document.getText();
+            selection.startLine = Math.max(editor.selection.active.line - this.config.finder.range, 0);
+            selection.lastLine = Math.min(editor.selection.active.line + this.config.finder.range, editor.document.lineCount);
 
-            selection.startLine = 0;
-            selection.lastLine = editor.document.lineCount;
+            selection.text = editor.document.getText(new vscode.Range(selection.startLine, 0, selection.lastLine, 0));
         }
 
         return selection;
