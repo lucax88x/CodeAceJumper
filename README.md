@@ -42,3 +42,7 @@ for details, [see](https://github.com/lucax88x/CodeAceJumper/issues/6)
 ### 1.1.1
 
 using SVG instead of TEXT for the decorations, this means a HUGE performance boost
+
+### 1.1.2
+
+thanks to [ncthis](https://github.com/lucax88x/CodeAceJumper/pull/8) we now are able to make ace jump placeholders only for a "range" where the cursor is, instead of full page. Genius workaround until vscode releases the APIs for getting only viewable area of the screen.
