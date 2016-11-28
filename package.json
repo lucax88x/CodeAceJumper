@@ -58,6 +58,10 @@
         "aceJump.finder.pattern": {
           "type": "string",
           "default": "[ ,-.{_(\\[]"
+        },
+        "aceJump.finder.range": {
+          "type": "number",
+          "default": "40"
         }
       }
     }

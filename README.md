@@ -27,7 +27,8 @@ This extension contributes the following settings:
 * `aceJump.placeholder.color`: placeholder background color; defaults to black
 * `aceJump.placeholder.border`: placeholder background color; defaults to dotted thin black
 * `aceJump.finder.pattern`: regex pattern for the matching word separators; pattern should represent the single character which can split a word, for example a dot, or a square; defaults to `[ ,-.{_(\\[]`
- 
+* `aceJump.finder.range`: if no selection is made, maximum number of lines from the active cursors' line which should be considered for a match
+
 ### 1.0.0
 
 Initial release
