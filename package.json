@@ -7,14 +7,19 @@
   "publisher": "lucax88x",
   "homepage": "https://github.com/lucax88x/CodeAceJumper",
   "license": "https://github.com/lucax88x/CodeAceJumper/license.md",
+  "keywords": [    
+    "jump",
+    "AceJump",
+    "EasyMotion"
+  ],
   "repository": {
-		"type": "git",
-		"url": "https://github.com/lucax88x/CodeAceJumper.git"
-	},
+    "type": "git",
+    "url": "https://github.com/lucax88x/CodeAceJumper.git"
+  },
   "bugs": {
     "url": "https://github.com/lucax88x/CodeAceJumper/issues",
     "email": "lucax88x@gmail.com"
-  },  
+  },
   "engines": {
     "vscode": "^1.5.0"
   },
