@@ -12,9 +12,6 @@ export class PlaceHolderDecorator {
     private cache: { [index: string]: vscode.Uri };
     private decorations: vscode.TextEditorDecorationType[] = [];
 
-    private width: number = 12;
-    private height: number = 14;
-
     load = (config: Config) => {
         this.config = config;
 
@@ -26,8 +23,8 @@ export class PlaceHolderDecorator {
         let decorationType = vscode.window.createTextEditorDecorationType({
             after: {
                 margin: `0 0 0 -7px`,
-                height: `${this.height}px`,
-                width: `${this.width}px`
+                height: `${this.config.placeholder.height}px`,
+                width: `${this.config.placeholder.width}px`
             }
         });
 
@@ -78,13 +75,13 @@ export class PlaceHolderDecorator {
 
         root
             .att("xmlns", "http://www.w3.org/2000/svg")
-            .att("viewBox", `0 0 ${this.width} ${this.height}`)
-            .att("width", this.width)
-            .att("height", this.height);
+            .att("viewBox", `0 0 ${this.config.placeholder.width} ${this.config.placeholder.height}`)
+            .att("width", this.config.placeholder.width)
+            .att("height", this.config.placeholder.height);
 
         root.ele('rect')
-            .att("width", this.width)
-            .att("height", this.height)
+            .att("width", this.config.placeholder.width)
+            .att("height", this.config.placeholder.height)
             .att("rx", 2)
             .att("ry", 2)
             .att("style", `fill: ${this.config.placeholder.backgroundColor}`);
@@ -94,8 +91,8 @@ export class PlaceHolderDecorator {
             .att("font-family", this.config.placeholder.fontFamily)
             .att("font-size", `${this.config.placeholder.fontSize}px`)
             .att("fill", this.config.placeholder.color)
-            .att("x", "2")
-            .att("y", "12")
+            .att("x", this.config.placeholder.textPosX)
+            .att("y", this.config.placeholder.textPosY)
             .text(this.config.placeholder.upperCase ? code.toUpperCase() : code.toLowerCase());
 
         let svg = root.end({

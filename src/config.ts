@@ -10,6 +10,12 @@ class PlaceHolderConfig {
     color: string = "black";
     border: string = "dotted thin black";
 
+    width: number = 12;
+    height: number = 14;
+
+    textPosX: number = 2;
+    textPosY: number = 12;
+
     fontSize: number = 14;
     fontWeight: string = "normal";
     fontFamily: string = "Consolas";

@@ -60,9 +60,25 @@
           "type": "string",
           "default": "dotted thin black"
         },
+        "aceJump.placeholder.width": {
+          "type": "number",
+          "default": 12
+        },
+        "aceJump.placeholder.height": {
+          "type": "number",
+          "default": 14
+        },
         "aceJump.placeholder.fontSize": {
           "type": "number",
           "default": 14
+        },
+        "aceJump.placeholder.textPosX": {
+          "type": "number",
+          "default": 2
+        },
+        "aceJump.placeholder.textPosY": {
+          "type": "number",
+          "default": 12
         },
         "aceJump.placeholder.fontWeight": {
           "type": "string",
