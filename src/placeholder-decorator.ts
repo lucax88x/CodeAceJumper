@@ -12,10 +12,9 @@ export class PlaceHolderDecorator {
 
     private width: number = 12;
     private height: number = 14;
-    private fontSize: number = 14;
 
     load = (config: Config) => {
-        this.config = config
+        this.config = config;
 
         this.updateCache();
     }
@@ -68,11 +67,11 @@ export class PlaceHolderDecorator {
     private updateCache = () => {
         this.cache = {};
 
-        _.each(this.config.characters, code => this.cache[code] = this.buildUri(code, this.config.placeholder.backgroundColor, this.config.placeholder.color))
+        _.each(this.config.characters, code => this.cache[code] = this.buildUri(code))
     }
 
-    private buildUri = (code: string, backgroundColor: string, fontColor: string) => {
-        return vscode.Uri.parse(`data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${this.width} ${this.height}" height="${this.height}" width="${this.width}"><rect width="${this.width}" height="${this.height}" rx="2" ry="2" style="fill: ${backgroundColor};"></rect><text font-family="Consolas" font-size="${this.fontSize}px" fill="${fontColor}" x="2" y="12">${code}</text></svg>`);
+    private buildUri = (code: string) => {
+        return vscode.Uri.parse(`data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${this.width} ${this.height}" height="${this.height}" width="${this.width}"><rect width="${this.width}" height="${this.height}" rx="2" ry="2" style="fill: ${this.config.placeholder.backgroundColor};"></rect><text font-weight="${this.config.placeholder.fontWeight}" font-family="${this.config.placeholder.fontFamily}" font-size="${this.config.placeholder.fontSize}px" fill="${this.config.placeholder.color}" x="2" y="12">${this.config.placeholder.upperCase ? code.toUpperCase() : code.toLowerCase()}</text></svg>`);
     }
 
 }

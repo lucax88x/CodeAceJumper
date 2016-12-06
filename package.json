@@ -60,13 +60,29 @@
           "type": "string",
           "default": "dotted thin black"
         },
+        "aceJump.placeholder.fontSize": {
+          "type": "number",
+          "default": 14        
+        },
+        "aceJump.placeholder.fontWeight": {
+          "type": "string",
+          "default": "normal"
+        },
+        "aceJump.placeholder.fontFamily": {
+          "type": "string",
+          "default": "Consolas"
+        },
+        "aceJump.placeholder.upperCase": {
+          "type": "boolean",
+          "default": false
+        },
         "aceJump.finder.pattern": {
           "type": "string",
           "default": "[ ,-.{_(\\[]"
         },
         "aceJump.finder.range": {
           "type": "number",
-          "default": "40"
+          "default": 40
         }
       }
     }

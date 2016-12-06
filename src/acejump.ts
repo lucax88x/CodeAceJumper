@@ -58,6 +58,11 @@ export class AceJump {
         this.config.placeholder.color = config.get<string>("placeholder.color");
         this.config.placeholder.border = config.get<string>("placeholder.border");
 
+        this.config.placeholder.fontSize = config.get<number>("placeholder.fontSize");
+        this.config.placeholder.fontWeight = config.get<string>("placeholder.fontWeight");
+        this.config.placeholder.fontFamily = config.get<string>("placeholder.fontFamily");
+        this.config.placeholder.upperCase = config.get<boolean>("placeholder.upperCase");
+
         this.config.finder.pattern = config.get<string>("finder.pattern");
         this.config.finder.range = config.get<number>("finder.range");
 
