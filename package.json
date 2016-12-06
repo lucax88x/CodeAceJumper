@@ -7,7 +7,7 @@
   "publisher": "lucax88x",
   "homepage": "https://github.com/lucax88x/CodeAceJumper",
   "license": "https://github.com/lucax88x/CodeAceJumper/license.md",
-  "keywords": [    
+  "keywords": [
     "jump",
     "AceJump",
     "EasyMotion"
@@ -62,7 +62,7 @@
         },
         "aceJump.placeholder.fontSize": {
           "type": "number",
-          "default": 14        
+          "default": 14
         },
         "aceJump.placeholder.fontWeight": {
           "type": "string",
@@ -101,6 +101,8 @@
   },
   "dependencies": {
     "@types/lodash": "^4.14.37",
-    "lodash": "^4.16.4"
+    "@types/xmlbuilder": "0.0.28",
+    "lodash": "^4.16.4",
+    "xmlbuilder": "^8.2.2"
   }
 }

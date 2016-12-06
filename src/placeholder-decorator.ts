@@ -1,5 +1,7 @@
 import * as vscode from 'vscode';
 import * as _ from "lodash";
+import * as builder from "xmlbuilder";
+
 
 import { PlaceHolder } from './placeholder-calculus';
 import { Config } from './config';
@@ -71,7 +73,37 @@ export class PlaceHolderDecorator {
     }
 
     private buildUri = (code: string) => {
-        return vscode.Uri.parse(`data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${this.width} ${this.height}" height="${this.height}" width="${this.width}"><rect width="${this.width}" height="${this.height}" rx="2" ry="2" style="fill: ${this.config.placeholder.backgroundColor};"></rect><text font-weight="${this.config.placeholder.fontWeight}" font-family="${this.config.placeholder.fontFamily}" font-size="${this.config.placeholder.fontSize}px" fill="${this.config.placeholder.color}" x="2" y="12">${this.config.placeholder.upperCase ? code.toUpperCase() : code.toLowerCase()}</text></svg>`);
+
+        let root = builder.create('svg', {}, {}, { headless: true });
+
+        root
+            .att("xmlns", "http://www.w3.org/2000/svg")
+            .att("viewBox", `0 0 ${this.width} ${this.height}`)
+            .att("width", this.width)
+            .att("height", this.height);
+
+        root.ele('rect')
+            .att("width", this.width)
+            .att("height", this.height)
+            .att("rx", 2)
+            .att("ry", 2)
+            .att("style", `fill: ${this.config.placeholder.backgroundColor}`);
+
+        root.ele('text')
+            .att("font-weight", this.config.placeholder.fontWeight)
+            .att("font-family", this.config.placeholder.fontFamily)
+            .att("font-size", `${this.config.placeholder.fontSize}px`)
+            .att("fill", this.config.placeholder.color)
+            .att("x", "2")
+            .att("y", "12")
+            .text(this.config.placeholder.upperCase ? code.toUpperCase() : code.toLowerCase());
+
+        let svg = root.end({
+            pretty: false
+        });
+
+        return vscode.Uri.parse(`data:image/svg+xml;utf8,${svg}`);
+
     }
 
 }
