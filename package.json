@@ -94,7 +94,7 @@
         },
         "aceJump.finder.pattern": {
           "type": "string",
-          "default": "[ ,-.{_(\\[]"
+          "default": "[ ,-.{_(\"'<\\[]"
         },
         "aceJump.finder.range": {
           "type": "number",
