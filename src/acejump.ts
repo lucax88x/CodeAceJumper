@@ -1,10 +1,10 @@
-import * as vscode from 'vscode';
-import * as _ from 'lodash';
+import { Config } from "./config";
+import { InlineInput } from "./inline-input";
+import { PlaceHolder, PlaceHolderCalculus } from "./placeholder-calculus";
+import { PlaceHolderDecorator } from "./placeholder-decorator";
+import * as _ from "lodash";
+import * as vscode from "vscode";
 
-import { PlaceHolderDecorator } from './placeholder-decorator';
-import { Config } from './config';
-import { InlineInput } from './inline-input';
-import { PlaceHolder, PlaceHolderCalculus } from './placeholder-calculus';
 
 class Selection {
     text: string;
@@ -33,7 +33,23 @@ export class AceJump {
         disposables.push(vscode.commands.registerCommand('extension.aceJump', () => {
             if (!this.isJumping) {
                 this.isJumping = true;
-                this.jump()
+                this.jump((editor, placeholder) => {
+                    editor.selection = new vscode.Selection(new vscode.Position(placeholder.line, placeholder.character), new vscode.Position(placeholder.line, placeholder.character));
+                })
+                    .then(() => {
+                        this.isJumping = false;
+                    })
+                    .catch(() => {
+                        this.isJumping = false;
+                    });
+            }
+        }));
+        disposables.push(vscode.commands.registerCommand('extension.aceJump.selection', () => {
+            if (!this.isJumping) {
+                this.isJumping = true;
+                this.jump((editor, placeholder) => {
+                    editor.selection = new vscode.Selection(new vscode.Position(editor.selection.active.line, editor.selection.active.character), new vscode.Position(placeholder.line, placeholder.character));
+                })
                     .then(() => {
                         this.isJumping = false;
                     })
@@ -76,7 +92,7 @@ export class AceJump {
         this.placeHolderDecorator.load(this.config);
     }
 
-    private jump = (): Promise<void> => {
+    private jump = (action: (editor: vscode.TextEditor, placeholder: PlaceHolder) => void): Promise<void> => {
         return new Promise<void>((jumpResolve, jumpReject) => {
 
             let editor = vscode.window.activeTextEditor;
@@ -127,7 +143,7 @@ export class AceJump {
                     });
             })
                 .then((placeholder: PlaceHolder) => {
-                    this.setSelection(editor, placeholder);
+                    action(editor, placeholder);
                     vscode.window.setStatusBarMessage("AceJump: Jumped!", 1000);
                     jumpResolve();
                 })
@@ -162,10 +178,6 @@ export class AceJump {
         }
 
         return selection;
-    }
-
-    private setSelection = (editor: vscode.TextEditor, placeholder: PlaceHolder) => {
-        editor.selection = new vscode.Selection(new vscode.Position(placeholder.line, placeholder.character), new vscode.Position(placeholder.line, placeholder.character));
     }
 
     private find = (editor: vscode.TextEditor, selection: Selection, value: string): ILineIndexes => {

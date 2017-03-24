@@ -34,7 +34,11 @@
     "commands": [
       {
         "command": "extension.aceJump",
-        "title": "Ace Jump"
+        "title": "AceJump: Jump"
+      },
+      {
+        "command": "extension.aceJump.selection",
+        "title": "AceJump: Selection"
       }
     ],
     "keybindings": [

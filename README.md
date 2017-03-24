@@ -17,7 +17,7 @@ To configure the keybinding, add the following lines to `keybindings.json` (`Fil
         "command": "extension.aceJump"
     }
 
-otherwise you can just open command Ace Jump
+otherwise you can just open command and search for AceJump and see the available commands
 
 ## Extension Settings
 
