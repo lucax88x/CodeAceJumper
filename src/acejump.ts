@@ -102,8 +102,9 @@ export class AceJump {
                 return;
             }
 
+            let messaggeDisposable = vscode.window.setStatusBarMessage("AceJump: Type");
             const promise = new Promise<PlaceHolder>((resolve, reject) => {
-                vscode.window.setStatusBarMessage("AceJump: Type");
+
                 let firstInlineInput = new InlineInput().show(editor, (v) => v)
                     .then((value: string) => {
 
@@ -144,11 +145,13 @@ export class AceJump {
             })
                 .then((placeholder: PlaceHolder) => {
                     action(editor, placeholder);
-                    vscode.window.setStatusBarMessage("AceJump: Jumped!", 1000);
+                    vscode.window.setStatusBarMessage("AceJump: Jumped!", 2000);
                     jumpResolve();
                 })
                 .catch((reason?: string) => {
-                    vscode.window.setStatusBarMessage((reason) ? reason : "AceJump: canceled");
+                    if (!reason) reason = "Canceled!";
+                    vscode.window.setStatusBarMessage(`AceJump: ${reason}`, 2000);
+                    messaggeDisposable.dispose();
                     jumpReject();
                 });
         });
@@ -227,7 +230,7 @@ export class AceJump {
 
             this.placeHolderDecorator.addDecorations(editor, placeholders);
 
-            vscode.window.setStatusBarMessage("AceJump: Jump To");
+            let messageDisposable = vscode.window.setStatusBarMessage("AceJump: Jump To");
             new InlineInput().show(editor, (v) => v)
                 .then((value: string) => {
                     this.placeHolderDecorator.removeDecorations(editor);
@@ -254,6 +257,7 @@ export class AceJump {
                     }
                 }).catch(() => {
                     this.placeHolderDecorator.removeDecorations(editor);
+                    messageDisposable.dispose();
                     reject();
                 });
         });
