@@ -43,9 +43,7 @@ Initial release
 
 ### 1.1.0
 
-New group system when we have more matches than the alphabet can have (26)
-
-for details, [see](https://github.com/lucax88x/CodeAceJumper/issues/6)
+New group system when we have more matches than the alphabet can have (26) [details](https://github.com/lucax88x/CodeAceJumper/issues/6)
 
 ### 1.1.1
 
@@ -59,3 +57,8 @@ thanks to [ncthis](https://github.com/lucax88x/CodeAceJumper/pull/8) we now are 
 
 placeholder now have more configurations, such has font size, family, etc
 added ', " and < in the pattern
+
+### 1.1.4
+
+* Added new command that let Ace Jump [details](https://github.com/lucax88x/CodeAceJumper/issues/6)
+* Correctly disposing the `AceJump: Type` and `AceJump: Jump To messages`
