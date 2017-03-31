@@ -36,6 +36,7 @@ This extension contributes the following settings:
 * `aceJump.placeholder.upperCase`: placeholder font to uppercase; defaults to false
 * `aceJump.finder.pattern`: regex pattern for the matching word separators; pattern should represent the single character which can split a word, for example a dot, or a square; defaults to `[ ,-.{_(\\[]`
 * `aceJump.finder.range`: if no selection is made, maximum number of lines from the active cursors' line which should be considered for a match
+* `aceJump.finder.skipSelection`: don't acejump in selections
 
 ### 1.0.0
 

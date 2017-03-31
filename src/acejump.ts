@@ -87,6 +87,7 @@ export class AceJump {
 
         this.config.finder.pattern = config.get<string>("finder.pattern");
         this.config.finder.range = config.get<number>("finder.range");
+        this.config.finder.skipSelection = config.get<boolean>("finder.skipSelection");
 
         this.placeholderCalculus.load(this.config);
         this.placeHolderDecorator.load(this.config);
@@ -161,7 +162,7 @@ export class AceJump {
 
         let selection: Selection = new Selection();
 
-        if (!editor.selection.isEmpty) {
+        if (!this.config.finder.skipSelection && !editor.selection.isEmpty) {
             selection.text = editor.document.getText(editor.selection);
 
             if (editor.selection.anchor.line > editor.selection.active.line) {
