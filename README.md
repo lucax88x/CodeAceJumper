@@ -37,6 +37,7 @@ This extension contributes the following settings:
 * `aceJump.finder.pattern`: regex pattern for the matching word separators; pattern should represent the single character which can split a word, for example a dot, or a square; defaults to `[ ,-.{_(\\[]`
 * `aceJump.finder.range`: if no selection is made, maximum number of lines from the active cursors' line which should be considered for a match
 * `aceJump.finder.skipSelection`: don't acejump in selections
+* `aceJump.finder.onlyInitialLetter`: if enabled, will search for starting character of the words, otherwise it will search for any characters (this also mean special characters, don't try space :D)
 
 ### 1.0.0
 

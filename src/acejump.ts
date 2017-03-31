@@ -88,6 +88,7 @@ export class AceJump {
         this.config.finder.pattern = config.get<string>("finder.pattern");
         this.config.finder.range = config.get<number>("finder.range");
         this.config.finder.skipSelection = config.get<boolean>("finder.skipSelection");
+        this.config.finder.onlyInitialLetter = config.get<boolean>("finder.onlyInitialLetter");
 
         this.placeholderCalculus.load(this.config);
         this.placeHolderDecorator.load(this.config);
@@ -207,21 +208,35 @@ export class AceJump {
             return [];
         }
 
+        char = char.toLowerCase();
+
         let indices = [];
-        //splitted by spaces
-        let words = str.split(new RegExp(this.config.finder.pattern));
-        //current line index
-        let index = 0;
 
-        for (var i = 0; i < words.length; i++) {
+        if (this.config.finder.onlyInitialLetter) {
+            //current line index
+            let index = 0;
 
-            if (words[i][0] && words[i][0].toLowerCase() === char.toLowerCase()) {
-                indices.push(index);
-            };
+            //splitted by the pattern 
+            let words = str.split(new RegExp(this.config.finder.pattern));
+            for (var w = 0; w < words.length; w++) {
 
-            // increment by word and white space
-            index += words[i].length + 1;
+                if (words[w][0] && words[w][0].toLowerCase() === char) {
+                    indices.push(index);
+                };
+
+                // increment by word and white space
+                index += words[w].length + 1;
+            }
         }
+        else {
+
+            let regexp = new RegExp(`[${char}]`, "gi");
+            let match: RegExpMatchArray;
+            while ((match = regexp.exec(str)) != null) {
+                indices.push(match.index);
+            }
+        }
+
         return indices;
     }
 

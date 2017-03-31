@@ -107,6 +107,10 @@
         "aceJump.finder.skipSelection": {
           "type": "boolean",
           "default": false
+        },
+        "aceJump.finder.onlyInitialLetter": {
+          "type": "boolean",
+          "default": true
         }
       }
     }
