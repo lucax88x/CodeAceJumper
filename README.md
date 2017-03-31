@@ -64,3 +64,8 @@ added ', " and < in the pattern
 
 * Added new command that let Ace Jump [details](https://github.com/lucax88x/CodeAceJumper/issues/6)
 * Correctly disposing the `AceJump: Type` and `AceJump: Jump To messages`
+
+### 1.1.5
+
+* possibility to search inside words using the new setting `aceJump.finder.onlyInitialLetter=false`
+* possibility to skip the search on the selections using the new setting `aceJump.finder.skipSelection=true`
