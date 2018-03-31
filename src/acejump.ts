@@ -211,13 +211,14 @@ export class AceJump {
         char = char.toLowerCase();
 
         let indices = [];
+        const finderPatternRegex = new RegExp(this.config.finder.pattern);
 
-        if (this.config.finder.onlyInitialLetter) {
+        if (this.config.finder.onlyInitialLetter && !finderPatternRegex.test(char)) {
             //current line index
             let index = 0;
 
             //splitted by the pattern 
-            let words = str.split(new RegExp(this.config.finder.pattern));
+            let words = str.split(finderPatternRegex);
             for (var w = 0; w < words.length; w++) {
 
                 if (words[w][0] && words[w][0].toLowerCase() === char) {
