@@ -69,3 +69,7 @@ added ', " and < in the pattern
 
 * possibility to search inside words using the new setting `aceJump.finder.onlyInitialLetter=false`
 * possibility to skip the search on the selections using the new setting `aceJump.finder.skipSelection=true`
+
+### 1.1.6
+
+* Resolve non-intuitive behavior when search query matches separator regex [details](https://github.com/lucax88x/CodeAceJumper/pull/20)
