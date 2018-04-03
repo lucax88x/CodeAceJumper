@@ -73,3 +73,7 @@ added ', " and < in the pattern
 ### 1.1.6
 
 * Resolve non-intuitive behavior when search query matches separator regex [details](https://github.com/lucax88x/CodeAceJumper/pull/20)
+
+### 1.1.7
+
+* Fixed "AceJump: Jump To" message always in status bar #18 [details](https://github.com/lucax88x/CodeAceJumper/issues/18)
