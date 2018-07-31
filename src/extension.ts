@@ -5,15 +5,13 @@
 import * as vscode from 'vscode';
 import { AceJump } from './acejump';
 
-
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
-    let aceJump = new AceJump();
+  let aceJump = new AceJump();
 
-    aceJump.configure(context);
+  aceJump.configure(context);
 }
 
 // this method is called when your extension is deactivated
-export function deactivate() {
-}
+export function deactivate() {}
