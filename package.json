@@ -121,16 +121,16 @@
     "postinstall": "node ./node_modules/vscode/bin/install"
   },
   "devDependencies": {
-    "@types/node": "^7.0.43",
-    "@types/mocha": "^2.2.42",
     "@types/lodash": "^4.14.114",
+    "@types/mocha": "^2.2.42",
+    "@types/node": "^7.0.43",
     "@types/xmlbuilder": "0.0.28",
-    "mocha": "^2.3.3",
+    "mocha": "^5.2.0",
+    "tslint": "^5.8.0",
     "typescript": "^2.6.1",
-    "vscode": "^1.1.6",
-    "tslint": "^5.8.0"
+    "vscode": "^1.1.6"
   },
-  "dependencies": {    
+  "dependencies": {
     "lodash": "^4.17.10",
     "xmlbuilder": "^8.2.2"
   }
