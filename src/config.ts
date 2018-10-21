@@ -52,7 +52,6 @@ class PlaceHolderConfig {
 
 class FinderConfig {
   pattern: string;
-  range: number;
   skipSelection: boolean = false;
   onlyInitialLetter: boolean = true;
 }

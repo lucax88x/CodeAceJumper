@@ -100,10 +100,6 @@
           "type": "string",
           "default": "[ ,-.{_(\"'<\\[]"
         },
-        "aceJump.finder.range": {
-          "type": "number",
-          "default": 40
-        },
         "aceJump.finder.skipSelection": {
           "type": "boolean",
           "default": false

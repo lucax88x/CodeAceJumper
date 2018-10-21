@@ -1,9 +1,10 @@
-import { Config } from './config';
-import { InlineInput } from './inline-input';
-import { PlaceHolder, PlaceHolderCalculus } from './placeholder-calculus';
-import { PlaceHolderDecorator } from './placeholder-decorator';
-import * as _ from 'lodash';
-import * as vscode from 'vscode';
+import * as _ from "lodash";
+import * as vscode from "vscode";
+
+import { Config } from "./config";
+import { InlineInput } from "./inline-input";
+import { PlaceHolder, PlaceHolderCalculus } from "./placeholder-calculus";
+import { PlaceHolderDecorator } from "./placeholder-decorator";
 
 class Selection {
   text: string;
@@ -31,7 +32,7 @@ export class AceJump {
     let disposables: vscode.Disposable[] = [];
 
     disposables.push(
-      vscode.commands.registerCommand('extension.aceJump', () => {
+      vscode.commands.registerCommand("extension.aceJump", () => {
         if (!this.isJumping) {
           this.isJumping = true;
           this.jump((editor, placeholder) => {
@@ -50,7 +51,7 @@ export class AceJump {
       })
     );
     disposables.push(
-      vscode.commands.registerCommand('extension.aceJump.selection', () => {
+      vscode.commands.registerCommand("extension.aceJump.selection", () => {
         if (!this.isJumping) {
           this.isJumping = true;
           this.jump((editor, placeholder) => {
@@ -81,44 +82,43 @@ export class AceJump {
   };
 
   private loadConfig = () => {
-    let config = vscode.workspace.getConfiguration('aceJump');
+    let config = vscode.workspace.getConfiguration("aceJump");
 
     this.config.placeholder.backgroundColor = config.get<string>(
-      'placeholder.backgroundColor'
+      "placeholder.backgroundColor"
     );
-    this.config.placeholder.color = config.get<string>('placeholder.color');
-    this.config.placeholder.border = config.get<string>('placeholder.border');
+    this.config.placeholder.color = config.get<string>("placeholder.color");
+    this.config.placeholder.border = config.get<string>("placeholder.border");
 
-    this.config.placeholder.width = config.get<number>('placeholder.width');
-    this.config.placeholder.height = config.get<number>('placeholder.height');
+    this.config.placeholder.width = config.get<number>("placeholder.width");
+    this.config.placeholder.height = config.get<number>("placeholder.height");
 
     this.config.placeholder.textPosX = config.get<number>(
-      'placeholder.textPosX'
+      "placeholder.textPosX"
     );
     this.config.placeholder.textPosY = config.get<number>(
-      'placeholder.textPosY'
+      "placeholder.textPosY"
     );
 
     this.config.placeholder.fontSize = config.get<number>(
-      'placeholder.fontSize'
+      "placeholder.fontSize"
     );
     this.config.placeholder.fontWeight = config.get<string>(
-      'placeholder.fontWeight'
+      "placeholder.fontWeight"
     );
     this.config.placeholder.fontFamily = config.get<string>(
-      'placeholder.fontFamily'
+      "placeholder.fontFamily"
     );
     this.config.placeholder.upperCase = config.get<boolean>(
-      'placeholder.upperCase'
+      "placeholder.upperCase"
     );
 
-    this.config.finder.pattern = config.get<string>('finder.pattern');
-    this.config.finder.range = config.get<number>('finder.range');
+    this.config.finder.pattern = config.get<string>("finder.pattern");
     this.config.finder.skipSelection = config.get<boolean>(
-      'finder.skipSelection'
+      "finder.skipSelection"
     );
     this.config.finder.onlyInitialLetter = config.get<boolean>(
-      'finder.onlyInitialLetter'
+      "finder.onlyInitialLetter"
     );
 
     this.placeholderCalculus.load(this.config);
@@ -137,7 +137,7 @@ export class AceJump {
       }
 
       let messaggeDisposable = vscode.window.setStatusBarMessage(
-        'AceJump: Type'
+        "AceJump: Type"
       );
       const promise = new Promise<PlaceHolder>((resolve, reject) => {
         let firstInlineInput = new InlineInput()
@@ -154,7 +154,7 @@ export class AceJump {
 
             let lineIndexes: ILineIndexes = this.find(editor, selection, value);
             if (lineIndexes.count <= 0) {
-              reject('AceJump: no matches');
+              reject("AceJump: no matches");
               return;
             }
 
@@ -182,12 +182,12 @@ export class AceJump {
       })
         .then((placeholder: PlaceHolder) => {
           action(editor, placeholder);
-          vscode.window.setStatusBarMessage('AceJump: Jumped!', 2000);
+          vscode.window.setStatusBarMessage("AceJump: Jumped!", 2000);
           messaggeDisposable.dispose();
           jumpResolve();
         })
         .catch((reason?: string) => {
-          if (!reason) reason = 'Canceled!';
+          if (!reason) reason = "Canceled!";
           vscode.window.setStatusBarMessage(`AceJump: ${reason}`, 2000);
           messaggeDisposable.dispose();
           jumpReject();
@@ -209,12 +209,9 @@ export class AceJump {
         selection.lastLine = editor.selection.active.line;
       }
     } else {
-      selection.startLine = Math.max(
-        editor.selection.active.line - this.config.finder.range,
-        0
-      );
+      selection.startLine = Math.max(editor.selection.active.line, 0);
       selection.lastLine = Math.min(
-        editor.selection.active.line + this.config.finder.range,
+        editor.selection.active.line,
         editor.document.lineCount
       );
 
@@ -276,7 +273,7 @@ export class AceJump {
         index += words[w].length + 1;
       }
     } else {
-      let regexp = new RegExp(`[${char}]`, 'gi');
+      let regexp = new RegExp(`[${char}]`, "gi");
       let match: RegExpMatchArray;
       while ((match = regexp.exec(str)) != null) {
         indices.push(match.index);
@@ -294,7 +291,7 @@ export class AceJump {
       this.placeHolderDecorator.addDecorations(editor, placeholders);
 
       let messageDisposable = vscode.window.setStatusBarMessage(
-        'AceJump: Jump To'
+        "AceJump: Jump To"
       );
       new InlineInput()
         .show(editor, v => v)
