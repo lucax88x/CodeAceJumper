@@ -80,3 +80,7 @@ added ', " and < in the pattern
 ### 1.1.8
 
 - Now the icon does not move the charaters in vscode anymore #23 [details](https://github.com/lucax88x/CodeAceJumper/issues/23)
+
+### 1.1.9
+
+- Now uses a new vscode api for detecing the visible ranges in the screen [details](https://github.com/lucax88x/CodeAceJumper/issues/5)
