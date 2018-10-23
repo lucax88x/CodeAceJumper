@@ -1,4 +1,4 @@
-import * as _ from "lodash";
+import { find, first } from "lodash";
 import * as vscode from "vscode";
 
 import { Config } from "./config";
@@ -164,7 +164,7 @@ export class AceJump {
 
             if (placeholders.length === 0) return;
             if (placeholders.length === 1) {
-              let placeholder = _.first(placeholders);
+              let placeholder = first(placeholders);
               resolve(placeholder);
             } else {
               this.prepareForJumpTo(editor, placeholders)
@@ -209,11 +209,13 @@ export class AceJump {
         selection.lastLine = editor.selection.active.line;
       }
     } else {
-      selection.startLine = Math.max(editor.selection.active.line, 0);
-      selection.lastLine = Math.min(
-        editor.selection.active.line,
-        editor.document.lineCount
-      );
+      if (editor.visibleRanges.length === 0) {
+        throw Error("There are no visible ranges!");
+      }
+
+      const visibleRange = first(editor.visibleRanges);
+      selection.startLine = visibleRange.start.line;
+      selection.lastLine = visibleRange.end.line;
 
       selection.text = editor.document.getText(
         new vscode.Range(selection.startLine, 0, selection.lastLine, 0)
@@ -300,7 +302,7 @@ export class AceJump {
 
           if (!value) return;
 
-          let placeholder = _.find(
+          let placeholder = find(
             placeholders,
             placeholder => placeholder.placeholder === value.toLowerCase()
           );
