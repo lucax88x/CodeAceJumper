@@ -44,7 +44,23 @@ export class InlineInput {
       });
     });
 
-    this.registerCommand('type', this.onType);
+    try {
+      this.registerCommand('type', this.onType);
+    } catch (e) { // Someone has registered `type`, use fallback (Microsoft/vscode#13441)
+      const ct = new vscode.CancellationTokenSource();
+      vscode.window.showInputBox({
+        placeHolder: '',
+        prompt: 'AceJump ',
+        validateInput: (s) => {
+          if (!s) return '';
+          this.onType({ text: s });
+          ct.cancel();
+          return null;
+        }
+      }, ct.token).then((s) => {
+        this.cancel(editor);
+      });
+    }
 
     return promise;
   };
