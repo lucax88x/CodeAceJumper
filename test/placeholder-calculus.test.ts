@@ -1,8 +1,7 @@
 import * as assert from 'assert';
-import * as vscode from 'vscode';
-import * as myExtension from '../src/extension';
-import { PlaceHolder, PlaceHolderCalculus } from '../src/placeholder-calculus';
+
 import { Config } from '../src/config';
+import { PlaceHolderCalculus } from '../src/placeholder-calculus';
 
 suite('PlaceHolderCalculus Tests', () => {
   let config = new Config();

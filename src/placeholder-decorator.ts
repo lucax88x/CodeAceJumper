@@ -1,9 +1,9 @@
-import * as vscode from 'vscode';
 import * as _ from 'lodash';
+import * as vscode from 'vscode';
 import * as builder from 'xmlbuilder';
 
-import { PlaceHolder } from './placeholder-calculus';
 import { Config } from './config';
+import { PlaceHolder } from './placeholder-calculus';
 
 export class PlaceHolderDecorator {
   private config: Config;

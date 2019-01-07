@@ -1,8 +1,7 @@
-import { Config } from './config';
-import * as vscode from 'vscode';
 import * as _ from 'lodash';
 
-import { ILineIndexes, IIndexes } from './acejump';
+import { ILineIndexes } from './acejump';
+import { Config } from './config';
 
 export class PlaceHolder {
   index: number;
