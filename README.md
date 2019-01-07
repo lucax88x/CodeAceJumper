@@ -84,3 +84,7 @@ added ', " and < in the pattern
 ### 1.1.9
 
 - Now uses a new vscode api for detecing the visible ranges in the screen [details](https://github.com/lucax88x/CodeAceJumper/issues/5)
+
+### 1.1.10
+
+- Now should work together with extensions using the TYPE command (like VIM extensions) thanks to [matklad](https://github.com/lucax88x/CodeAceJumper/pull/25)
