@@ -1,23 +1,29 @@
-import * as _ from 'lodash';
-import * as vscode from 'vscode';
+import { forEach, map } from 'ramda';
+import {
+  Range,
+  TextEditor,
+  TextEditorDecorationType,
+  Uri,
+  window
+} from 'vscode';
 import * as builder from 'xmlbuilder';
 
-import { Config } from './config';
-import { PlaceHolder } from './placeholder-calculus';
+import { Config } from './config/config';
+import { PlaceHolder } from './models/place-holder';
 
 export class PlaceHolderDecorator {
   private config: Config;
-  private cache: { [index: string]: vscode.Uri };
-  private decorations: vscode.TextEditorDecorationType[] = [];
+  private cache: { [index: string]: Uri };
+  private decorations: TextEditorDecorationType[] = [];
 
-  load = (config: Config) => {
+  public load(config: Config) {
     this.config = config;
 
     this.updateCache();
-  };
+  }
 
-  addDecorations = (editor: vscode.TextEditor, placeholders: PlaceHolder[]) => {
-    let decorationType = vscode.window.createTextEditorDecorationType({
+  public addDecorations(editor: TextEditor, placeholders: PlaceHolder[]) {
+    const decorationType = window.createTextEditorDecorationType({
       after: {
         margin: `0 0 0 ${1 * -this.config.placeholder.width}px`,
         height: `${this.config.placeholder.height}px`,
@@ -25,10 +31,9 @@ export class PlaceHolderDecorator {
       }
     });
 
-    let options = [];
-    _.each(placeholders, placeholder => {
-      let option = {
-        range: new vscode.Range(
+    const options = map(
+      placeholder => ({
+        range: new Range(
           placeholder.line,
           placeholder.character + 1,
           placeholder.line,
@@ -46,34 +51,34 @@ export class PlaceHolderDecorator {
             }
           }
         }
-      };
-
-      options.push(option);
-    });
+      }),
+      placeholders
+    );
 
     this.decorations.push(decorationType);
 
     editor.setDecorations(decorationType, options);
-  };
+  }
 
-  removeDecorations = (editor: vscode.TextEditor) => {
-    _.each(this.decorations, item => {
+  public removeDecorations(editor: TextEditor) {
+    forEach(item => {
       editor.setDecorations(item, []);
       item.dispose();
-    });
-  };
+    }, this.decorations);
+  }
 
-  private updateCache = () => {
+  private updateCache() {
     this.cache = {};
 
-    _.each(
-      this.config.characters,
-      code => (this.cache[code] = this.buildUri(code))
+    // TODO: use reduce
+    forEach(
+      code => (this.cache[code] = this.buildUri(code)),
+      this.config.characters
     );
-  };
+  }
 
-  private buildUri = (code: string) => {
-    let root = builder.create('svg', {}, {}, { headless: true });
+  private buildUri(code: string) {
+    const root = builder.create('svg', {}, {}, { headless: true });
 
     root
       .att('xmlns', 'http://www.w3.org/2000/svg')
@@ -106,10 +111,10 @@ export class PlaceHolderDecorator {
           : code.toLowerCase()
       );
 
-    let svg = root.end({
+    const svg = root.end({
       pretty: false
     });
 
-    return vscode.Uri.parse(`data:image/svg+xml;utf8,${svg}`);
-  };
+    return Uri.parse(`data:image/svg+xml;utf8,${svg}`);
+  }
 }

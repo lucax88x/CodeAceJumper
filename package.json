@@ -114,12 +114,13 @@
   "scripts": {
     "vscode:prepublish": "tsc -p ./",
     "compile": "tsc -watch -p ./",
+    "lint": "tslint -c tslint.json 'src/**/*.ts' 'test/**/*.ts'",
     "postinstall": "node ./node_modules/vscode/bin/install"
   },
   "devDependencies": {
-    "@types/lodash": "^4.14.114",
     "@types/mocha": "^2.2.42",
     "@types/node": "^7.0.43",
+    "@types/ramda": "^0.25.50",
     "@types/xmlbuilder": "0.0.28",
     "mocha": "^5.2.0",
     "tslint": "^5.8.0",
@@ -127,7 +128,8 @@
     "vscode": "^1.1.21"
   },
   "dependencies": {
-    "lodash": "^4.17.10",
+    "lodash": "^4.17.11",
+    "ramda": "^0.26.1",
     "xmlbuilder": "^8.2.2"
   }
 }

@@ -1,54 +1,49 @@
-import * as _ from 'lodash';
+import { filter, head, last, reject } from 'ramda';
+import forEach from 'ramda/es/forEach';
 
-import { ILineIndexes } from './acejump';
-import { Config } from './config';
-
-export class PlaceHolder {
-  index: number;
-  placeholder: string;
-  line: number;
-  character: number;
-
-  root?: PlaceHolder;
-  childrens: PlaceHolder[] = [];
-}
+import { Config } from './config/config';
+import { LineIndexes } from './models/line-indexes';
+import { PlaceHolder } from './models/place-holder';
 
 export class PlaceHolderCalculus {
   private config: Config;
 
-  load = (config: Config) => {
+  public load(config: Config) {
     this.config = config;
-  };
+  }
 
-  buildPlaceholders = (lineIndexes: ILineIndexes): PlaceHolder[] => {
-    let placeholders: PlaceHolder[] = [];
-    let count: number = 0;
-    let candidate: number = 1;
-    let map: PlaceHolder[][] = [];
-    let breakCycles: boolean = false;
+  public buildPlaceholders(lineIndexes: LineIndexes): PlaceHolder[] {
+    const placeholders: PlaceHolder[] = [];
+    let count = 0;
+    let candidate = 1;
+    const map: PlaceHolder[][] = [];
+    let breakCycles = false;
 
-    for (let key in lineIndexes.indexes) {
-      let line = parseInt(key);
-      let lineIndex = lineIndexes.indexes[key];
+    for (const key in lineIndexes.indexes) {
+      if (lineIndexes.hasOwnProperty(key)) {
+        continue;
+      }
+      const line = parseInt(key, 10);
+      const lineIndex = lineIndexes.indexes[key];
 
-      for (let i = 0; i < lineIndex.length; i++) {
+      for (const i of lineIndex) {
         if (count + 1 > Math.pow(this.config.characters.length, 2)) {
           breakCycles = true;
           break;
         }
 
-        let character = lineIndex[i];
+        const character = lineIndex[i];
 
         if (count >= this.config.characters.length) {
           for (let y = candidate; y < placeholders.length; y++) {
-            let movingPlaceholder = placeholders[y];
+            const movingPlaceholder = placeholders[y];
 
-            let previousIndex = movingPlaceholder.index - 1;
+            const previousIndex = movingPlaceholder.index - 1;
 
             if (map[previousIndex].length < this.config.characters.length) {
-              _.remove(
-                map[movingPlaceholder.index],
-                item => item === movingPlaceholder
+              map[movingPlaceholder.index] = reject(
+                item => item === movingPlaceholder,
+                map[movingPlaceholder.index]
               );
 
               movingPlaceholder.index = previousIndex;
@@ -63,23 +58,28 @@ export class PlaceHolderCalculus {
           candidate++;
         }
 
-        let placeholder = new PlaceHolder();
+        const placeholder = new PlaceHolder();
 
         placeholder.index = 0;
 
-        let last = _.last(placeholders);
+        const lastPlaceholder = last(placeholders);
 
-        if (last) placeholder.index = last.index + 1;
+        if (!!lastPlaceholder) {
+          placeholder.index = lastPlaceholder.index + 1;
+        }
 
-        if (placeholder.index >= this.config.characters.length)
+        if (placeholder.index >= this.config.characters.length) {
           placeholder.index = this.config.characters.length - 1;
+        }
 
         placeholder.placeholder = this.config.characters[placeholder.index];
 
         placeholder.line = line;
         placeholder.character = character;
 
-        if (!map[placeholder.index]) map[placeholder.index] = [];
+        if (!map[placeholder.index]) {
+          map[placeholder.index] = [];
+        }
 
         placeholders.push(placeholder);
         map[placeholder.index].push(placeholder);
@@ -87,20 +87,31 @@ export class PlaceHolderCalculus {
         count++;
       }
 
-      if (breakCycles) break;
+      if (breakCycles) {
+        break;
+      }
     }
 
     // we assign root to other placeholders
-    _.each(_.filter(map, item => item.length > 1), mappedPlaceholders => {
-      let root = mappedPlaceholders[0];
+
+    const mapWithMultipleItems = filter(item => item.length > 1, map);
+
+    forEach(mappedPlaceholders => {
+      const root = head(mappedPlaceholders);
+
+      if (!root) {
+        return;
+      }
 
       for (let y = 0; y < mappedPlaceholders.length; y++) {
-        let mappedPlaceholder: PlaceHolder = mappedPlaceholders[y];
+        const mappedPlaceholder: PlaceHolder = mappedPlaceholders[y];
 
         // first mappedPlaceholder is the root!
-        if (y > 0) mappedPlaceholder.root = root;
+        if (y > 0) {
+          mappedPlaceholder.root = root;
+        }
 
-        let placeholder = new PlaceHolder();
+        const placeholder = new PlaceHolder();
 
         placeholder.index = y;
         placeholder.placeholder = this.config.characters[placeholder.index];
@@ -111,26 +122,8 @@ export class PlaceHolderCalculus {
         // add a copy of placeholder as children of root
         root.childrens.push(placeholder);
       }
-    });
+    }, mapWithMultipleItems);
 
     return placeholders;
-  };
-
-  getIndexByChar = (char: string): number => {
-    return this.config.characters.indexOf(char);
-  };
-
-  private isLastChar = (char: string) => {
-    let index = this.config.characters.indexOf(char);
-    return index + 1 >= this.config.characters.length;
-  };
-
-  private nextChar = (char: string) => {
-    if (this.isLastChar(char)) {
-      return this.config.characters[0];
-    } else {
-      let index = this.config.characters.indexOf(char);
-      return this.config.characters[index + 1];
-    }
-  };
+  }
 }

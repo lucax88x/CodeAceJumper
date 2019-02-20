@@ -1,24 +1,16 @@
-import * as vscode from 'vscode';
+import {
+  CancellationTokenSource,
+  commands,
+  Disposable,
+  TextEditor,
+  TextEditorEdit,
+  window
+} from 'vscode';
 
-class Input {
-  text: string;
-  validateInput: (text: string) => string;
-  resolve: (text: string) => void;
-  reject: (reason: any) => void;
-  constructor(options: {
-    validateInput: (text: string) => string;
-    resolve: (text: string) => void;
-    reject: (reason: any) => void;
-  }) {
-    this.text = '';
-    this.validateInput = options.validateInput;
-    this.resolve = options.resolve;
-    this.reject = options.reject;
-  }
-}
+import { Input } from './models/input';
 
 export class InlineInput {
-  private subscriptions: vscode.Disposable[] = [];
+  private subscriptions: Disposable[] = [];
 
   private input: Input;
 
@@ -26,21 +18,21 @@ export class InlineInput {
     this.registerTextEditorCommand('extension.aceJump.input.stop', this.cancel);
   }
 
-  show = (
-    editor: vscode.TextEditor,
+  public show(
+    editor: TextEditor,
     validateInput: (text: string) => string
-  ): Promise<string> => {
+  ): Promise<string> {
     this.setContext(true);
 
     const promise = new Promise<string>((resolve, reject) => {
       this.input = new Input({
-        validateInput: validateInput,
-        resolve: resolve,
-        reject: reject
+        reject,
+        resolve,
+        validateInput
       });
 
-      vscode.window.onDidChangeActiveTextEditor(() => {
-        this.cancel(editor);
+      window.onDidChangeActiveTextEditor(() => {
+        this.cancel();
       });
     });
 
@@ -48,14 +40,16 @@ export class InlineInput {
       this.registerCommand('type', this.onType);
     } catch (e) {
       // Someone has registered `type`, use fallback (Microsoft/vscode#13441)
-      const ct = new vscode.CancellationTokenSource();
-      vscode.window
+      const ct = new CancellationTokenSource();
+      window
         .showInputBox(
           {
             placeHolder: '',
             prompt: 'AceJump ',
             validateInput: s => {
-              if (!s) return '';
+              if (!s) {
+                return '';
+              }
               this.onType({ text: s });
               ct.cancel();
               return null;
@@ -64,64 +58,65 @@ export class InlineInput {
           ct.token
         )
         .then(s => {
-          this.cancel(editor);
+          this.cancel();
         });
     }
 
     return promise;
-  };
+  }
 
-  private dispose = () => {
+  private dispose() {
     this.subscriptions.forEach(d => d.dispose());
-  };
+  }
 
-  private registerTextEditorCommand = (
+  private registerTextEditorCommand(
     commandId: string,
-    run: (
-      editor: vscode.TextEditor,
-      edit: vscode.TextEditorEdit,
-      ...args: any[]
-    ) => void
-  ): void => {
-    this.subscriptions.push(
-      vscode.commands.registerTextEditorCommand(commandId, run)
-    );
-  };
+    run: (editor: TextEditor, edit: TextEditorEdit) => void
+  ): void {
+    this.subscriptions.push(commands.registerTextEditorCommand(commandId, run));
+  }
 
-  private registerCommand = (
+  private registerCommand(
     commandId: string,
+    // tslint:disable-next-line:no-any
     run: (...args: any[]) => void
-  ): void => {
-    this.subscriptions.push(vscode.commands.registerCommand(commandId, run));
-  };
+  ): void {
+    this.subscriptions.push(commands.registerCommand(commandId, run));
+  }
 
-  private onType = (event: { text: string }) => {
-    const editor = vscode.window.activeTextEditor;
+  private onType(event: { text: string }) {
+    const editor = window.activeTextEditor;
 
     if (this.input) {
-      this.input.text += event.text;
-      this.input.validateInput(this.input.text);
-      this.complete(editor);
-    } else vscode.commands.executeCommand('default:type', event);
-  };
+      if (!!editor) {
+        this.input.text += event.text;
+        this.input.validateInput(this.input.text);
+        this.complete(editor);
+      } else {
+        this.cancel();
+      }
+    } else {
+      commands.executeCommand('default:type', event);
+    }
+  }
 
-  private cancel = (editor: vscode.TextEditor) => {
+  private cancel() {
     if (this.input) {
       this.input.reject('canceled');
     }
     this.dispose();
     this.setContext(false);
-  };
+  }
 
-  private complete = (editor: vscode.TextEditor) => {
+  private complete(editor: TextEditor) {
     if (this.input) {
       this.input.resolve(this.input.text);
     }
     this.dispose();
     this.setContext(false);
-  };
+  }
 
   private setContext(value: boolean) {
-    vscode.commands.executeCommand('setContext', 'aceJumpInput', value);
+    commands.executeCommand('setContext', 'aceJumpInput', value);
   }
 }
