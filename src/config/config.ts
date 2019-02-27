@@ -32,36 +32,35 @@ export class Config {
     'y',
     'z'
   ];
-  public placeholder: PlaceHolderConfig;
-  public finder: FinderConfig;
+  public placeholder = new PlaceHolderConfig();
+  public finder = new FinderConfig();
 }
 
-export function buildConfig(config: WorkspaceConfiguration) {
-  const cfg = new Config();
-  cfg.placeholder.backgroundColor = config.get(
-    'placeholder.backgroundColor',
-    'yellow'
-  );
-  cfg.placeholder.color = config.get('placeholder.color', 'black');
-  cfg.placeholder.border = config.get(
-    'placeholder.border',
-    'dotted thin black'
-  );
+export function buildConfig(cfg: WorkspaceConfiguration) {
+  const config = new Config();
 
-  cfg.placeholder.width = config.get('placeholder.width', 12);
-  cfg.placeholder.height = config.get('placeholder.height', 14);
+  config.placeholder = {
+    backgroundColor: cfg.get('placeholder.backgroundColor', 'yellow'),
+    color: cfg.get('placeholder.color', 'black'),
+    border: cfg.get('placeholder.border', 'dotted thin black'),
 
-  cfg.placeholder.textPosX = config.get('placeholder.textPosX', 2);
-  cfg.placeholder.textPosY = config.get('placeholder.textPosY', 12);
+    width: cfg.get('placeholder.width', 12),
+    height: cfg.get('placeholder.height', 14),
 
-  cfg.placeholder.fontSize = config.get('placeholder.fontSize', 14);
-  cfg.placeholder.fontWeight = config.get('placeholder.fontWeight', 'normal');
-  cfg.placeholder.fontFamily = config.get('placeholder.fontFamily', 'Consolas');
-  cfg.placeholder.upperCase = config.get('placeholder.upperCase', false);
+    textPosX: cfg.get('placeholder.textPosX', 2),
+    textPosY: cfg.get('placeholder.textPosY', 12),
 
-  cfg.finder.pattern = config.get('finder.pattern', `[ ,-.{_(\"'<\\[]`);
-  cfg.finder.skipSelection = config.get('finder.skipSelection', false);
-  cfg.finder.onlyInitialLetter = config.get('finder.onlyInitialLetter', true);
+    fontSize: cfg.get('placeholder.fontSize', 14),
+    fontWeight: cfg.get('placeholder.fontWeight', 'normal'),
+    fontFamily: cfg.get('placeholder.fontFamily', 'Consolas'),
+    upperCase: cfg.get('placeholder.upperCase', false)
+  };
 
-  return cfg;
+  config.finder = {
+    pattern: cfg.get('finder.pattern', `[ ,-.{_(\"'<\\[]`),
+    skipSelection: cfg.get('finder.skipSelection', false),
+    onlyInitialLetter: cfg.get('finder.onlyInitialLetter', true)
+  };
+
+  return config;
 }

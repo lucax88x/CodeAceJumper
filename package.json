@@ -29,7 +29,7 @@
   "activationEvents": [
     "*"
   ],
-  "main": "./out/src/extension",
+  "main": "./out/extension",
   "contributes": {
     "commands": [
       {
@@ -112,17 +112,21 @@
     }
   },
   "scripts": {
-    "vscode:prepublish": "tsc -p ./",
-    "compile": "tsc -watch -p ./",
+    "vscode:prepublish": "yarn run lint && yarn run compile",
     "lint": "tslint -c tslint.json 'src/**/*.ts' 'test/**/*.ts'",
-    "postinstall": "node ./node_modules/vscode/bin/install"
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "postinstall": "node ./node_modules/vscode/bin/install",
+    "test": "yarn run compile && node ./node_modules/vscode/bin/test"
   },
   "devDependencies": {
     "@types/mocha": "^2.2.42",
     "@types/node": "^7.0.43",
     "@types/ramda": "^0.25.50",
+    "@types/sinon": "^7.0.6",
     "@types/xmlbuilder": "0.0.28",
     "mocha": "^5.2.0",
+    "sinon": "^7.2.4",
     "tslint": "^5.8.0",
     "typescript": "^3.1.3",
     "vscode": "^1.1.21"

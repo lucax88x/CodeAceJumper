@@ -18,17 +18,13 @@ export class InlineInput {
     this.registerTextEditorCommand('extension.aceJump.input.stop', this.cancel);
   }
 
-  public show(
-    editor: TextEditor,
-    validateInput: (text: string) => string
-  ): Promise<string> {
+  public async show(): Promise<string> {
     this.setContext(true);
 
     const promise = new Promise<string>((resolve, reject) => {
       this.input = new Input({
         reject,
-        resolve,
-        validateInput
+        resolve
       });
 
       window.onDidChangeActiveTextEditor(() => {
@@ -41,25 +37,23 @@ export class InlineInput {
     } catch (e) {
       // Someone has registered `type`, use fallback (Microsoft/vscode#13441)
       const ct = new CancellationTokenSource();
-      window
-        .showInputBox(
-          {
-            placeHolder: '',
-            prompt: 'AceJump ',
-            validateInput: s => {
-              if (!s) {
-                return '';
-              }
-              this.onType({ text: s });
-              ct.cancel();
-              return null;
+      await window.showInputBox(
+        {
+          placeHolder: '',
+          prompt: 'AceJump ',
+          validateInput: s => {
+            if (!s) {
+              return '';
             }
-          },
-          ct.token
-        )
-        .then(s => {
-          this.cancel();
-        });
+            this.onType({ text: s });
+            ct.cancel();
+            return null;
+          }
+        },
+        ct.token
+      );
+
+      this.cancel();
     }
 
     return promise;
@@ -84,21 +78,20 @@ export class InlineInput {
     this.subscriptions.push(commands.registerCommand(commandId, run));
   }
 
-  private onType(event: { text: string }) {
+  private onType = (event: { text: string }) => {
     const editor = window.activeTextEditor;
 
     if (this.input) {
       if (!!editor) {
         this.input.text += event.text;
-        this.input.validateInput(this.input.text);
-        this.complete(editor);
+        this.complete();
       } else {
         this.cancel();
       }
     } else {
       commands.executeCommand('default:type', event);
     }
-  }
+  };
 
   private cancel() {
     if (this.input) {
@@ -108,7 +101,7 @@ export class InlineInput {
     this.setContext(false);
   }
 
-  private complete(editor: TextEditor) {
+  private complete() {
     if (this.input) {
       this.input.resolve(this.input.text);
     }

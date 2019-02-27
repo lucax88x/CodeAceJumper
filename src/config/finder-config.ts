@@ -1,5 +1,5 @@
-export interface FinderConfig {
-  pattern: string;
-  skipSelection: boolean;
-  onlyInitialLetter: boolean;
+export class FinderConfig {
+  public pattern = `[ ,-.{_(\"'<\\[]`;
+  public skipSelection = false;
+  public onlyInitialLetter = true;
 }

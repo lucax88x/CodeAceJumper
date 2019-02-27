@@ -16,7 +16,7 @@ export class PlaceHolderDecorator {
   private cache: { [index: string]: Uri };
   private decorations: TextEditorDecorationType[] = [];
 
-  public load(config: Config) {
+  public refreshConfig(config: Config) {
     this.config = config;
 
     this.updateCache();

@@ -1,18 +1,18 @@
 import * as assert from 'assert';
 
-import { Config } from '../src/config/config';
-import { PlaceHolderCalculus } from '../src/placeholder-calculus';
+import { Config } from '../config/config';
+import { PlaceHolderCalculus } from '../placeholder-calculus';
 
-suite('PlaceHolderCalculus Tests', () => {
+describe('PlaceHolderCalculus', () => {
   const config = new Config();
 
   config.characters = ['a', 'b', 'c'];
 
   const sut = new PlaceHolderCalculus();
-  sut.load(config);
+  sut.refreshConfig(config);
 
-  suite('Placeholder building Tests', () => {
-    test('one row with 3 letters give "a b c"', () => {
+  describe('Placeholder building Tests', () => {
+    it('one row with 3 letters give "a b c"', () => {
       const placeholders = sut.buildPlaceholders({
         count: 3,
         indexes: {
@@ -27,7 +27,7 @@ suite('PlaceHolderCalculus Tests', () => {
       assert.equal(placeholders[2].placeholder, 'c');
     });
 
-    test('one row with 4 letters give "a a b c"', () => {
+    it('one row with 4 letters give "a a b c"', () => {
       const placeholders = sut.buildPlaceholders({
         count: 4,
         indexes: {
@@ -43,7 +43,7 @@ suite('PlaceHolderCalculus Tests', () => {
       assert.equal(placeholders[3].placeholder, 'c');
     });
 
-    test('one row with 5 letters give "a a a b c"', () => {
+    it('one row with 5 letters give "a a a b c"', () => {
       const placeholders = sut.buildPlaceholders({
         count: 5,
         indexes: {
@@ -60,7 +60,7 @@ suite('PlaceHolderCalculus Tests', () => {
       assert.equal(placeholders[4].placeholder, 'c');
     });
 
-    test('one row with 6 letters give "a a a b b c"', () => {
+    it('one row with 6 letters give "a a a b b c"', () => {
       const placeholders = sut.buildPlaceholders({
         count: 6,
         indexes: {
@@ -78,7 +78,7 @@ suite('PlaceHolderCalculus Tests', () => {
       assert.equal(placeholders[5].placeholder, 'c');
     });
 
-    test('one row with 7 letters give "a a a b b b c"', () => {
+    it('one row with 7 letters give "a a a b b b c"', () => {
       const placeholders = sut.buildPlaceholders({
         count: 7,
         indexes: {
@@ -97,7 +97,7 @@ suite('PlaceHolderCalculus Tests', () => {
       assert.equal(placeholders[6].placeholder, 'c');
     });
 
-    test('one row with 8 letters give "a a a b b b c c"', () => {
+    it('one row with 8 letters give "a a a b b b c c"', () => {
       const placeholders = sut.buildPlaceholders({
         count: 8,
         indexes: {
@@ -117,7 +117,7 @@ suite('PlaceHolderCalculus Tests', () => {
       assert.equal(placeholders[7].placeholder, 'c');
     });
 
-    test('one row with 9 letters give "a a a b b b c c c"', () => {
+    it('one row with 9 letters give "a a a b b b c c c"', () => {
       const placeholders = sut.buildPlaceholders({
         count: 9,
         indexes: {
@@ -138,7 +138,7 @@ suite('PlaceHolderCalculus Tests', () => {
       assert.equal(placeholders[8].placeholder, 'c');
     });
 
-    test('one row with 10 letters give "a a a b b b c c c"', () => {
+    it('one row with 10 letters give "a a a b b b c c c"', () => {
       const placeholders = sut.buildPlaceholders({
         count: 10,
         indexes: {

@@ -1,5 +1,4 @@
-import { filter, head, last, reject } from 'ramda';
-import forEach from 'ramda/es/forEach';
+import { filter, forEach, head, last, reject } from 'ramda';
 
 import { Config } from './config/config';
 import { LineIndexes } from './models/line-indexes';
@@ -8,7 +7,7 @@ import { PlaceHolder } from './models/place-holder';
 export class PlaceHolderCalculus {
   private config: Config;
 
-  public load(config: Config) {
+  public refreshConfig(config: Config) {
     this.config = config;
   }
 
@@ -26,7 +25,7 @@ export class PlaceHolderCalculus {
       const line = parseInt(key, 10);
       const lineIndex = lineIndexes.indexes[key];
 
-      for (const i of lineIndex) {
+      for (let i = 0; i < lineIndex.length; i++) {
         if (count + 1 > Math.pow(this.config.characters.length, 2)) {
           breakCycles = true;
           break;
