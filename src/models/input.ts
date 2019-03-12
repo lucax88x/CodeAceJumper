@@ -1,10 +1,10 @@
 export class Input {
   public text: string;
   public resolve: (text: string) => void;
-  public reject: (reason: string) => void;
+  public reject: (canceled: boolean) => void;
   constructor(options: {
     resolve: (text: string) => void;
-    reject: (reason: string) => void;
+    reject: (canceled: boolean) => void;
   }) {
     this.text = '';
     this.resolve = options.resolve;

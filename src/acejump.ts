@@ -8,6 +8,7 @@ import {
 
 import { buildConfig } from './config/config';
 import { Jumper } from './jumper';
+import { JumpKind } from './models/jump-kind';
 
 export class AceJump {
   private jumper = new Jumper();
@@ -16,7 +17,25 @@ export class AceJump {
     context.subscriptions.push(
       commands.registerCommand('extension.aceJump', async () => {
         try {
-          const { editor, placeholder } = await this.jumper.jump();
+          const { editor, placeholder } = await this.jumper.jump(
+            JumpKind.Normal
+          );
+
+          editor.selection = new Selection(
+            new Position(placeholder.line, placeholder.character),
+            new Position(placeholder.line, placeholder.character)
+          );
+          // tslint:disable-next-line:no-empty
+        } catch (_) {}
+      })
+    );
+
+    context.subscriptions.push(
+      commands.registerCommand('extension.aceJump.multiChar', async () => {
+        try {
+          const { editor, placeholder } = await this.jumper.jump(
+            JumpKind.MultiChar
+          );
 
           editor.selection = new Selection(
             new Position(placeholder.line, placeholder.character),
@@ -30,7 +49,9 @@ export class AceJump {
     context.subscriptions.push(
       commands.registerCommand('extension.aceJump.selection', async () => {
         try {
-          const { editor, placeholder } = await this.jumper.jump();
+          const { editor, placeholder } = await this.jumper.jump(
+            JumpKind.Normal
+          );
 
           editor.selection = new Selection(
             new Position(

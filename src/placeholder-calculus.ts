@@ -2,7 +2,7 @@ import { filter, forEach, head, last, reject } from 'ramda';
 
 import { Config } from './config/config';
 import { LineIndexes } from './models/line-indexes';
-import { PlaceHolder } from './models/place-holder';
+import { Placeholder } from './models/placeholder';
 
 export class PlaceHolderCalculus {
   private config: Config;
@@ -11,11 +11,12 @@ export class PlaceHolderCalculus {
     this.config = config;
   }
 
-  public buildPlaceholders(lineIndexes: LineIndexes): PlaceHolder[] {
-    const placeholders: PlaceHolder[] = [];
+  public buildPlaceholders(lineIndexes: LineIndexes): Placeholder[] {
+    const placeholders: Placeholder[] = [];
     let count = 0;
+    let skip = 0;
     let candidate = 1;
-    const map: PlaceHolder[][] = [];
+    const map: Placeholder[][] = [];
     let breakCycles = false;
 
     for (const key in lineIndexes.indexes) {
@@ -31,7 +32,7 @@ export class PlaceHolderCalculus {
           break;
         }
 
-        const character = lineIndex[i];
+        const characterIndex = lineIndex[i];
 
         if (count >= this.config.characters.length) {
           for (let y = candidate; y < placeholders.length; y++) {
@@ -57,31 +58,38 @@ export class PlaceHolderCalculus {
           candidate++;
         }
 
-        const placeholder = new PlaceHolder();
+        const placeholder = new Placeholder();
 
-        placeholder.index = 0;
+        if (characterIndex === -1) {
+          skip++;
+        } else {
+          const lastPlaceholder = last(placeholders);
 
-        const lastPlaceholder = last(placeholders);
+          if (!!lastPlaceholder) {
+            placeholder.index = lastPlaceholder.index + 1;
+          }
 
-        if (!!lastPlaceholder) {
-          placeholder.index = lastPlaceholder.index + 1;
+          // increase index by previous skipped
+          placeholder.index += skip;
+          skip = 0;
+
+          // imho can be removed and should throw exception in case?
+          if (placeholder.index >= this.config.characters.length) {
+            placeholder.index = this.config.characters.length - 1;
+          }
+
+          placeholder.placeholder = this.config.characters[placeholder.index];
+
+          placeholder.line = line;
+          placeholder.character = characterIndex;
+
+          if (!map[placeholder.index]) {
+            map[placeholder.index] = [];
+          }
+
+          placeholders.push(placeholder);
+          map[placeholder.index].push(placeholder);
         }
-
-        if (placeholder.index >= this.config.characters.length) {
-          placeholder.index = this.config.characters.length - 1;
-        }
-
-        placeholder.placeholder = this.config.characters[placeholder.index];
-
-        placeholder.line = line;
-        placeholder.character = character;
-
-        if (!map[placeholder.index]) {
-          map[placeholder.index] = [];
-        }
-
-        placeholders.push(placeholder);
-        map[placeholder.index].push(placeholder);
 
         count++;
       }
@@ -93,7 +101,7 @@ export class PlaceHolderCalculus {
 
     // we assign root to other placeholders
 
-    const mapWithMultipleItems = filter(item => item.length > 1, map);
+    const mapWithMultipleItems = filter(item => !!item && item.length > 1, map);
 
     forEach(mappedPlaceholders => {
       const root = head(mappedPlaceholders);
@@ -103,14 +111,14 @@ export class PlaceHolderCalculus {
       }
 
       for (let y = 0; y < mappedPlaceholders.length; y++) {
-        const mappedPlaceholder: PlaceHolder = mappedPlaceholders[y];
+        const mappedPlaceholder: Placeholder = mappedPlaceholders[y];
 
         // first mappedPlaceholder is the root!
         if (y > 0) {
           mappedPlaceholder.root = root;
         }
 
-        const placeholder = new PlaceHolder();
+        const placeholder = new Placeholder();
 
         placeholder.index = y;
         placeholder.placeholder = this.config.characters[placeholder.index];

@@ -93,13 +93,13 @@ export class InlineInput {
     }
   };
 
-  private cancel() {
+  private cancel = () => {
     if (this.input) {
-      this.input.reject('canceled');
+      this.input.reject(true);
     }
     this.dispose();
     this.setContext(false);
-  }
+  };
 
   private complete() {
     if (this.input) {

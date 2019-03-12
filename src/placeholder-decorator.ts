@@ -1,5 +1,6 @@
-import { forEach, map } from 'ramda';
+import { forEach, map, reduce } from 'ramda';
 import {
+  DecorationOptions,
   Range,
   TextEditor,
   TextEditorDecorationType,
@@ -9,11 +10,12 @@ import {
 import * as builder from 'xmlbuilder';
 
 import { Config } from './config/config';
-import { PlaceHolder } from './models/place-holder';
+import { Placeholder } from './models/placeholder';
 
 export class PlaceHolderDecorator {
   private config: Config;
-  private cache: { [index: string]: Uri };
+  private placeholderCache: { [index: string]: Uri };
+  private highlightCache: { [index: number]: Uri };
   private decorations: TextEditorDecorationType[] = [];
 
   public refreshConfig(config: Config) {
@@ -22,16 +24,19 @@ export class PlaceHolderDecorator {
     this.updateCache();
   }
 
-  public addDecorations(editor: TextEditor, placeholders: PlaceHolder[]) {
+  public addDecorations(editor: TextEditor, placeholders: Placeholder[]) {
+    const width = this.config.placeholder.width;
+    const height = this.config.placeholder.height;
+
     const decorationType = window.createTextEditorDecorationType({
       after: {
-        margin: `0 0 0 ${1 * -this.config.placeholder.width}px`,
-        height: `${this.config.placeholder.height}px`,
-        width: `${1 * this.config.placeholder.width}px`
+        margin: `0 0 0 ${1 * -width}px`,
+        height: `${height}px`,
+        width: `${1 * width}px`
       }
     });
 
-    const options = map(
+    const options = map<Placeholder, DecorationOptions>(
       placeholder => ({
         range: new Range(
           placeholder.line,
@@ -42,12 +47,57 @@ export class PlaceHolderDecorator {
         renderOptions: {
           dark: {
             after: {
-              contentIconPath: this.cache[placeholder.placeholder]
+              contentIconPath: this.placeholderCache[placeholder.placeholder]
             }
           },
           light: {
             after: {
-              contentIconPath: this.cache[placeholder.placeholder]
+              contentIconPath: this.placeholderCache[placeholder.placeholder]
+            }
+          }
+        }
+      }),
+      placeholders
+    );
+
+    this.decorations.push(decorationType);
+
+    editor.setDecorations(decorationType, options);
+  }
+
+  public addHighlights(
+    editor: TextEditor,
+    placeholders: Placeholder[],
+    highlightCount: number
+  ) {
+    const width = this.config.placeholder.width;
+    const height = this.config.placeholder.height;
+
+    const decorationType = window.createTextEditorDecorationType({
+      after: {
+        margin: `0 0 0 ${1 * -width}px`,
+        height: `${height}px`,
+        width: `${1 * width}px`
+      }
+    });
+
+    const options = map<Placeholder, DecorationOptions>(
+      placeholder => ({
+        range: new Range(
+          placeholder.line,
+          placeholder.character + 2,
+          placeholder.line,
+          placeholder.character + 2
+        ),
+        renderOptions: {
+          dark: {
+            after: {
+              contentIconPath: this.highlightCache[highlightCount]
+            }
+          },
+          light: {
+            after: {
+              contentIconPath: this.highlightCache[highlightCount]
             }
           }
         }
@@ -68,16 +118,24 @@ export class PlaceHolderDecorator {
   }
 
   private updateCache() {
-    this.cache = {};
+    this.placeholderCache = reduce<string, { [index: string]: Uri }>(
+      (acc, code) => {
+        acc[code] = this.buildUriForPlaceholder(code);
+        return acc;
+      },
+      {}
+    )(this.config.characters);
 
-    // TODO: use reduce
-    forEach(
-      code => (this.cache[code] = this.buildUri(code)),
-      this.config.characters
-    );
+    this.highlightCache = reduce<number, { [index: number]: Uri }>(
+      (acc, width) => {
+        acc[width] = this.buildUriForHighlight(width);
+        return acc;
+      },
+      {}
+    )([...Array(10)].map((_, i) => i + 1));
   }
 
-  private buildUri(code: string) {
+  private buildUriForPlaceholder(code: string) {
     const root = builder.create('svg', {}, {}, { headless: true });
 
     root
@@ -110,6 +168,35 @@ export class PlaceHolderDecorator {
           ? code.toUpperCase()
           : code.toLowerCase()
       );
+
+    const svg = root.end({
+      pretty: false
+    });
+
+    return Uri.parse(`data:image/svg+xml;utf8,${svg}`);
+  }
+
+  private buildUriForHighlight(characterCount: number) {
+    const root = builder.create('svg', {}, {}, { headless: true });
+
+    const width = this.config.highlight.width * characterCount;
+    const height = this.config.highlight.height;
+    const offsetX = this.config.highlight.offsetX;
+    const offsetY = this.config.highlight.offsetY;
+
+    root
+      .att('xmlns', 'http://www.w3.org/2000/svg')
+      .att('viewBox', `${offsetX} ${offsetY} ${width} ${height}`)
+      .att('width', width)
+      .att('height', height);
+
+    root
+      .ele('rect')
+      .att('width', width)
+      .att('height', height)
+      .att('rx', 2)
+      .att('ry', 2)
+      .att('style', `fill: ${this.config.highlight.backgroundColor}`);
 
     const svg = root.end({
       pretty: false

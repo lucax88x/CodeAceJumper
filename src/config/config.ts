@@ -1,7 +1,8 @@
 import { WorkspaceConfiguration } from 'vscode';
 
 import { FinderConfig } from './finder-config';
-import { PlaceHolderConfig } from './place-holder-config';
+import { HighlightConfig } from './highlight-config';
+import { PlaceholderConfig } from './placeholder-config';
 
 export class Config {
   public characters = [
@@ -32,7 +33,8 @@ export class Config {
     'y',
     'z'
   ];
-  public placeholder = new PlaceHolderConfig();
+  public placeholder = new PlaceholderConfig();
+  public highlight = new HighlightConfig();
   public finder = new FinderConfig();
 }
 
@@ -54,6 +56,18 @@ export function buildConfig(cfg: WorkspaceConfiguration) {
     fontWeight: cfg.get('placeholder.fontWeight', 'normal'),
     fontFamily: cfg.get('placeholder.fontFamily', 'Consolas'),
     upperCase: cfg.get('placeholder.upperCase', false)
+  };
+
+  config.highlight = {
+    backgroundColor: cfg.get(
+      'highlight.backgroundColor',
+      'rgba(124,240,10,0.5)'
+    ),
+
+    width: cfg.get('highlight.width', 10),
+    height: cfg.get('highlight.height', 14),
+    offsetX: cfg.get('highlight.offsetX', 0),
+    offsetY: cfg.get('highlight.offsetY', 0)
   };
 
   config.finder = {

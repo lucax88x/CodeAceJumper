@@ -1,3 +1,4 @@
+import { filter, keys, map } from 'ramda';
 import { TextEditor } from 'vscode';
 
 import { Config } from './config/config';
@@ -22,10 +23,7 @@ export class AreaIndexFinder {
     area: JumpArea,
     char: string
   ): LineIndexes {
-    const lineIndexes: LineIndexes = {
-      count: 0,
-      indexes: {}
-    };
+    const lineIndexes = new LineIndexes();
 
     for (let i = area.startLine; i <= area.lastLine; i++) {
       const line = editor.document.lineAt(i);
@@ -39,18 +37,55 @@ export class AreaIndexFinder {
   }
 
   /**
-   * find indexes on the line where our char is matching
-   * @param str
+   * will recompute indexes by usind previous one where our char is matching
+   * @param editor
+   * @param previousLineIndexes
    * @param char
    */
-  private findByCharOnGivenLine(str: string, char: string): number[] {
+  public restrictByChar(
+    editor: TextEditor,
+    previousLineIndexes: LineIndexes,
+    char: string
+  ): LineIndexes {
+    const lineIndexes = new LineIndexes();
+
+    if (previousLineIndexes.count === 0) {
+      return lineIndexes;
+    }
+
+    lineIndexes.highlightCount = previousLineIndexes.highlightCount + 1;
+
+    const lines = keys(previousLineIndexes.indexes) as string[];
+
+    for (const lineIndex of lines) {
+      const line = editor.document.lineAt(parseInt(lineIndex, 10));
+      const indexes = this.restrictByCharOnGivenLine(
+        line.text,
+        previousLineIndexes.indexes[lineIndex],
+        char,
+        lineIndexes.highlightCount
+      );
+
+      lineIndexes.count += filter(i => i !== -1, indexes).length;
+      lineIndexes.indexes[lineIndex] = indexes;
+    }
+
+    return lineIndexes;
+  }
+
+  /**
+   * find indexes on the line where our char is matching
+   * @param line
+   * @param char
+   */
+  private findByCharOnGivenLine(line: string, char: string): number[] {
     if (char.length === 0) {
       return [];
     }
 
     char = char.toLowerCase();
 
-    const indices = [];
+    const indexes = [];
     const finderPatternRegex = new RegExp(this.config.finder.pattern);
 
     if (
@@ -61,11 +96,11 @@ export class AreaIndexFinder {
       let index = 0;
 
       // splitted by the pattern
-      const words = str.split(finderPatternRegex);
+      const words = line.split(finderPatternRegex);
 
       for (let w = 0; w < words.length; w++) {
         if (words[w][0] && words[w][0].toLowerCase() === char) {
-          indices.push(index);
+          indexes.push(index);
         }
 
         // increment by whole line and white space
@@ -75,13 +110,39 @@ export class AreaIndexFinder {
       const regexp = new RegExp(`[${char}]`, 'gi');
       let match: RegExpMatchArray | null;
       // tslint:disable-next-line:no-conditional-assignment
-      while ((match = regexp.exec(str)) !== null) {
+      while ((match = regexp.exec(line)) !== null) {
         if (match.index !== undefined) {
-          indices.push(match.index);
+          indexes.push(match.index);
         }
       }
     }
 
-    return indices;
+    return indexes;
+  }
+
+  /**
+   * restrict indexes by detecting if next char is matching for each occurrence with our char
+   * @param line
+   * @param char
+   */
+  private restrictByCharOnGivenLine(
+    line: string,
+    previousIndexes: number[],
+    char: string,
+    skipCount: number
+  ): number[] {
+    if (char.length === 0) {
+      return [];
+    }
+
+    char = char.toLowerCase();
+
+    return map(charIndex => {
+      if (line[charIndex + skipCount].toLowerCase() === char) {
+        return charIndex;
+      } else {
+        return -1;
+      }
+    }, previousIndexes);
   }
 }

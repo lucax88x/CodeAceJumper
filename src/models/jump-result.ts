@@ -1,8 +1,8 @@
 import { TextEditor } from 'vscode';
 
-import { PlaceHolder } from './place-holder';
+import { Placeholder } from './placeholder';
 
 export interface JumpResult {
   editor: TextEditor;
-  placeholder: PlaceHolder;
+  placeholder: Placeholder;
 }
