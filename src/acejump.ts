@@ -1,10 +1,4 @@
-import {
-  commands,
-  ExtensionContext,
-  Position,
-  Selection,
-  workspace
-} from 'vscode';
+import { commands, ExtensionContext, Position, Selection, workspace } from 'vscode';
 
 import { buildConfig } from './config/config';
 import { Jumper } from './jumper';

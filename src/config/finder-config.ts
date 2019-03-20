@@ -1,5 +1,5 @@
 export class FinderConfig {
-  public pattern: string;
-  public skipSelection: boolean;
-  public onlyInitialLetter: boolean;
+  public pattern = `[ ,-.{_(\"'<\\[]`;
+  public skipSelection = false;
+  public onlyInitialLetter = true;
 }

@@ -90,7 +90,7 @@ export class AreaIndexFinder {
 
     if (
       this.config.finder.onlyInitialLetter &&
-      !finderPatternRegex.test(char) // what is purpose of this?
+      !finderPatternRegex.test(char)
     ) {
       // current line index
       let index = 0;

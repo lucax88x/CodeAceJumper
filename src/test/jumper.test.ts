@@ -93,7 +93,7 @@ describe('Jumper', () => {
 
       try {
         // when
-        await sut.jump(JumpKind.Normal)
+        await sut.jump(JumpKind.Normal);
 
         throw new Error('should have thrown exception');
       } catch (error) {
@@ -117,7 +117,6 @@ describe('Jumper', () => {
       assert.deepEqual(placeholder, {
         childrens: [],
         index: 0,
-        highlight: 0,
         placeholder: 'a',
         line: 2,
         character: 5
@@ -199,7 +198,6 @@ describe('Jumper', () => {
       assert.deepEqual(placeholder, {
         childrens: [],
         index: 1,
-        highlight: 0,
         placeholder: 'b',
         line: 3,
         character: 0
@@ -233,7 +231,6 @@ describe('Jumper', () => {
       assert.deepEqual(placeholder, {
         childrens: [],
         index: 5,
-        highlight: 0,
         placeholder: 'f',
         line: 3,
         character: 10
@@ -266,7 +263,6 @@ describe('Jumper', () => {
       assert.deepEqual(placeholder, {
         childrens: [],
         index: 1,
-        highlight: 0,
         placeholder: 'b',
         line: 3,
         character: 0
