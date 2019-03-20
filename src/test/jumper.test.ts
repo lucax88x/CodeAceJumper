@@ -26,7 +26,7 @@ describe('Jumper', () => {
     scenario.reset();
   });
 
-  describe('normal jump', () => {
+  describe('both jumpkinds', () => {
     // it('when we finish a jump we should be able to recall it', async () => {
     //   // given
     //   scenario.withLines('this absolutely match').withCommand('a');
@@ -36,95 +36,102 @@ describe('Jumper', () => {
     //   await sut.jump(JumpKind.Normal);
     // });
 
-    it('should not jump when there is no editor', async () => {
-      // given
-      scenario.withNoEditor();
+    [JumpKind.Normal, JumpKind.MultiChar].forEach(jumpKind => {
+      it(`should not jump when there is no editor for ${jumpKind}`, async () => {
+        // given
+        scenario.withNoEditor();
 
-      try {
-        // when
-        await sut.jump(JumpKind.Normal);
+        try {
+          // when
+          await sut.jump(jumpKind);
 
-        throw new Error('should have thrown exception');
-      } catch (error) {
-        // then
-        assert.equal(error.message, 'No active editor');
+          throw new Error('should have thrown exception');
+        } catch (error) {
+          // then
+          assert.equal(error.message, 'No active editor');
 
-        scenario.hasStatusBarMessages();
-      }
-    });
-
-    it('should not jump if input is empty', async () => {
-      // given
-      scenario.withEditor().withCommands('');
-
-      try {
-        // when
-        await sut.jump(JumpKind.Normal);
-
-        throw new Error('should have thrown exception');
-      } catch (error) {
-        // then
-        assert.equal(error.message, 'Empty Value');
-
-        scenario.hasStatusBarMessages('AceJump: Type', 'AceJump: Empty Value');
-      }
-    });
-
-    it('should break if there is no visibleRanges', async () => {
-      // given
-      scenario.withNoVisibleRanges().withCommands('a');
-
-      try {
-        // when
-        await sut.jump(JumpKind.Normal);
-
-        throw new Error('should have thrown exception');
-      } catch (error) {
-        // then
-        assert.equal(error.message, 'There are no visible ranges!');
-
-        scenario.hasStatusBarMessages('AceJump: Type', 'AceJump: Canceled');
-      }
-    });
-
-    it('should break if there is one row which does not match the char', async () => {
-      // given
-      scenario.withLines('no matching characters').withCommands('a');
-
-      try {
-        // when
-        await sut.jump(JumpKind.Normal);
-
-        throw new Error('should have thrown exception');
-      } catch (error) {
-        // then
-        assert.equal(error.message, 'No Matches');
-
-        scenario.hasStatusBarMessages('AceJump: Type', 'AceJump: No Matches');
-      }
-    });
-
-    it('should jump directly if there is three row where matches only one', async () => {
-      // given
-      scenario
-        .withLines('my first row', 'this absolutely match', 'class some')
-        .withCommands('a');
-
-      // when
-      const { placeholder } = await sut.jump(JumpKind.Normal);
-
-      // then
-      assert.deepEqual(placeholder, {
-        childrens: [],
-        index: 0,
-        placeholder: 'a',
-        line: 2,
-        character: 5
+          scenario.hasStatusBarMessages();
+        }
       });
 
-      scenario.hasStatusBarMessages('AceJump: Type', 'AceJump: Jumped!');
-    });
+      it(`should not jump if input is empty for ${jumpKind}`, async () => {
+        // given
+        scenario.withEditor().withCommands('');
 
+        try {
+          // when
+          await sut.jump(jumpKind);
+
+          throw new Error('should have thrown exception');
+        } catch (error) {
+          // then
+          assert.equal(error.message, 'Empty Value');
+
+          scenario.hasStatusBarMessages(
+            'AceJump: Type',
+            'AceJump: Empty Value'
+          );
+        }
+      });
+
+      it(`should break if there is no visibleRanges for ${jumpKind}`, async () => {
+        // given
+        scenario.withNoVisibleRanges().withCommands('a');
+
+        try {
+          // when
+          await sut.jump(jumpKind);
+
+          throw new Error('should have thrown exception');
+        } catch (error) {
+          // then
+          assert.equal(error.message, 'There are no visible ranges!');
+
+          scenario.hasStatusBarMessages('AceJump: Type', 'AceJump: Canceled');
+        }
+      });
+
+      it(`should break if there is one row which does not match the char for ${jumpKind}`, async () => {
+        // given
+        scenario.withLines('no matching characters').withCommands('a');
+
+        try {
+          // when
+          await sut.jump(jumpKind);
+
+          throw new Error('should have thrown exception');
+        } catch (error) {
+          // then
+          assert.equal(error.message, 'No Matches');
+
+          scenario.hasStatusBarMessages('AceJump: Type', 'AceJump: No Matches');
+        }
+      });
+
+      it(`should jump directly if there is three row where matches only one for ${jumpKind}`, async () => {
+        // given
+        scenario
+          .withLines('my first row', 'this absolutely match', 'class some')
+          .withCommands('a');
+
+        // when
+        const { placeholder } = await sut.jump(jumpKind);
+
+        // then
+        assert.deepEqual(placeholder, {
+          childrens: [],
+          index: 0,
+          placeholder: 'a',
+          line: 2,
+          character: 5
+        });
+
+        scenario.hasStatusBarMessages('AceJump: Type', 'AceJump: Jumped!');
+      });
+    });
+  });
+
+  describe(`${JumpKind.Normal} jumpkind`, () => {
     it('should not jump if there is three row where matches three but we type empty value', async () => {
       // given
       scenario
@@ -270,6 +277,119 @@ describe('Jumper', () => {
 
       scenario.hasStatusBarMessages(
         'AceJump: Type',
+        'AceJump: Jump To',
+        'AceJump: Jumped!'
+      );
+    });
+  });
+
+  describe(`${JumpKind.MultiChar} jumpkind`, () => {
+    it('should not jump if there is three row where matches three but we type empty value', async () => {
+      // given
+      scenario
+        .withLines(
+          'my first row',
+          'this absolutely match',
+          'also this is also matching'
+        )
+        .withCommands('a', '');
+
+      try {
+        // when
+        await sut.jump(JumpKind.MultiChar);
+
+        throw new Error('should have thrown exception');
+      } catch (error) {
+        // then
+        assert.equal(error.message, 'Empty Value');
+
+        scenario.hasStatusBarMessages(
+          'AceJump: Type',
+          'AceJump: Next char',
+          'AceJump: Empty Value'
+        );
+      }
+    });
+
+    it(`
+    should jump directly to first placeholder when
+    there is three row where matches three and we restrict to a valid next char`, async () => {
+      // given
+      scenario
+        .withLines(
+          'my first row',
+          'this absolutely match',
+          'also this is also matching'
+        )
+        .withCommands(
+          'a', // we try to match a
+          'b', // we try to match second char
+          'escape', // we escape
+          'a' // we try to jump to placeholder
+        );
+
+      // when
+      const { placeholder } = await sut.jump(JumpKind.MultiChar);
+
+      // then
+      scenario.hasCreatedPlaceholders(6);
+
+      assert.deepEqual(placeholder, {
+        childrens: [],
+        index: 0,
+        placeholder: 'a',
+        line: 2,
+        character: 5
+      });
+
+      scenario.hasStatusBarMessages(
+        'AceJump: Type',
+        'AceJump: Next char',
+        'AceJump: Jumped!'
+      );
+    });
+
+    it(`
+      should preserve placeholders and jump to correct placeholder
+      when there is three row where matches three
+      but we restrict with a non-matching char until we press a valid next char
+      `, async () => {
+      // given
+      scenario
+        .withLines(
+          'my first row',
+          'this absolutely match',
+          'also this is also matching'
+        )
+        .withCommands(
+          'a', // we try to match a
+          'z', // non matching restrict char
+          'f', // non matching restrict char
+          'l', // we try to match second char
+          'escape', // we escape
+          'b' // we try to jump to placeholder
+        );
+
+      // when
+      const { placeholder } = await sut.jump(JumpKind.MultiChar);
+
+      // then
+      scenario.hasCreatedPlaceholders(24);
+
+      assert.deepEqual(placeholder, {
+        childrens: [],
+        index: 1,
+        placeholder: 'b',
+        line: 3,
+        character: 0
+      });
+
+      scenario.hasStatusBarMessages(
+        'AceJump: Type',
+        'AceJump: Next char',
+        'AceJump: Next char',
+        'AceJump: Next char',
+        'AceJump: Next char',
         'AceJump: Jump To',
         'AceJump: Jumped!'
       );

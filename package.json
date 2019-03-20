@@ -106,7 +106,7 @@
         },
         "aceJump.highlight.width": {
           "type": "number",
-          "default": 9
+          "default": 10
         },
         "aceJump.highlight.height": {
           "type": "number",

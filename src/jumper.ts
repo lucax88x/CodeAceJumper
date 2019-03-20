@@ -272,7 +272,7 @@ export class Jumper {
           }
         } catch (error) {
           if (error === true) {
-            // we pressed the escape character so we can start to jump
+            // we pressed the escape character | canceled so we can start to jump
             messageDisposable.dispose();
 
             resolve(placeholders);
@@ -299,7 +299,11 @@ export class Jumper {
     }
   }
 
-  private setMessage(message: string, timeout: number = 5000): Disposable {
-    return window.setStatusBarMessage(`AceJump: ${message}`, timeout);
+  private setMessage(message: string, timeout: number = 0): Disposable {
+    if (timeout > 0) {
+      return window.setStatusBarMessage(`AceJump: ${message}`, timeout);
+    } else {
+      return window.setStatusBarMessage(`AceJump: ${message}`);
+    }
   }
 }

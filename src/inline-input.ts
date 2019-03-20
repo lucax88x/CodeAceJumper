@@ -82,7 +82,7 @@ export class InlineInput {
     const editor = window.activeTextEditor;
 
     if (this.input) {
-      if (!!editor) {
+      if (!!editor && event.text !== 'escape') {
         this.input.text += event.text;
         this.complete();
       } else {
