@@ -38,7 +38,7 @@ export class Jumper {
         return;
       }
 
-      const messaggeDisposable = this.setMessage('Type');
+      const messaggeDisposable = this.setMessage('Type', 5000);
 
       try {
         const placeholder = await this.askForInitialChar(jumpKind, editor);
@@ -144,7 +144,7 @@ export class Jumper {
     return new Promise<Placeholder>(async (resolve, reject) => {
       this.placeHolderDecorator.addDecorations(editor, placeholders);
 
-      const messageDisposable = this.setMessage('Jump To');
+      const messageDisposable = this.setMessage('Jump To', 5000);
 
       try {
         const char = await new InlineInput().show();
@@ -218,7 +218,7 @@ export class Jumper {
         resolve(placeholders);
         return;
       } else {
-        const messageDisposable = this.setMessage('Next char');
+        const messageDisposable = this.setMessage('Next char', 5000);
 
         try {
           const char = await new InlineInput().show();
@@ -299,7 +299,7 @@ export class Jumper {
     }
   }
 
-  private setMessage(message: string, timeout: number = 0): Disposable {
+  private setMessage(message: string, timeout: number): Disposable {
     if (timeout > 0) {
       return window.setStatusBarMessage(`AceJump: ${message}`, timeout);
     } else {
