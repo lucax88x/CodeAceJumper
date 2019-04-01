@@ -138,7 +138,8 @@ export class AreaIndexFinder {
     char = char.toLowerCase();
 
     return map(charIndex => {
-      if (line[charIndex + skipCount].toLowerCase() === char) {
+      const letter = line[charIndex + skipCount];
+      if (letter && letter.toLowerCase() === char) {
         return charIndex;
       } else {
         return -1;

@@ -394,5 +394,45 @@ describe('Jumper', () => {
         'AceJump: Jumped!'
       );
     });
+
+    it(`
+      shoud jump to matched placeholder directly even without escaping
+      when there is three row where matches three
+      but we restrict with a non-matching char but which matches a placeholder
+      `, async () => {
+      // given
+      scenario
+        .withLines(
+          'my first row',
+          'this absolutely match',
+          'also this is also matching'
+        )
+        .withCommands(
+          'a', // we try to match a
+          'l', // we restrict with l
+          'c' // we jump to placeholder c
+        );
+
+      // when
+      const { placeholder } = await sut.jump(JumpKind.MultiChar);
+
+      // then
+      scenario.hasCreatedPlaceholders(10);
+
+      assert.deepEqual(placeholder, {
+        childrens: [],
+        index: 2,
+        placeholder: 'c',
+        line: 3,
+        character: 13
+      });
+
+      scenario.hasStatusBarMessages(
+        'AceJump: Type',
+        'AceJump: Next char',
+        'AceJump: Next char',
+        'AceJump: Jumped!'
+      );
+    });
   });
 });

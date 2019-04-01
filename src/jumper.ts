@@ -156,10 +156,7 @@ export class Jumper {
 
         this.placeHolderDecorator.removeDecorations(editor);
 
-        let placeholder = find(
-          plc => plc.placeholder === char.toLowerCase(),
-          placeholders
-        );
+        let placeholder = findPlaceholder(char)(placeholders);
 
         if (!placeholder) {
           reject(CancelReason.NoPlaceHolderMatched);
@@ -236,13 +233,27 @@ export class Jumper {
             char
           );
 
+          // we failed to restrict
           if (restrictedLineIndexes.count <= 0) {
-            // we keep the existing placeholders and try again
-            resolve(
-              await this.recursivelyRestrict(editor, placeholders, lineIndexes)
-            );
-            messageDisposable.dispose();
-            return;
+            // we try to check if char matches placeholder
+            const placeholder = findPlaceholder(char)(placeholders);
+
+            if (!!placeholder) {
+              resolve([placeholder]);
+              messageDisposable.dispose();
+              return;
+            } else {
+              // we keep the existing placeholders and try again
+              resolve(
+                await this.recursivelyRestrict(
+                  editor,
+                  placeholders,
+                  lineIndexes
+                )
+              );
+              messageDisposable.dispose();
+              return;
+            }
           }
 
           const restrictedPlaceholders: Placeholder[] = this.placeholderCalculus.buildPlaceholders(
@@ -307,3 +318,6 @@ export class Jumper {
     }
   }
 }
+
+const findPlaceholder = (char: string) =>
+  find<Placeholder>(plc => plc.placeholder === char.toLowerCase());
