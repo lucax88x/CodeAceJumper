@@ -67,3 +67,7 @@ added ', " and < in the pattern
 
 - Total refactor of the code
 - added a new command that support multichar [info](https://github.com/lucax88x/CodeAceJumper/issues/21)
+
+### 2.0.1
+
+- if while restricting we don't match a letter but we match a placeholder we jump directly for it
