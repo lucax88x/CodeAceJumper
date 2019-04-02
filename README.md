@@ -75,3 +75,7 @@ added ', " and < in the pattern
 ### 2.1.0
 
 - dimming the editor when we start to ace jump, can be disabled with `aceJump.dim.enabled`
+
+### 2.1.1
+
+- reduced bundle size with webpack
