@@ -337,9 +337,9 @@ export class Jumper {
 
   private setMessage(message: string, timeout: number): Disposable {
     if (timeout > 0) {
-      return window.setStatusBarMessage(`AceJump: ${message}`, timeout);
+      return window.setStatusBarMessage(`$(rocket) ${message}`, timeout);
     } else {
-      return window.setStatusBarMessage(`AceJump: ${message}`);
+      return window.setStatusBarMessage(`$(rocket) ${message}`);
     }
   }
 }
