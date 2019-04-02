@@ -1,6 +1,8 @@
 import { forEach, map, reduce } from 'ramda';
 import {
   DecorationOptions,
+  DecorationRenderOptions,
+  Position,
   Range,
   TextEditor,
   TextEditorDecorationType,
@@ -16,6 +18,7 @@ export class PlaceHolderDecorator {
   private config: Config;
   private placeholderCache: { [index: string]: Uri };
   private highlightCache: { [index: number]: Uri };
+  private dim: TextEditorDecorationType;
   private decorations: TextEditorDecorationType[] = [];
 
   public refreshConfig(config: Config) {
@@ -110,11 +113,45 @@ export class PlaceHolderDecorator {
     editor.setDecorations(decorationType, options);
   }
 
+  public dimEditor(editor: TextEditor, ranges: Range[]) {
+    this.undimEditor(editor);
+
+    const options: DecorationRenderOptions = {
+      textDecoration: `none; filter: grayscale(1);`
+    };
+
+    this.dim = window.createTextEditorDecorationType(options);
+
+    const toAddRanges = [];
+    if (!!ranges && !!ranges.length) {
+      toAddRanges.push(...ranges);
+    } else {
+      toAddRanges.push(
+        new Range(
+          new Position(0, 0),
+          new Position(editor.document.lineCount, Number.MAX_VALUE)
+        )
+      );
+    }
+
+    editor.setDecorations(this.dim, toAddRanges);
+  }
+
   public removeDecorations(editor: TextEditor) {
     forEach(item => {
       editor.setDecorations(item, []);
       item.dispose();
     }, this.decorations);
+
+    this.decorations = [];
+  }
+
+  public undimEditor(editor: TextEditor) {
+    if (!!this.dim) {
+      editor.setDecorations(this.dim, []);
+      this.dim.dispose();
+      delete this.dim;
+    }
   }
 
   private updateCache() {

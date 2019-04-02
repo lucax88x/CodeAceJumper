@@ -14,6 +14,7 @@ import { PlaceHolderCalculus } from './placeholder-calculus';
 import { PlaceHolderDecorator } from './placeholder-decorator';
 
 export class Jumper {
+  private config: Config;
   private placeholderCalculus = new PlaceHolderCalculus();
   private placeHolderDecorator = new PlaceHolderDecorator();
   private jumpAreaFinder = new JumpAreaFinder();
@@ -65,6 +66,7 @@ export class Jumper {
   }
 
   public refreshConfig(config: Config) {
+    this.config = config;
     this.placeholderCalculus.refreshConfig(config);
     this.placeHolderDecorator.refreshConfig(config);
     this.jumpAreaFinder.refreshConfig(config);
@@ -74,6 +76,9 @@ export class Jumper {
   private askForInitialChar(jumpKind: JumpKind, editor: TextEditor) {
     return new Promise<Placeholder>(async (resolve, reject) => {
       try {
+        if (this.config.dim.enabled) {
+          this.placeHolderDecorator.dimEditor(editor, []);
+        }
         let char = await new InlineInput().show();
 
         if (!char) {
@@ -142,6 +147,13 @@ export class Jumper {
    */
   private recursivelyJumpTo(editor: TextEditor, placeholders: Placeholder[]) {
     return new Promise<Placeholder>(async (resolve, reject) => {
+      if (this.config.dim.enabled) {
+        const placeholderHoles = this.placeholderCalculus.getPlaceholderHoles(
+          placeholders,
+          editor.document.lineCount
+        );
+        this.placeHolderDecorator.dimEditor(editor, placeholderHoles);
+      }
       this.placeHolderDecorator.addDecorations(editor, placeholders);
 
       const messageDisposable = this.setMessage('Jump To', 5000);
@@ -155,6 +167,7 @@ export class Jumper {
         }
 
         this.placeHolderDecorator.removeDecorations(editor);
+        this.placeHolderDecorator.undimEditor(editor);
 
         let placeholder = findPlaceholder(char)(placeholders);
 
@@ -184,6 +197,7 @@ export class Jumper {
         }
       } catch (error) {
         this.placeHolderDecorator.removeDecorations(editor);
+        this.placeHolderDecorator.undimEditor(editor);
         messageDisposable.dispose();
 
         reject(error);
@@ -203,6 +217,15 @@ export class Jumper {
     lineIndexes: LineIndexes
   ) {
     return new Promise<Placeholder[]>(async (resolve, reject) => {
+      if (this.config.dim.enabled) {
+        const placeholderHoles = this.placeholderCalculus.getPlaceholderHoles(
+          placeholders,
+          editor.document.lineCount,
+          lineIndexes.highlightCount
+        );
+        this.placeHolderDecorator.dimEditor(editor, placeholderHoles);
+      }
+
       this.placeHolderDecorator.addDecorations(editor, placeholders);
       this.placeHolderDecorator.addHighlights(
         editor,
@@ -226,6 +249,7 @@ export class Jumper {
           }
 
           this.placeHolderDecorator.removeDecorations(editor);
+          this.placeHolderDecorator.undimEditor(editor);
 
           const restrictedLineIndexes = this.areaIndexFinder.restrictByChar(
             editor,
@@ -289,6 +313,7 @@ export class Jumper {
             resolve(placeholders);
           } else {
             this.placeHolderDecorator.removeDecorations(editor);
+            this.placeHolderDecorator.undimEditor(editor);
             messageDisposable.dispose();
 
             reject(error);

@@ -1,6 +1,7 @@
 import * as assert from 'assert';
 
 import { Config } from '../config/config';
+import { Placeholder } from '../models/placeholder';
 import { PlaceHolderCalculus } from '../placeholder-calculus';
 
 describe('PlaceHolderCalculus', () => {
@@ -208,6 +209,66 @@ describe('PlaceHolderCalculus', () => {
 
         assert.equal(placeholders[0].placeholder, 'c');
       });
+    });
+  });
+  describe.only('Placeholder building holes Tests', () => {
+    it('simple holes without highlight', () => {
+      const placeholder = new Placeholder();
+
+      const ranges = sut.getPlaceholderHoles(
+        [
+          { ...placeholder, line: 0, character: 21 },
+          { ...placeholder, line: 2, character: 5 }
+        ],
+        50
+      );
+
+      assert.equal(ranges.length, 3);
+
+      assert.equal(ranges[0].start.line, 0);
+      assert.equal(ranges[0].start.character, 0);
+      assert.equal(ranges[0].end.line, 0);
+      assert.equal(ranges[0].end.character, 21);
+
+      assert.equal(ranges[1].start.line, 0);
+      assert.equal(ranges[1].start.character, 22);
+      assert.equal(ranges[1].end.line, 2);
+      assert.equal(ranges[1].end.character, 5);
+
+      assert.equal(ranges[2].start.line, 2);
+      assert.equal(ranges[2].start.character, 6);
+      assert.equal(ranges[2].end.line, 50);
+      assert.equal(ranges[2].end.character, Number.MAX_VALUE);
+    });
+
+    it('simple holes with highlight', () => {
+      const placeholder = new Placeholder();
+
+      const ranges = sut.getPlaceholderHoles(
+        [
+          { ...placeholder, line: 0, character: 21 },
+          { ...placeholder, line: 2, character: 5 }
+        ],
+        50,
+        5
+      );
+
+      assert.equal(ranges.length, 3);
+
+      assert.equal(ranges[0].start.line, 0);
+      assert.equal(ranges[0].start.character, 0);
+      assert.equal(ranges[0].end.line, 0);
+      assert.equal(ranges[0].end.character, 21);
+
+      assert.equal(ranges[1].start.line, 0);
+      assert.equal(ranges[1].start.character, 27);
+      assert.equal(ranges[1].end.line, 2);
+      assert.equal(ranges[1].end.character, 5);
+
+      assert.equal(ranges[2].start.line, 2);
+      assert.equal(ranges[2].start.character, 11);
+      assert.equal(ranges[2].end.line, 50);
+      assert.equal(ranges[2].end.character, Number.MAX_VALUE);
     });
   });
 });

@@ -1,4 +1,10 @@
-import { commands, ExtensionContext, Position, Selection, workspace } from 'vscode';
+import {
+  commands,
+  ExtensionContext,
+  Position,
+  Selection,
+  workspace
+} from 'vscode';
 
 import { buildConfig } from './config/config';
 import { Jumper } from './jumper';
@@ -63,9 +69,9 @@ export class AceJump {
     this.loadConfig();
   }
 
-  private loadConfig() {
+  private loadConfig = () => {
     const config = workspace.getConfiguration('aceJump');
 
     this.jumper.refreshConfig(buildConfig(config));
-  }
+  };
 }

@@ -1,4 +1,5 @@
 import { filter, forEach, head, last, reject } from 'ramda';
+import { Position, Range } from 'vscode';
 
 import { Config } from './config/config';
 import { LineIndexes } from './models/line-indexes';
@@ -132,5 +133,39 @@ export class PlaceHolderCalculus {
     }, mapWithMultipleItems);
 
     return placeholders;
+  }
+
+  public getPlaceholderHoles(
+    placeholders: Placeholder[],
+    lineCount: number,
+    highlightCount = -1
+  ): Range[] {
+    const ranges: Range[] = [];
+    let previousLine = 0;
+    let previousCharacter = -1;
+    for (let i = 0; i < placeholders.length; i++) {
+      const placeholder = placeholders[i];
+
+      ranges.push(
+        new Range(
+          new Position(previousLine, previousCharacter + 1),
+          new Position(placeholder.line, placeholder.character)
+        )
+      );
+
+      previousLine = placeholder.line;
+      previousCharacter =
+        placeholder.character +
+        (highlightCount === -1 ? 0 : highlightCount);
+    }
+
+    ranges.push(
+      new Range(
+        new Position(previousLine, previousCharacter + 1),
+        new Position(lineCount, Number.MAX_VALUE)
+      )
+    );
+
+    return ranges;
   }
 }

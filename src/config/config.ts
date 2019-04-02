@@ -1,5 +1,6 @@
 import { WorkspaceConfiguration } from 'vscode';
 
+import { DimConfig } from './dim-config';
 import { FinderConfig } from './finder-config';
 import { HighlightConfig } from './highlight-config';
 import { PlaceholderConfig } from './placeholder-config';
@@ -36,6 +37,7 @@ export class Config {
   public placeholder = new PlaceholderConfig();
   public highlight = new HighlightConfig();
   public finder = new FinderConfig();
+  public dim = new DimConfig();
 }
 
 export function buildConfig(cfg: WorkspaceConfiguration) {
@@ -74,6 +76,10 @@ export function buildConfig(cfg: WorkspaceConfiguration) {
     pattern: cfg.get('finder.pattern', `[ ,-.{_(\"'<\\[]`),
     skipSelection: cfg.get('finder.skipSelection', false),
     onlyInitialLetter: cfg.get('finder.onlyInitialLetter', true)
+  };
+
+  config.dim = {
+    enabled: cfg.get('dim.enabled', true)
   };
 
   return config;
