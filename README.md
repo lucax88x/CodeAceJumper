@@ -71,3 +71,7 @@ added ', " and < in the pattern
 ### 2.0.1
 
 - if while restricting we don't match a letter but we match a placeholder we jump directly for it
+
+### 2.1.0
+
+- dimming the editor when we start to ace jump, can be disabled with `aceJump.dim.enabled`
