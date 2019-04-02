@@ -42,14 +42,20 @@ export class Jumper {
       const messaggeDisposable = this.setMessage('Type', 5000);
 
       try {
+        if (this.config.dim.enabled) {
+          this.placeHolderDecorator.dimEditor(editor, []);
+        }
+
         const placeholder = await this.askForInitialChar(jumpKind, editor);
 
         this.setMessage('Jumped!', 2000);
 
+        this.placeHolderDecorator.undimEditor(editor);
         messaggeDisposable.dispose();
         this.isJumping = false;
         resolve({ editor, placeholder });
       } catch (error) {
+        this.placeHolderDecorator.undimEditor(editor);
         messaggeDisposable.dispose();
         this.isJumping = false;
 
@@ -76,9 +82,6 @@ export class Jumper {
   private askForInitialChar(jumpKind: JumpKind, editor: TextEditor) {
     return new Promise<Placeholder>(async (resolve, reject) => {
       try {
-        if (this.config.dim.enabled) {
-          this.placeHolderDecorator.dimEditor(editor, []);
-        }
         let char = await new InlineInput().show();
 
         if (!char) {
