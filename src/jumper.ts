@@ -154,6 +154,7 @@ export class Jumper {
         );
         this.placeHolderDecorator.dimEditor(editor, placeholderHoles);
       }
+      this.placeHolderDecorator.removeHighlights(editor);
       this.placeHolderDecorator.addDecorations(editor, placeholders);
 
       const messageDisposable = this.setMessage('Jump To', 5000);
@@ -167,6 +168,7 @@ export class Jumper {
         }
 
         this.placeHolderDecorator.removeDecorations(editor);
+        this.placeHolderDecorator.removeHighlights(editor);
         this.placeHolderDecorator.undimEditor(editor);
 
         let placeholder = findPlaceholder(char)(placeholders);
@@ -197,6 +199,7 @@ export class Jumper {
         }
       } catch (error) {
         this.placeHolderDecorator.removeDecorations(editor);
+        this.placeHolderDecorator.removeHighlights(editor);
         this.placeHolderDecorator.undimEditor(editor);
         messageDisposable.dispose();
 
@@ -249,6 +252,7 @@ export class Jumper {
           }
 
           this.placeHolderDecorator.removeDecorations(editor);
+          this.placeHolderDecorator.removeHighlights(editor);
           this.placeHolderDecorator.undimEditor(editor);
 
           const restrictedLineIndexes = this.areaIndexFinder.restrictByChar(
@@ -313,6 +317,7 @@ export class Jumper {
             resolve(placeholders);
           } else {
             this.placeHolderDecorator.removeDecorations(editor);
+            this.placeHolderDecorator.removeHighlights(editor);
             this.placeHolderDecorator.undimEditor(editor);
             messageDisposable.dispose();
 

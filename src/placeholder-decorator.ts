@@ -20,6 +20,7 @@ export class PlaceHolderDecorator {
   private highlightCache: { [index: number]: Uri };
   private dim: TextEditorDecorationType;
   private decorations: TextEditorDecorationType[] = [];
+  private highlights: TextEditorDecorationType[] = [];
 
   public refreshConfig(config: Config) {
     this.config = config;
@@ -108,7 +109,7 @@ export class PlaceHolderDecorator {
       placeholders
     );
 
-    this.decorations.push(decorationType);
+    this.highlights.push(decorationType);
 
     editor.setDecorations(decorationType, options);
   }
@@ -144,6 +145,15 @@ export class PlaceHolderDecorator {
     }, this.decorations);
 
     this.decorations = [];
+  }
+
+  public removeHighlights(editor: TextEditor) {
+    forEach(item => {
+      editor.setDecorations(item, []);
+      item.dispose();
+    }, this.highlights);
+
+    this.highlights = [];
   }
 
   public undimEditor(editor: TextEditor) {
