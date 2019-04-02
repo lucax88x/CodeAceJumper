@@ -68,8 +68,8 @@ describe('Jumper', () => {
           assert.equal(error.message, 'Empty Value');
 
           scenario.hasStatusBarMessages(
-            'AceJump: Type',
-            'AceJump: Empty Value'
+            '$(rocket) Type',
+            '$(rocket) Empty Value'
           );
         }
       });
@@ -87,7 +87,7 @@ describe('Jumper', () => {
           // then
           assert.equal(error.message, 'There are no visible ranges!');
 
-          scenario.hasStatusBarMessages('AceJump: Type', 'AceJump: Canceled');
+          scenario.hasStatusBarMessages('$(rocket) Type', '$(rocket) Canceled');
         }
       });
 
@@ -104,7 +104,7 @@ describe('Jumper', () => {
           // then
           assert.equal(error.message, 'No Matches');
 
-          scenario.hasStatusBarMessages('AceJump: Type', 'AceJump: No Matches');
+          scenario.hasStatusBarMessages('$(rocket) Type', '$(rocket) No Matches');
         }
       });
 
@@ -126,7 +126,7 @@ describe('Jumper', () => {
           character: 5
         });
 
-        scenario.hasStatusBarMessages('AceJump: Type', 'AceJump: Jumped!');
+        scenario.hasStatusBarMessages('$(rocket) Type', '$(rocket) Jumped!');
       });
     });
   });
@@ -152,9 +152,9 @@ describe('Jumper', () => {
         assert.equal(error.message, 'Empty Value');
 
         scenario.hasStatusBarMessages(
-          'AceJump: Type',
-          'AceJump: Jump To',
-          'AceJump: Empty Value'
+          '$(rocket) Type',
+          '$(rocket) Jump To',
+          '$(rocket) Empty Value'
         );
       }
     });
@@ -179,9 +179,9 @@ describe('Jumper', () => {
         assert.equal(error.message, 'No Matches');
 
         scenario.hasStatusBarMessages(
-          'AceJump: Type',
-          'AceJump: Jump To',
-          'AceJump: No Matches'
+          '$(rocket) Type',
+          '$(rocket) Jump To',
+          '$(rocket) No Matches'
         );
       }
     });
@@ -200,6 +200,7 @@ describe('Jumper', () => {
       const { placeholder } = await sut.jump(JumpKind.Normal);
 
       // then
+      scenario.hasDimmedEditor(2);
       scenario.hasCreatedPlaceholders(3);
 
       assert.deepEqual(placeholder, {
@@ -211,9 +212,9 @@ describe('Jumper', () => {
       });
 
       scenario.hasStatusBarMessages(
-        'AceJump: Type',
-        'AceJump: Jump To',
-        'AceJump: Jumped!'
+        '$(rocket) Type',
+        '$(rocket) Jump To',
+        '$(rocket) Jumped!'
       );
     });
 
@@ -233,6 +234,7 @@ describe('Jumper', () => {
       const { placeholder } = await sut.jump(JumpKind.Normal);
 
       // then
+      scenario.hasDimmedEditor(3);
       scenario.hasCreatedPlaceholders(80);
 
       assert.deepEqual(placeholder, {
@@ -244,10 +246,10 @@ describe('Jumper', () => {
       });
 
       scenario.hasStatusBarMessages(
-        'AceJump: Type',
-        'AceJump: Jump To',
-        'AceJump: Jump To',
-        'AceJump: Jumped!'
+        '$(rocket) Type',
+        '$(rocket) Jump To',
+        '$(rocket) Jump To',
+        '$(rocket) Jumped!'
       );
     });
 
@@ -265,6 +267,7 @@ describe('Jumper', () => {
       const { placeholder } = await sut.jump(JumpKind.Normal);
 
       // then
+      scenario.hasDimmedEditor(2);
       scenario.hasCreatedPlaceholders(3);
 
       assert.deepEqual(placeholder, {
@@ -276,9 +279,9 @@ describe('Jumper', () => {
       });
 
       scenario.hasStatusBarMessages(
-        'AceJump: Type',
-        'AceJump: Jump To',
-        'AceJump: Jumped!'
+        '$(rocket) Type',
+        '$(rocket) Jump To',
+        '$(rocket) Jumped!'
       );
     });
   });
@@ -304,9 +307,9 @@ describe('Jumper', () => {
         assert.equal(error.message, 'Empty Value');
 
         scenario.hasStatusBarMessages(
-          'AceJump: Type',
-          'AceJump: Next char',
-          'AceJump: Empty Value'
+          '$(rocket) Type',
+          '$(rocket) Next char',
+          '$(rocket) Empty Value'
         );
       }
     });
@@ -332,6 +335,7 @@ describe('Jumper', () => {
       const { placeholder } = await sut.jump(JumpKind.MultiChar);
 
       // then
+      scenario.hasDimmedEditor(2);
       scenario.hasCreatedPlaceholders(6);
 
       assert.deepEqual(placeholder, {
@@ -343,9 +347,9 @@ describe('Jumper', () => {
       });
 
       scenario.hasStatusBarMessages(
-        'AceJump: Type',
-        'AceJump: Next char',
-        'AceJump: Jumped!'
+        '$(rocket) Type',
+        '$(rocket) Next char',
+        '$(rocket) Jumped!'
       );
     });
 
@@ -374,6 +378,7 @@ describe('Jumper', () => {
       const { placeholder } = await sut.jump(JumpKind.MultiChar);
 
       // then
+      scenario.hasDimmedEditor(6);
       scenario.hasCreatedPlaceholders(24);
 
       assert.deepEqual(placeholder, {
@@ -385,13 +390,13 @@ describe('Jumper', () => {
       });
 
       scenario.hasStatusBarMessages(
-        'AceJump: Type',
-        'AceJump: Next char',
-        'AceJump: Next char',
-        'AceJump: Next char',
-        'AceJump: Next char',
-        'AceJump: Jump To',
-        'AceJump: Jumped!'
+        '$(rocket) Type',
+        '$(rocket) Next char',
+        '$(rocket) Next char',
+        '$(rocket) Next char',
+        '$(rocket) Next char',
+        '$(rocket) Jump To',
+        '$(rocket) Jumped!'
       );
     });
 
@@ -417,6 +422,7 @@ describe('Jumper', () => {
       const { placeholder } = await sut.jump(JumpKind.MultiChar);
 
       // then
+      scenario.hasDimmedEditor(3);
       scenario.hasCreatedPlaceholders(10);
 
       assert.deepEqual(placeholder, {
@@ -428,10 +434,10 @@ describe('Jumper', () => {
       });
 
       scenario.hasStatusBarMessages(
-        'AceJump: Type',
-        'AceJump: Next char',
-        'AceJump: Next char',
-        'AceJump: Jumped!'
+        '$(rocket) Type',
+        '$(rocket) Next char',
+        '$(rocket) Next char',
+        '$(rocket) Jumped!'
       );
     });
   });

@@ -1,7 +1,7 @@
 import * as assert from 'assert';
 import { filter, map, sum } from 'ramda';
 import * as sinon from 'sinon';
-import { commands, TextEditor, window } from 'vscode';
+import { commands, DecorationOptions, Range, TextEditor, window } from 'vscode';
 
 import { RecursivePartial } from '../recursive-partial';
 
@@ -52,7 +52,12 @@ export class ScenarioBuilder {
   }
 
   public withEditor() {
-    this.editorMock = {};
+    this.editorMock = {
+      document: {
+        lineCount: 0
+      },
+      setDecorations: this.setDecorationsSpy = this.sandbox.spy()
+    };
     return this;
   }
 
@@ -61,6 +66,10 @@ export class ScenarioBuilder {
       selection: {
         isEmpty: true
       },
+      document: {
+        lineCount: 0
+      },
+      setDecorations: this.setDecorationsSpy = this.sandbox.spy(),
       visibleRanges: []
     };
     return this;
@@ -80,7 +89,8 @@ export class ScenarioBuilder {
       visibleRanges: [{ start: { line: 1 }, end: { line: lines.length } }],
       document: {
         getText: () => 'my long text',
-        lineAt: lineAtMock
+        lineAt: lineAtMock,
+        lineCount: lines.length
       },
       setDecorations: this.setDecorationsSpy = this.sandbox.spy()
     };
@@ -100,16 +110,37 @@ export class ScenarioBuilder {
   }
 
   public hasCreatedPlaceholders(count: number) {
-    const nonRemoveDecorationCalls = filter(
-      call => call.args[1].length !== 0,
-      this.setDecorationsSpy.getCalls()
+    const notRemoveDecorationCalls = filter<SinonCall>(
+      call => call.args[1].length !== 0
+    );
+    // dim is called setting only ranges and no options
+    const dimDecorationCalls = filter<SinonCall>(call =>
+      call.args[1][0].hasOwnProperty('range')
     );
 
-    const createdPlaceholders = sum(
-      map(c => c.args[1].length, nonRemoveDecorationCalls)
+    const sumCalls = dimDecorationCalls(
+      notRemoveDecorationCalls(this.setDecorationsSpy.getCalls())
     );
+
+    const createdPlaceholders = sum(map(c => c.args[1].length, sumCalls));
 
     assert.equal(createdPlaceholders, count);
+  }
+
+  public hasDimmedEditor(count: number) {
+    const notRemoveDecorationCalls = filter<SinonCall>(
+      call => call.args[1].length !== 0
+    );
+    // dim is called setting only ranges and no options
+    const nonDimDecorationCalls = filter<SinonCall>(
+      call => !call.args[1][0].hasOwnProperty('range')
+    );
+
+    const dimmedCalls = nonDimDecorationCalls(
+      notRemoveDecorationCalls(this.setDecorationsSpy.getCalls())
+    );
+
+    assert.equal(dimmedCalls.length, count);
   }
 
   public hasStatusBarMessages(...statuses: string[]) {
@@ -117,4 +148,8 @@ export class ScenarioBuilder {
 
     assert.deepEqual(statuses, allArgs, `${statuses} did not match ${allArgs}`);
   }
+}
+
+interface SinonCall {
+  args: Array<Range[] | DecorationOptions[]>;
 }

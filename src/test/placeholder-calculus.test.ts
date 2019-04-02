@@ -211,7 +211,7 @@ describe('PlaceHolderCalculus', () => {
       });
     });
   });
-  describe.only('Placeholder building holes Tests', () => {
+  describe('Placeholder building holes Tests', () => {
     it('simple holes without highlight', () => {
       const placeholder = new Placeholder();
 

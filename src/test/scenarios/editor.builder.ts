@@ -24,7 +24,8 @@ export class EditorBuilder {
 
     this.editorMock = {
       document: {
-        lineAt: lineAtMock
+        lineAt: lineAtMock,
+        lineCount: lines.length
       }
     };
     return this;
