@@ -79,3 +79,7 @@ added ', " and < in the pattern
 ### 2.1.1
 
 - reduced bundle size with webpack
+
+### 2.1.2
+
+- fixes [bug](https://github.com/lucax88x/CodeAceJumper/issues/29)
