@@ -83,3 +83,7 @@ added ', " and < in the pattern
 ### 2.1.2
 
 - fixes [bug](https://github.com/lucax88x/CodeAceJumper/issues/29)
+
+### 2.1.3
+
+- fixes [bug](https://github.com/lucax88x/CodeAceJumper/issues/30)
