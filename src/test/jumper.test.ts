@@ -200,7 +200,7 @@ describe('Jumper', () => {
       const { placeholder } = await sut.jump(JumpKind.Normal);
 
       // then
-      scenario.hasDimmedEditor(2);
+      scenario.hasDimmedEditor(1);
       scenario.hasCreatedPlaceholders(3);
 
       assert.deepEqual(placeholder, {
@@ -234,7 +234,7 @@ describe('Jumper', () => {
       const { placeholder } = await sut.jump(JumpKind.Normal);
 
       // then
-      scenario.hasDimmedEditor(3);
+      scenario.hasDimmedEditor(2);
       scenario.hasCreatedPlaceholders(80);
 
       assert.deepEqual(placeholder, {
@@ -267,7 +267,7 @@ describe('Jumper', () => {
       const { placeholder } = await sut.jump(JumpKind.Normal);
 
       // then
-      scenario.hasDimmedEditor(2);
+      scenario.hasDimmedEditor(1);
       scenario.hasCreatedPlaceholders(3);
 
       assert.deepEqual(placeholder, {
@@ -335,7 +335,7 @@ describe('Jumper', () => {
       const { placeholder } = await sut.jump(JumpKind.MultiChar);
 
       // then
-      scenario.hasDimmedEditor(2);
+      scenario.hasDimmedEditor(1);
       scenario.hasCreatedPlaceholders(6);
 
       assert.deepEqual(placeholder, {
@@ -378,7 +378,7 @@ describe('Jumper', () => {
       const { placeholder } = await sut.jump(JumpKind.MultiChar);
 
       // then
-      scenario.hasDimmedEditor(6);
+      scenario.hasDimmedEditor(5);
       scenario.hasCreatedPlaceholders(24);
 
       assert.deepEqual(placeholder, {
@@ -422,7 +422,7 @@ describe('Jumper', () => {
       const { placeholder } = await sut.jump(JumpKind.MultiChar);
 
       // then
-      scenario.hasDimmedEditor(3);
+      scenario.hasDimmedEditor(2);
       scenario.hasCreatedPlaceholders(10);
 
       assert.deepEqual(placeholder, {
