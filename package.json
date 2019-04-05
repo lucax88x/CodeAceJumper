@@ -104,22 +104,6 @@
           "type": "string",
           "default": "rgba(124,240,10,0.5)"
         },
-        "aceJump.highlight.width": {
-          "type": "number",
-          "default": 10
-        },
-        "aceJump.highlight.height": {
-          "type": "number",
-          "default": 14
-        },
-        "aceJump.highlight.offsetX": {
-          "type": "number",
-          "default": 0
-        },
-        "aceJump.highlight.offsetY": {
-          "type": "number",
-          "default": 0
-        },
         "aceJump.finder.pattern": {
           "type": "string",
           "default": "[ ,-.{_(\"'<\\[]"

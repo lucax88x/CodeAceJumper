@@ -17,10 +17,9 @@ import { Placeholder } from './models/placeholder';
 export class PlaceHolderDecorator {
   private config: Config;
   private placeholderCache: { [index: string]: Uri };
-  private highlightCache: { [index: number]: Uri };
   private dim: TextEditorDecorationType;
   private decorations: TextEditorDecorationType[] = [];
-  private highlights: TextEditorDecorationType[] = [];
+  private highlight: TextEditorDecorationType;
 
   public refreshConfig(config: Config) {
     this.config = config;
@@ -74,44 +73,27 @@ export class PlaceHolderDecorator {
     placeholders: Placeholder[],
     highlightCount: number
   ) {
-    const width = this.config.placeholder.width;
-    const height = this.config.placeholder.height;
-
-    const decorationType = window.createTextEditorDecorationType({
-      after: {
-        margin: `0 0 0 ${1 * -width}px`,
-        height: `${height}px`,
-        width: `${1 * width}px`
-      }
-    });
+    const type: DecorationRenderOptions = {
+      textDecoration: `none; background-color: ${
+        this.config.highlight.backgroundColor
+      }`
+    };
 
     const options = map<Placeholder, DecorationOptions>(
       placeholder => ({
         range: new Range(
           placeholder.line,
-          placeholder.character + 2,
+          placeholder.character + 1,
           placeholder.line,
-          placeholder.character + 2
-        ),
-        renderOptions: {
-          dark: {
-            after: {
-              contentIconPath: this.highlightCache[highlightCount]
-            }
-          },
-          light: {
-            after: {
-              contentIconPath: this.highlightCache[highlightCount]
-            }
-          }
-        }
+          placeholder.character + 1 + highlightCount
+        )
       }),
       placeholders
     );
 
-    this.highlights.push(decorationType);
+    this.highlight = window.createTextEditorDecorationType(type);
 
-    editor.setDecorations(decorationType, options);
+    editor.setDecorations(this.highlight, options);
   }
 
   public dimEditor(editor: TextEditor, ranges: Range[]) {
@@ -148,12 +130,11 @@ export class PlaceHolderDecorator {
   }
 
   public removeHighlights(editor: TextEditor) {
-    forEach(item => {
-      editor.setDecorations(item, []);
-      item.dispose();
-    }, this.highlights);
-
-    this.highlights = [];
+    if (!!this.highlight) {
+      editor.setDecorations(this.highlight, []);
+      this.highlight.dispose();
+      delete this.highlight;
+    }
   }
 
   public undimEditor(editor: TextEditor) {
@@ -172,14 +153,6 @@ export class PlaceHolderDecorator {
       },
       {}
     )(this.config.characters);
-
-    this.highlightCache = reduce<number, { [index: number]: Uri }>(
-      (acc, width) => {
-        acc[width] = this.buildUriForHighlight(width);
-        return acc;
-      },
-      {}
-    )([...Array(10)].map((_, i) => i + 1));
   }
 
   private buildUriForPlaceholder(code: string) {
@@ -215,35 +188,6 @@ export class PlaceHolderDecorator {
           ? code.toUpperCase()
           : code.toLowerCase()
       );
-
-    const svg = root.end({
-      pretty: false
-    });
-
-    return Uri.parse(`data:image/svg+xml;utf8,${svg}`);
-  }
-
-  private buildUriForHighlight(characterCount: number) {
-    const root = builder.create('svg', {}, {}, { headless: true });
-
-    const width = this.config.highlight.width * characterCount;
-    const height = this.config.highlight.height;
-    const offsetX = this.config.highlight.offsetX;
-    const offsetY = this.config.highlight.offsetY;
-
-    root
-      .att('xmlns', 'http://www.w3.org/2000/svg')
-      .att('viewBox', `${offsetX} ${offsetY} ${width} ${height}`)
-      .att('width', width)
-      .att('height', height);
-
-    root
-      .ele('rect')
-      .att('width', width)
-      .att('height', height)
-      .att('rx', 2)
-      .att('ry', 2)
-      .att('style', `fill: ${this.config.highlight.backgroundColor}`);
 
     const svg = root.end({
       pretty: false

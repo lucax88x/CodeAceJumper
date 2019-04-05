@@ -64,12 +64,7 @@ export function buildConfig(cfg: WorkspaceConfiguration) {
     backgroundColor: cfg.get(
       'highlight.backgroundColor',
       'rgba(124,240,10,0.5)'
-    ),
-
-    width: cfg.get('highlight.width', 10),
-    height: cfg.get('highlight.height', 14),
-    offsetX: cfg.get('highlight.offsetX', 0),
-    offsetY: cfg.get('highlight.offsetY', 0)
+    )
   };
 
   config.finder = {

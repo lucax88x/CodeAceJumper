@@ -233,93 +233,83 @@ export class Jumper {
         lineIndexes.highlightCount
       );
 
-      // max highlight count reached, we must jump to
-      if (lineIndexes.highlightCount >= 10) {
-        resolve(placeholders);
-        return;
-      } else {
-        const messageDisposable = this.setMessage('Next char', 5000);
+      const messageDisposable = this.setMessage('Next char', 5000);
 
-        try {
-          const char = await new InlineInput().show();
+      try {
+        const char = await new InlineInput().show();
 
-          if (!char) {
-            reject(CancelReason.EmptyValue);
+        if (!char) {
+          reject(CancelReason.EmptyValue);
+          return;
+        }
+
+        this.placeHolderDecorator.removeDecorations(editor);
+        this.placeHolderDecorator.removeHighlights(editor);
+        this.placeHolderDecorator.undimEditor(editor);
+
+        const restrictedLineIndexes = this.areaIndexFinder.restrictByChar(
+          editor,
+          lineIndexes,
+          char
+        );
+
+        // we failed to restrict
+        if (restrictedLineIndexes.count <= 0) {
+          // we try to check if char matches placeholder
+          const placeholder = findPlaceholder(char)(placeholders);
+
+          if (!!placeholder) {
+            resolve([placeholder]);
+            messageDisposable.dispose();
+            return;
+          } else {
+            // we keep the existing placeholders and try again
+            resolve(
+              await this.recursivelyRestrict(editor, placeholders, lineIndexes)
+            );
+            messageDisposable.dispose();
             return;
           }
+        }
 
+        const restrictedPlaceholders: Placeholder[] = this.placeholderCalculus.buildPlaceholders(
+          restrictedLineIndexes
+        );
+
+        if (restrictedPlaceholders.length === 0) {
+          reject(CancelReason.NoMatches);
+          return;
+        }
+
+        if (restrictedPlaceholders.length === 1) {
+          resolve(restrictedPlaceholders);
+        } else {
+          try {
+            resolve(
+              await this.recursivelyRestrict(
+                editor,
+                restrictedPlaceholders,
+                restrictedLineIndexes
+              )
+            );
+            messageDisposable.dispose();
+          } catch (error) {
+            reject(error);
+          }
+        }
+      } catch (error) {
+        if (error === true) {
+          // we pressed the escape character | canceled so we can start to jump
+          messageDisposable.dispose();
+
+          resolve(placeholders);
+        } else {
           this.placeHolderDecorator.removeDecorations(editor);
           this.placeHolderDecorator.removeHighlights(editor);
           this.placeHolderDecorator.undimEditor(editor);
+          messageDisposable.dispose();
 
-          const restrictedLineIndexes = this.areaIndexFinder.restrictByChar(
-            editor,
-            lineIndexes,
-            char
-          );
-
-          // we failed to restrict
-          if (restrictedLineIndexes.count <= 0) {
-            // we try to check if char matches placeholder
-            const placeholder = findPlaceholder(char)(placeholders);
-
-            if (!!placeholder) {
-              resolve([placeholder]);
-              messageDisposable.dispose();
-              return;
-            } else {
-              // we keep the existing placeholders and try again
-              resolve(
-                await this.recursivelyRestrict(
-                  editor,
-                  placeholders,
-                  lineIndexes
-                )
-              );
-              messageDisposable.dispose();
-              return;
-            }
-          }
-
-          const restrictedPlaceholders: Placeholder[] = this.placeholderCalculus.buildPlaceholders(
-            restrictedLineIndexes
-          );
-
-          if (restrictedPlaceholders.length === 0) {
-            reject(CancelReason.NoMatches);
-            return;
-          }
-
-          if (restrictedPlaceholders.length === 1) {
-            resolve(restrictedPlaceholders);
-          } else {
-            try {
-              resolve(
-                await this.recursivelyRestrict(
-                  editor,
-                  restrictedPlaceholders,
-                  restrictedLineIndexes
-                )
-              );
-              messageDisposable.dispose();
-            } catch (error) {
-              reject(error);
-            }
-          }
-        } catch (error) {
-          if (error === true) {
-            // we pressed the escape character | canceled so we can start to jump
-            messageDisposable.dispose();
-
-            resolve(placeholders);
-          } else {
-            this.placeHolderDecorator.removeDecorations(editor);
-            this.placeHolderDecorator.removeHighlights(editor);
-            this.placeHolderDecorator.undimEditor(editor);
-            messageDisposable.dispose();
-
-            reject(error);
-          }
+          reject(error);
         }
       }
     });
