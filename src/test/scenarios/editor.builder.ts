@@ -19,7 +19,7 @@ export class EditorBuilder {
     const lineAtMock = sinon.stub();
 
     for (let i = 0; i < lines.length; i++) {
-      lineAtMock.onCall(i).returns({ text: lines[i] });
+      lineAtMock.withArgs(i).returns({ text: lines[i] });
     }
 
     this.editorMock = {

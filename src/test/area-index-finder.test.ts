@@ -30,7 +30,7 @@ describe('AreaIndexFinder', () => {
       const editor = editorBuilder.withLines('my first row').build();
 
       // when
-      const result = sut.findByChar(editor, new JumpArea(0, 0), '');
+      const result = sut.findByChar(editor, new JumpArea([[0, 0]]), '');
 
       // then
       assert.deepEqual(result, {
@@ -53,7 +53,7 @@ describe('AreaIndexFinder', () => {
           .build();
 
         // when
-        const result = sut.findByChar(editor, new JumpArea(0, 2), 'a');
+        const result = sut.findByChar(editor, new JumpArea([[0, 2]]), 'a');
 
         // then
         assert.deepEqual(result, {
@@ -68,7 +68,7 @@ describe('AreaIndexFinder', () => {
         const editor = editorBuilder.withLines('class a {}').build();
 
         // when
-        const result = sut.findByChar(editor, new JumpArea(0, 0), 'A');
+        const result = sut.findByChar(editor, new JumpArea([[0, 0]]), 'A');
 
         // then
         assert.deepEqual(result, {
@@ -83,7 +83,7 @@ describe('AreaIndexFinder', () => {
         const editor = editorBuilder.withLines('class A {}').build();
 
         // when
-        const result = sut.findByChar(editor, new JumpArea(0, 0), 'a');
+        const result = sut.findByChar(editor, new JumpArea([[0, 0]]), 'a');
 
         // then
         assert.deepEqual(result, {
@@ -100,7 +100,7 @@ describe('AreaIndexFinder', () => {
           .build();
 
         // when
-        const result = sut.findByChar(editor, new JumpArea(1, 1), 'a');
+        const result = sut.findByChar(editor, new JumpArea([[1, 1]]), 'a');
 
         // then
         assert.deepEqual(result, {
@@ -117,7 +117,7 @@ describe('AreaIndexFinder', () => {
           .build();
 
         // when
-        const result = sut.findByChar(editor, new JumpArea(0, 0), 'a');
+        const result = sut.findByChar(editor, new JumpArea([[0, 0]]), 'a');
 
         // then
         assert.deepEqual(result, {
@@ -137,7 +137,7 @@ describe('AreaIndexFinder', () => {
           .build();
 
         // when
-        const result = sut.findByChar(editor, new JumpArea(0, 1), 'a');
+        const result = sut.findByChar(editor, new JumpArea([[0, 1]]), 'a');
 
         // then
         assert.deepEqual(result, {
@@ -161,7 +161,7 @@ describe('AreaIndexFinder', () => {
           .build();
 
         // when
-        const result = sut.findByChar(editor, new JumpArea(0, 2), 'a');
+        const result = sut.findByChar(editor, new JumpArea([[0, 2]]), 'a');
 
         // then
         assert.deepEqual(result, {
@@ -176,7 +176,7 @@ describe('AreaIndexFinder', () => {
         const editor = editorBuilder.withLines('myabsolutemethod').build();
 
         // when
-        const result = sut.findByChar(editor, new JumpArea(0, 0), 'A');
+        const result = sut.findByChar(editor, new JumpArea([[0, 0]]), 'A');
 
         // then
         assert.deepEqual(result, {
@@ -191,7 +191,7 @@ describe('AreaIndexFinder', () => {
         const editor = editorBuilder.withLines('myAbsoluteMethod').build();
 
         // when
-        const result = sut.findByChar(editor, new JumpArea(0, 0), 'a');
+        const result = sut.findByChar(editor, new JumpArea([[0, 0]]), 'a');
 
         // then
         assert.deepEqual(result, {
@@ -208,7 +208,7 @@ describe('AreaIndexFinder', () => {
           .build();
 
         // when
-        const result = sut.findByChar(editor, new JumpArea(1, 1), 'a');
+        const result = sut.findByChar(editor, new JumpArea([[1, 1]]), 'a');
 
         // then
         assert.deepEqual(result, {
@@ -228,7 +228,7 @@ describe('AreaIndexFinder', () => {
           .build();
 
         // when
-        const result = sut.findByChar(editor, new JumpArea(0, 1), 'a');
+        const result = sut.findByChar(editor, new JumpArea([[0, 1]]), 'a');
 
         // then
         assert.deepEqual(result, {
@@ -238,6 +238,34 @@ describe('AreaIndexFinder', () => {
             0: [7, 12, 18, 25, 27, 35, 44, 48, 74, 80],
             1: [6, 21, 42]
           }
+        });
+      });
+
+      it('should find values matching any letter with given char and multiple jump areas', () => {
+        // given
+        const editor = editorBuilder
+          .withLines(
+            'my first row',
+            'class a {}',
+            'empty',
+            'empty',
+            'empty',
+            'myAbsoluteMethod'
+          )
+          .build();
+
+        // when
+        const result = sut.findByChar(
+          editor,
+          new JumpArea([[0, 1], [5, 5]]),
+          'a'
+        );
+
+        // then
+        assert.deepEqual(result, {
+          count: 3,
+          highlightCount: 0,
+          indexes: { 0: [], 1: [2, 6], 5: [2] }
         });
       });
     });

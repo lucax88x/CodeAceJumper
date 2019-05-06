@@ -40,8 +40,7 @@ describe('JumpAreaFinder', () => {
 
       // then
       assert.deepEqual(result, {
-        startLine: 5,
-        lastLine: 15
+        lines: [[5, 15]]
       });
     });
 
@@ -60,8 +59,7 @@ describe('JumpAreaFinder', () => {
 
       // then
       assert.deepEqual(result, {
-        startLine: 5,
-        lastLine: 15
+        lines: [[5, 15]]
       });
     });
   });
@@ -102,8 +100,7 @@ describe('JumpAreaFinder', () => {
 
       // then
       assert.deepEqual(result, {
-        startLine: 5,
-        lastLine: 10
+        lines: [[5, 10]]
       });
     });
   });

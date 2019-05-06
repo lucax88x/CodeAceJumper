@@ -25,12 +25,14 @@ export class AreaIndexFinder {
   ): LineIndexes {
     const lineIndexes = new LineIndexes();
 
-    for (let i = area.startLine; i <= area.lastLine; i++) {
-      const line = editor.document.lineAt(i);
-      const indexes = this.findByCharOnGivenLine(line.text, char);
+    for (const areaLine of area.lines) {
+      for (let i = areaLine[0]; i <= areaLine[1]; i++) {
+        const line = editor.document.lineAt(i);
+        const indexes = this.findByCharOnGivenLine(line.text, char);
 
-      lineIndexes.count += indexes.length;
-      lineIndexes.indexes[i] = indexes;
+        lineIndexes.count += indexes.length;
+        lineIndexes.indexes[i] = indexes;
+      }
     }
 
     return lineIndexes;
