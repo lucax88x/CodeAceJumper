@@ -91,3 +91,7 @@ added ', " and < in the pattern
 ### 2.1.4
 
 - changed way to render highlights in the multichar and removed the limitation of 10
+
+### 2.1.5
+
+- now it uses full power of vscode api for multiple visible areas, for example when we collapse functions or classes
