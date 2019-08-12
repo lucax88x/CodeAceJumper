@@ -35,10 +35,10 @@
   resolved "https://registry.yarnpkg.com/@types/mocha/-/mocha-2.2.48.tgz#3523b126a0b049482e1c3c11877460f76622ffab"
   integrity sha512-nlK/iyETgafGli8Zh9zJVCTicvU3iajSkRwOh3Hhiva598CMqNJ4NcVCGMTGKpGpTYj/9R8RLzS9NAykSSCqGw==
 
-"@types/node@^7.0.43":
-  version "7.10.3"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-7.10.3.tgz#b85d16331cf5ffe434600816593f86e10ccc0e73"
-  integrity sha512-HeyK+csRk7Khhg9krpMGJeT9pLzjsmiJFHYRzYpPv/dQ5tPclQsbvceiX/HKynRt/9lMLorWUYTbBHC3hRI4sg==
+"@types/node@^12.7.1":
+  version "12.7.1"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-12.7.1.tgz#3b5c3a26393c19b400844ac422bd0f631a94d69d"
+  integrity sha512-aK9jxMypeSrhiYofWWBf/T7O+KwaiAHzM4sveCdWPn71lzUSMimRnKzhXDKfKwV1kWoBo2P1aGgaIYGLf9/ljw==
 
 "@types/ramda@^0.26.19":
   version "0.26.19"
