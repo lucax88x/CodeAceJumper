@@ -140,7 +140,7 @@
     "@types/xmlbuilder": "11.0.1",
     "mocha": "^5.2.0",
     "sinon": "^7.4.1",
-    "ts-loader": "^5.3.3",
+    "ts-loader": "^6.0.4",
     "tslint": "^5.18.0",
     "typescript": "^3.5.3",
     "vscode": "^1.1.36",
