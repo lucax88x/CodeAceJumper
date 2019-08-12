@@ -12,6 +12,40 @@ This extensions provides you with easy Ace Jump feature for Visual Studio Code. 
 
 ![example gif](https://user-images.githubusercontent.com/2300328/53043799-17ad7e80-3468-11e9-993e-9d425a9801e8.gif)
 
+## Keyboard shortcuts
+You may set keyboard shortcuts for invoking Code Ace Jumper by entering values in the keybindings.json file. For example:
+
+```json
+{
+    "key": "ctrl+alt+cmd+space",
+    "command": "extension.aceJump"
+},
+{
+    "key": "ctrl+cmd+space",
+    "command": "extension.aceJump.selection"
+}
+```
+
+Alternatively, you can set shortcuts using Code's own keyboard shortcuts GUI.
+
+## Advanced visual configuration for the placeholder
+Code Ace Jumper is preset with sensible visual defaults. You can further configure the aesthetics of the placeholders shown by adjusting the following settings in your settings.json file:
+
+```json
+aceJump.placeholder.width: placeholder width; defaults to 12
+aceJump.placeholder.height: placeholder height; defaults to 14
+aceJump.placeholder.fontSize: placeholder font size; defaults to 14
+aceJump.placeholder.textPosX: placeholder text X position; defaults to 2
+aceJump.placeholder.textPosY: placeholder text Y position; defaults to 12
+aceJump.placeholder.fontWeight: placeholder font weight; defaults to normal
+aceJump.placeholder.fontFamily: placeholder font family; defaults to Consolas
+aceJump.placeholder.upperCase: placeholder font to uppercase; defaults to false
+```
+
+__Note__ that the placeholder is an SVG asset so amending the font and size, for example, will require you to also amend the X/Y text positions.
+
+## Version history
+
 ### 1.0.0
 
 Initial release
