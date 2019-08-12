@@ -137,7 +137,7 @@
     "@types/node": "^7.0.43",
     "@types/ramda": "^0.26.19",
     "@types/sinon": "^7.0.6",
-    "@types/xmlbuilder": "0.0.28",
+    "@types/xmlbuilder": "11.0.1",
     "mocha": "^5.2.0",
     "sinon": "^7.2.4",
     "ts-loader": "^5.3.3",
