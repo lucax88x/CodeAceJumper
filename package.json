@@ -134,7 +134,7 @@
   },
   "devDependencies": {
     "@types/mocha": "^2.2.42",
-    "@types/node": "^7.0.43",
+    "@types/node": "^12.7.1",
     "@types/ramda": "^0.26.19",
     "@types/sinon": "^7.0.6",
     "@types/xmlbuilder": "0.0.28",
