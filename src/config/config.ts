@@ -68,7 +68,7 @@ export function buildConfig(cfg: WorkspaceConfiguration) {
   };
 
   config.finder = {
-    pattern: cfg.get('finder.pattern', `[ ,-.{_(\"'<\\[]`),
+    pattern: cfg.get('finder.pattern', `[ ,-.{_(\"'<\\[\t]`),
     skipSelection: cfg.get('finder.skipSelection', false),
     onlyInitialLetter: cfg.get('finder.onlyInitialLetter', true)
   };

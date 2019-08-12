@@ -3,7 +3,7 @@
   "displayName": "Code Ace Jumper",
   "description": "Visual Studio Code Ace Jump",
   "icon": "images/ace-jumper.png",
-  "version": "2.1.5",
+  "version": "2.1.6",
   "publisher": "lucax88x",
   "homepage": "https://github.com/lucax88x/CodeAceJumper",
   "license": "https://github.com/lucax88x/CodeAceJumper/license.md",
@@ -106,7 +106,7 @@
         },
         "aceJump.finder.pattern": {
           "type": "string",
-          "default": "[ ,-.{_(\"'<\\[]"
+          "default": "[ ,-.{_(\"'<\\[\t]"
         },
         "aceJump.finder.skipSelection": {
           "type": "boolean",

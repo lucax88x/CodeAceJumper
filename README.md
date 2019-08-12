@@ -129,3 +129,9 @@ added ', " and < in the pattern
 ### 2.1.5
 
 - now it uses full power of vscode api for multiple visible areas, for example when we collapse functions or classes
+
+### 2.1.6
+
+- updated readme, thanks to [pr](https://github.com/lucax88x/CodeAceJumper/pull/35)
+- audited node packages for security
+- when set to "only initial letter", first word of each line now works even with tabs indentation, [issue](https://github.com/lucax88x/CodeAceJumper/issues/33)
