@@ -144,7 +144,7 @@
     "typescript": "^3.5.3",
     "vscode": "^1.1.36",
     "webpack": "^4.39.1",
-    "webpack-cli": "^3.3.6"
+    "webpack-cli": "^3.3.7"
   },
   "dependencies": {
     "lodash": "^4.17.15",
