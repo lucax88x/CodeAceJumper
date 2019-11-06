@@ -134,7 +134,7 @@
   },
   "devDependencies": {
     "@types/mocha": "^5.2.7",
-    "@types/node": "^12.7.1",
+    "@types/node": "^12.12.6",
     "@types/ramda": "^0.26.19",
     "@types/sinon": "^7.0.13",
     "mocha": "^6.2.0",
