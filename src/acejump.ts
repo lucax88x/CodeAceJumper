@@ -58,7 +58,7 @@ export class AceJump {
               editor.selection.active.line,
               editor.selection.active.character
             ),
-            new Position(placeholder.line, placeholder.character)
+            new Position(placeholder.line, placeholder.character + 1)
           );
           // tslint:disable-next-line:no-empty
         } catch (_) {}
