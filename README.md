@@ -135,3 +135,8 @@ added ', " and < in the pattern
 - updated readme, thanks to [pr](https://github.com/lucax88x/CodeAceJumper/pull/35)
 - audited node packages for security
 - when set to "only initial letter", first word of each line now works even with tabs indentation, [issue](https://github.com/lucax88x/CodeAceJumper/issues/33)
+
+### 2.1.7
+
+- audited node packages for security
+- when using "selection mode", correctly selects also last character, [issue](https://github.com/lucax88x/CodeAceJumper/issues/108)
