@@ -125,7 +125,8 @@
   },
   "scripts": {
     "vscode:prepublish": "yarn run lint && webpack --mode production",
-    "publish": "vsce publish",
+    "vsce:login": "vsce login lucax88x",
+    "vsce:publish": "vsce publish",
     "compile": "webpack --mode development",
     "watch": "webpack --mode development --watch",
     "test-compile": "tsc -p ./",
