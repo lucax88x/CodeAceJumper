@@ -146,7 +146,7 @@
     "vsce": "^1.69.0",
     "vscode": "^1.1.36",
     "webpack": "^4.39.1",
-    "webpack-cli": "^3.3.6"
+    "webpack-cli": "^3.3.10"
   },
   "dependencies": {
     "lodash": "^4.17.15",
