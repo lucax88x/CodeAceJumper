@@ -140,7 +140,7 @@
     "@types/ramda": "^0.26.19",
     "@types/sinon": "^7.0.13",
     "mocha": "^6.2.0",
-    "sinon": "^7.4.1",
+    "sinon": "^8.0.2",
     "ts-loader": "^6.0.4",
     "tslint": "^5.18.0",
     "typescript": "^3.6.3",
