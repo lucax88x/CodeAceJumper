@@ -143,7 +143,7 @@
     "sinon": "^7.4.1",
     "ts-loader": "^6.0.4",
     "tslint": "^5.18.0",
-    "typescript": "^3.6.3",
+    "typescript": "^3.7.5",
     "vsce": "^1.69.0",
     "vscode": "^1.1.36",
     "webpack": "^4.39.1",
