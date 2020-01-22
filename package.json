@@ -30,6 +30,10 @@
     "*"
   ],
   "main": "./dist/extension",
+  "extensionKind": [
+    "workspace",
+    "ui"
+  ],
   "contributes": {
     "commands": [
       {
