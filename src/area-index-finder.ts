@@ -109,7 +109,8 @@ export class AreaIndexFinder {
         index += words[w].length + 1;
       }
     } else {
-      const regexp = new RegExp(`[${char}]`, 'gi');
+      const escapedChar = char.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const regexp = new RegExp(escapedChar, 'gi');
       let match: RegExpMatchArray | null;
       // tslint:disable-next-line:no-conditional-assignment
       while ((match = regexp.exec(line)) !== null) {
