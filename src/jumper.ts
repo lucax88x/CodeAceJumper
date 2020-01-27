@@ -87,52 +87,82 @@ export class Jumper {
           char = char.substring(0, 1);
         }
 
-        const area = this.jumpAreaFinder.findArea(editor);
-
-        const lineIndexes = this.areaIndexFinder.findByChar(editor, area, char);
-
-        if (lineIndexes.count <= 0) {
-          reject(CancelReason.NoMatches);
-          return;
-        }
-
-        let placeholders: Placeholder[] = this.placeholderCalculus.buildPlaceholders(
-          lineIndexes
+        const result = await this.buildPlaceholdersForChar(
+          editor,
+          char,
+          jumpKind
         );
+        resolve(result);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
 
-        if (placeholders.length === 0) {
-          reject(CancelReason.NoMatches);
-          return;
-        }
+  private buildPlaceholdersForChar(
+    editor: TextEditor,
+    char: string,
+    jumpKind: JumpKind
+  ) {
+    return new Promise<Placeholder>(async (resolve, reject) => {
+      const area = this.jumpAreaFinder.findArea(editor);
 
-        if (placeholders.length === 1) {
-          const placeholder = head(placeholders);
-          resolve(placeholder);
-        } else {
-          try {
-            if (jumpKind === JumpKind.MultiChar) {
-              placeholders = await this.recursivelyRestrict(
+      const lineIndexes = this.areaIndexFinder.findByChar(editor, area, char);
+
+      if (lineIndexes.count <= 0) {
+        reject(CancelReason.NoMatches);
+        return;
+      }
+
+      let placeholders: Placeholder[] = this.placeholderCalculus.buildPlaceholders(
+        lineIndexes
+      );
+
+      if (placeholders.length === 0) {
+        reject(CancelReason.NoMatches);
+        return;
+      }
+
+      if (placeholders.length === 1) {
+        const placeholder = head(placeholders);
+        resolve(placeholder);
+      } else {
+        try {
+          if (jumpKind === JumpKind.MultiChar) {
+            placeholders = await this.recursivelyRestrict(
+              editor,
+              placeholders,
+              lineIndexes
+            );
+          }
+
+          if (placeholders.length > 1) {
+            const jumpedPlaceholder = await this.recursivelyJumpTo(
+              editor,
+              placeholders
+            );
+            resolve(jumpedPlaceholder);
+          } else {
+            resolve(head(placeholders));
+          }
+        } catch (error) {
+          // let's try to recalculate placeholders if we change visible range
+          if (error === CancelReason.ChangedVisibleRanges) {
+            try {
+              const placeholder = await this.buildPlaceholdersForChar(
                 editor,
-                placeholders,
-                lineIndexes
+                char,
+                jumpKind
               );
-            }
+              resolve(placeholder);
 
-            if (placeholders.length > 1) {
-              const jumpedPlaceholder = await this.recursivelyJumpTo(
-                editor,
-                placeholders
-              );
-              resolve(jumpedPlaceholder);
-            } else {
-              resolve(head(placeholders));
+            } catch (error) {
+              reject(error);
             }
-          } catch (error) {
+          } else {
             reject(error);
           }
         }
-      } catch (error) {
-        reject(error);
       }
     });
   }
@@ -319,6 +349,10 @@ export class Jumper {
     switch (error) {
       case CancelReason.EmptyValue:
         return 'Empty Value';
+      case CancelReason.ChangedActiveEditor:
+        return 'Changed editor';
+      case CancelReason.ChangedVisibleRanges:
+        return 'Changed visible range';
       case CancelReason.NoMatches:
       case CancelReason.NoPlaceHolderMatched:
         return 'No Matches';

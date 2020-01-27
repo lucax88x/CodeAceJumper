@@ -8,6 +8,7 @@ import {
 } from 'vscode';
 
 import { Input } from './models/input';
+import { CancelReason } from './models/cancel-reason';
 
 export class InlineInput {
   private subscriptions: Disposable[] = [];
@@ -28,7 +29,10 @@ export class InlineInput {
       });
 
       window.onDidChangeActiveTextEditor(() => {
-        this.cancel();
+        this.cancelWithReason(CancelReason.ChangedActiveEditor);
+      });
+      window.onDidChangeTextEditorVisibleRanges(() => {
+        this.cancelWithReason(CancelReason.ChangedVisibleRanges);
       });
     });
 
@@ -94,8 +98,12 @@ export class InlineInput {
   };
 
   private cancel = () => {
+    this.cancelWithReason(CancelReason.Cancel);
+  };
+
+  private cancelWithReason = (cancelReason: CancelReason) => {
     if (this.input) {
-      this.input.reject(true);
+      this.input.reject(cancelReason);
     }
     this.dispose();
     this.setContext(false);
