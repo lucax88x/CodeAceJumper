@@ -155,7 +155,6 @@ export class Jumper {
                 jumpKind
               );
               resolve(placeholder);
-
             } catch (error) {
               reject(error);
             }
@@ -209,21 +208,14 @@ export class Jumper {
           placeholder = placeholder.root;
         }
 
-        if (placeholder.childrens.length > 1) {
-          try {
-            const innerPlaceholder = await this.recursivelyJumpTo(
-              editor,
-              placeholder.childrens
-            );
-            resolve(innerPlaceholder);
-            messageDisposable.dispose();
-          } catch (error) {
-            reject(error);
-          }
-        } else {
-          resolve(placeholder);
-          messageDisposable.dispose();
-        }
+        const resolvedPlaceholder = await this.resolvePlaceholderOrChildren(
+          placeholder,
+          editor,
+        );
+        resolve(resolvedPlaceholder);
+
+        messageDisposable.dispose();
+
       } catch (error) {
         this.placeHolderDecorator.removeDecorations(editor);
         this.placeHolderDecorator.removeHighlights(editor);
@@ -231,6 +223,27 @@ export class Jumper {
         messageDisposable.dispose();
 
         reject(error);
+      }
+    });
+  }
+
+  private async resolvePlaceholderOrChildren(
+    placeholder: Placeholder,
+    editor: TextEditor,
+  ) {
+    return new Promise<Placeholder>(async (resolve, reject) => {
+      if (placeholder.childrens.length > 1) {
+        try {
+          const innerPlaceholder = await this.recursivelyJumpTo(
+            editor,
+            placeholder.childrens
+          );
+          resolve(innerPlaceholder);
+        } catch (error) {
+          reject(error);
+        }
+      } else {
+        resolve(placeholder);
       }
     });
   }
@@ -289,8 +302,15 @@ export class Jumper {
           const placeholder = findPlaceholder(char)(placeholders);
 
           if (!!placeholder) {
-            resolve([placeholder]);
+
+            const resolvedPlaceholder = await this.resolvePlaceholderOrChildren(
+              placeholder,
+              editor,
+            );
+    
+            resolve([resolvedPlaceholder]);
             messageDisposable.dispose();
+
             return;
           } else {
             // we keep the existing placeholders and try again
@@ -324,11 +344,13 @@ export class Jumper {
             );
             messageDisposable.dispose();
           } catch (error) {
+            console.error(error);
             reject(error);
           }
         }
       } catch (error) {
-        if (error === true) {
+        console.error(error);
+        if (error === CancelReason.Cancel) {
           // we pressed the escape character | canceled so we can start to jump
           messageDisposable.dispose();
 

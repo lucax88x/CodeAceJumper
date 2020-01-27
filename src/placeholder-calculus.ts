@@ -26,14 +26,16 @@ export class PlaceHolderCalculus {
       }
       const line = parseInt(key, 10);
       const lineIndex = lineIndexes.indexes[key];
+      const lineIndexWithoutNegativeIndexes = filter(i => i >= 0, lineIndex);
 
-      for (let i = 0; i < lineIndex.length; i++) {
+      for (let i = 0; i < lineIndexWithoutNegativeIndexes.length; i++) {
         if (count + 1 > Math.pow(this.config.characters.length, 2)) {
           breakCycles = true;
           break;
         }
 
-        const characterIndex = lineIndex[i];
+        const characterIndex = lineIndexWithoutNegativeIndexes[i];
+
 
         if (count >= this.config.characters.length) {
           for (let y = candidate; y < placeholders.length; y++) {
