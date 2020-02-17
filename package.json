@@ -10,7 +10,9 @@
   "keywords": [
     "jump",
     "AceJump",
-    "EasyMotion"
+    "EasyMotion",
+    "emacs",
+    "vim"
   ],
   "repository": {
     "type": "git",

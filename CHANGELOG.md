@@ -104,3 +104,9 @@ added ', " and < in the pattern
 
 - fixed [#34](https://github.com/lucax88x/CodeAceJumper/issues/34)
 - fixed [#153](https://github.com/lucax88x/CodeAceJumper/issues/153)
+
+## [2.2.0]
+
+- fixed [#160](https://github.com/lucax88x/CodeAceJumper/issues/160)
+- implemented [#151](https://github.com/lucax88x/CodeAceJumper/issues/151)
+![video](https://media.giphy.com/media/jUQixLErR27iPssBYq/giphy.gif)

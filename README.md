@@ -10,7 +10,7 @@ This extensions provides you with easy Ace Jump feature for Visual Studio Code. 
 
 - `extension.aceJump.multiChar` allows us to refine the placeholders by providing more characters. When one matches it automatically jumps, otherwise you can escape and then jump by matching remaining placeholders.
 
-![example gif](https://user-images.githubusercontent.com/2300328/53043799-17ad7e80-3468-11e9-993e-9d425a9801e8.gif)
+![example gif](https://media.giphy.com/media/IzubTB1OPhaMUckWZb/giphy.gif)
 
 ## Keyboard shortcuts
 You may set keyboard shortcuts for invoking Code Ace Jumper by entering values in the keybindings.json file. For example:
