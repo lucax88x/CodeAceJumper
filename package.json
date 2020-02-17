@@ -64,47 +64,23 @@
       "properties": {
         "aceJump.placeholder.backgroundColor": {
           "type": "string",
-          "default": "yellow"
+          "default": "#c0b18b"
         },
         "aceJump.placeholder.color": {
           "type": "string",
-          "default": "black"
-        },
-        "aceJump.placeholder.border": {
-          "type": "string",
-          "default": "dotted thin black"
-        },
-        "aceJump.placeholder.width": {
-          "type": "number",
-          "default": 12
-        },
-        "aceJump.placeholder.height": {
-          "type": "number",
-          "default": 14
-        },
-        "aceJump.placeholder.fontSize": {
-          "type": "number",
-          "default": 14
-        },
-        "aceJump.placeholder.textPosX": {
-          "type": "number",
-          "default": 2
-        },
-        "aceJump.placeholder.textPosY": {
-          "type": "number",
-          "default": 12
-        },
-        "aceJump.placeholder.fontWeight": {
-          "type": "string",
-          "default": "normal"
-        },
-        "aceJump.placeholder.fontFamily": {
-          "type": "string",
-          "default": "Consolas"
+          "default": "#333"
         },
         "aceJump.placeholder.upperCase": {
           "type": "boolean",
           "default": false
+        },
+        "aceJump.placeholder.border": {
+          "type": "string",
+          "default": "none"
+        },
+        "aceJump.placeholder.fontWeight": {
+          "type": "string",
+          "default": "500"
         },
         "aceJump.highlight.backgroundColor": {
           "type": "string",
@@ -130,7 +106,7 @@
     }
   },
   "scripts": {
-    "vscode:prepublish": "yarn run lint && webpack --mode production",
+    "vscode:prepublish": "npm run lint && webpack --mode production",
     "vsce:login": "vsce login lucax88x",
     "vsce:publish": "vsce publish",
     "compile": "webpack --mode development",
@@ -138,7 +114,7 @@
     "test-compile": "tsc -p ./",
     "lint": "tslint -c tslint.json 'src/**/*.ts' 'test/**/*.ts'",
     "postinstall": "node ./node_modules/vscode/bin/install",
-    "test": "yarn run test-compile && node ./node_modules/vscode/bin/test"
+    "test": "npm run test-compile && node ./node_modules/vscode/bin/test"
   },
   "devDependencies": {
     "@types/mocha": "^5.2.7",

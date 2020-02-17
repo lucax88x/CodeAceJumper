@@ -44,20 +44,11 @@ export function buildConfig(cfg: WorkspaceConfiguration) {
   const config = new Config();
 
   config.placeholder = {
-    backgroundColor: cfg.get('placeholder.backgroundColor', 'yellow'),
-    color: cfg.get('placeholder.color', 'black'),
-    border: cfg.get('placeholder.border', 'dotted thin black'),
-
-    width: cfg.get('placeholder.width', 12),
-    height: cfg.get('placeholder.height', 14),
-
-    textPosX: cfg.get('placeholder.textPosX', 2),
-    textPosY: cfg.get('placeholder.textPosY', 12),
-
-    fontSize: cfg.get('placeholder.fontSize', 14),
-    fontWeight: cfg.get('placeholder.fontWeight', 'normal'),
-    fontFamily: cfg.get('placeholder.fontFamily', 'Consolas'),
-    upperCase: cfg.get('placeholder.upperCase', false)
+    backgroundColor: cfg.get('placeholder.backgroundColor', '#c0b18b'),
+    color: cfg.get('placeholder.color', '#333'),
+    upperCase: cfg.get('placeholder.upperCase', false),
+    fontWeight: cfg.get('placeholder.fontWeight', '500'),
+    border: cfg.get('placeholder.border', 'none')
   };
 
   config.highlight = {
