@@ -4,5 +4,5 @@ export enum CancelReason {
   ChangedVisibleRanges = 'changed-visible-ranges',
   EmptyValue = 'empty-value',
   NoMatches = 'no-matches',
-  NoPlaceHolderMatched = 'no-placeholder-matched'
+  NoPlaceHolderMatched = 'no-placeholder-matched',
 }

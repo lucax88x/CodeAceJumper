@@ -69,7 +69,7 @@ describe('Jumper', () => {
 
           scenario.hasStatusBarMessages(
             '$(rocket) Type',
-            '$(rocket) Empty Value'
+            '$(rocket) Empty Value',
           );
         }
       });
@@ -104,7 +104,10 @@ describe('Jumper', () => {
           // then
           assert.equal(error.message, 'No Matches');
 
-          scenario.hasStatusBarMessages('$(rocket) Type', '$(rocket) No Matches');
+          scenario.hasStatusBarMessages(
+            '$(rocket) Type',
+            '$(rocket) No Matches',
+          );
         }
       });
 
@@ -123,7 +126,7 @@ describe('Jumper', () => {
           index: 0,
           placeholder: 'a',
           line: 2,
-          character: 5
+          character: 5,
         });
 
         scenario.hasStatusBarMessages('$(rocket) Type', '$(rocket) Jumped!');
@@ -138,7 +141,7 @@ describe('Jumper', () => {
         .withLines(
           'my first row',
           'this absolutely match',
-          'also this is also matching'
+          'also this is also matching',
         )
         .withCommands('a', '');
 
@@ -154,7 +157,7 @@ describe('Jumper', () => {
         scenario.hasStatusBarMessages(
           '$(rocket) Type',
           '$(rocket) Jump To',
-          '$(rocket) Empty Value'
+          '$(rocket) Empty Value',
         );
       }
     });
@@ -165,7 +168,7 @@ describe('Jumper', () => {
         .withLines(
           'my first row',
           'this absolutely match',
-          'also this is also matching'
+          'also this is also matching',
         )
         .withCommands('a', 'd');
 
@@ -181,7 +184,7 @@ describe('Jumper', () => {
         scenario.hasStatusBarMessages(
           '$(rocket) Type',
           '$(rocket) Jump To',
-          '$(rocket) No Matches'
+          '$(rocket) No Matches',
         );
       }
     });
@@ -192,7 +195,7 @@ describe('Jumper', () => {
         .withLines(
           'my first row',
           'this absolutely match',
-          'also this is also matching'
+          'also this is also matching',
         )
         .withCommands('a', 'b');
 
@@ -208,13 +211,13 @@ describe('Jumper', () => {
         index: 1,
         placeholder: 'b',
         line: 3,
-        character: 0
+        character: 0,
       });
 
       scenario.hasStatusBarMessages(
         '$(rocket) Type',
         '$(rocket) Jump To',
-        '$(rocket) Jumped!'
+        '$(rocket) Jumped!',
       );
     });
 
@@ -226,7 +229,7 @@ describe('Jumper', () => {
           'a a a a a a a a a a a a a',
           'a a a a a a a a a a a a a',
           'a a a a a a a a a a a a a',
-          'a a a a a a a a a a a a a'
+          'a a a a a a a a a a a a a',
         )
         .withCommands('a', 'b', 'f');
 
@@ -242,14 +245,14 @@ describe('Jumper', () => {
         index: 5,
         placeholder: 'f',
         line: 3,
-        character: 10
+        character: 10,
       });
 
       scenario.hasStatusBarMessages(
         '$(rocket) Type',
         '$(rocket) Jump To',
         '$(rocket) Jump To',
-        '$(rocket) Jumped!'
+        '$(rocket) Jumped!',
       );
     });
 
@@ -259,7 +262,7 @@ describe('Jumper', () => {
         .withLines(
           'my first row',
           'this absolutely match',
-          'also this is also matching'
+          'also this is also matching',
         )
         .withCommands('a', 'b');
 
@@ -275,13 +278,13 @@ describe('Jumper', () => {
         index: 1,
         placeholder: 'b',
         line: 3,
-        character: 0
+        character: 0,
       });
 
       scenario.hasStatusBarMessages(
         '$(rocket) Type',
         '$(rocket) Jump To',
-        '$(rocket) Jumped!'
+        '$(rocket) Jumped!',
       );
     });
   });
@@ -293,7 +296,7 @@ describe('Jumper', () => {
         .withLines(
           'my first row',
           'this absolutely match',
-          'also this is also matching'
+          'also this is also matching',
         )
         .withCommands('a', '');
 
@@ -309,7 +312,7 @@ describe('Jumper', () => {
         scenario.hasStatusBarMessages(
           '$(rocket) Type',
           '$(rocket) Next char',
-          '$(rocket) Empty Value'
+          '$(rocket) Empty Value',
         );
       }
     });
@@ -322,13 +325,13 @@ describe('Jumper', () => {
         .withLines(
           'my first row',
           'this absolutely match',
-          'also this is also matching'
+          'also this is also matching',
         )
         .withCommands(
           'a', // we try to match a
           'b', // we try to match second char
           'escape', // we escape
-          'a' // we try to jump to placeholder
+          'a', // we try to jump to placeholder
         );
 
       // when
@@ -343,13 +346,13 @@ describe('Jumper', () => {
         index: 0,
         placeholder: 'a',
         line: 2,
-        character: 5
+        character: 5,
       });
 
       scenario.hasStatusBarMessages(
         '$(rocket) Type',
         '$(rocket) Next char',
-        '$(rocket) Jumped!'
+        '$(rocket) Jumped!',
       );
     });
 
@@ -363,7 +366,7 @@ describe('Jumper', () => {
         .withLines(
           'my first row',
           'this absolutely match',
-          'also this is also matching'
+          'also this is also matching',
         )
         .withCommands(
           'a', // we try to match a
@@ -371,7 +374,7 @@ describe('Jumper', () => {
           'f', // non matching restrict char
           'l', // we try to match second char
           'escape', // we escape
-          'b' // we try to jump to placeholder
+          'b', // we try to jump to placeholder
         );
 
       // when
@@ -386,7 +389,7 @@ describe('Jumper', () => {
         index: 1,
         placeholder: 'b',
         line: 3,
-        character: 0
+        character: 0,
       });
 
       scenario.hasStatusBarMessages(
@@ -396,7 +399,7 @@ describe('Jumper', () => {
         '$(rocket) Next char',
         '$(rocket) Next char',
         '$(rocket) Jump To',
-        '$(rocket) Jumped!'
+        '$(rocket) Jumped!',
       );
     });
 
@@ -410,12 +413,12 @@ describe('Jumper', () => {
         .withLines(
           'my first row',
           'this absolutely match',
-          'also this is also matching'
+          'also this is also matching',
         )
         .withCommands(
           'a', // we try to match a
           'l', // we restrict with l
-          'c' // we jump to placeholder c
+          'c', // we jump to placeholder c
         );
 
       // when
@@ -430,14 +433,14 @@ describe('Jumper', () => {
         index: 2,
         placeholder: 'c',
         line: 3,
-        character: 13
+        character: 13,
       });
 
       scenario.hasStatusBarMessages(
         '$(rocket) Type',
         '$(rocket) Next char',
         '$(rocket) Next char',
-        '$(rocket) Jumped!'
+        '$(rocket) Jumped!',
       );
     });
   });

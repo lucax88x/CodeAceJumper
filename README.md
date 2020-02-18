@@ -12,16 +12,23 @@ This extensions provides you with easy Ace Jump feature for Visual Studio Code. 
 
 ![example gif](https://media.giphy.com/media/IzubTB1OPhaMUckWZb/giphy.gif)
 
+- `extension.aceJump.selection` allows us to refine the placeholders by providing more characters. When one matches it automatically jumps, otherwise you can escape and then jump by matching remaining placeholders.
+
 ## Keyboard shortcuts
+
 You may set keyboard shortcuts for invoking Code Ace Jumper by entering values in the keybindings.json file. For example:
 
 ```json
 {
-    "key": "ctrl+alt+cmd+space",
+    "key": "your key",
     "command": "extension.aceJump"
 },
 {
-    "key": "ctrl+cmd+space",
+    "key": "your key",
+    "command": "extension.aceJump.multiChar"
+},
+{
+    "key": "your key",
     "command": "extension.aceJump.selection"
 }
 ```
@@ -29,17 +36,13 @@ You may set keyboard shortcuts for invoking Code Ace Jumper by entering values i
 Alternatively, you can set shortcuts using Code's own keyboard shortcuts GUI.
 
 ## Advanced visual configuration for the placeholder
+
 Code Ace Jumper is preset with sensible visual defaults. You can further configure the aesthetics of the placeholders shown by adjusting the following settings in your settings.json file:
 
 ```json
-aceJump.placeholder.width: placeholder width; defaults to 12
-aceJump.placeholder.height: placeholder height; defaults to 14
-aceJump.placeholder.fontSize: placeholder font size; defaults to 14
-aceJump.placeholder.textPosX: placeholder text X position; defaults to 2
-aceJump.placeholder.textPosY: placeholder text Y position; defaults to 12
-aceJump.placeholder.fontWeight: placeholder font weight; defaults to normal
-aceJump.placeholder.fontFamily: placeholder font family; defaults to Consolas
+aceJump.placeholder.backgroundColor: placeholder background color; defaults to #c0b18b
+aceJump.placeholder.color: placeholder width; defaults to #333
 aceJump.placeholder.upperCase: placeholder font to uppercase; defaults to false
+aceJump.placeholder.border: placeholder border; defaults to none
+aceJump.placeholder.fontWeight: placeholder font weight; defaults to 500
 ```
-
-__Note__ that the placeholder is an SVG asset so amending the font and size, for example, will require you to also amend the X/Y text positions.

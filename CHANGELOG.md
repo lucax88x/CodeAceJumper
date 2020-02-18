@@ -105,8 +105,10 @@ added ', " and < in the pattern
 - fixed [#34](https://github.com/lucax88x/CodeAceJumper/issues/34)
 - fixed [#153](https://github.com/lucax88x/CodeAceJumper/issues/153)
 
-## [2.2.0]
+## [3.0.0]
 
 - fixed [#160](https://github.com/lucax88x/CodeAceJumper/issues/160)
 - implemented [#151](https://github.com/lucax88x/CodeAceJumper/issues/151)
-![video](https://media.giphy.com/media/jUQixLErR27iPssBYq/giphy.gif)
+  ![video](https://media.giphy.com/media/jUQixLErR27iPssBYq/giphy.gif)
+- implemented [#174](https://github.com/lucax88x/CodeAceJumper/issues/174)
+- fixed [164](https://github.com/lucax88x/CodeAceJumper/issues/164) which is the reason of the breaking change
