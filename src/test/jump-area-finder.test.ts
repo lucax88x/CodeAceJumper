@@ -31,8 +31,8 @@ describe('JumpAreaFinder', () => {
         selection: {
           isEmpty: false,
           anchor: { line: 5 },
-          active: { line: 15 }
-        }
+          active: { line: 15 },
+        },
       };
 
       // when
@@ -40,7 +40,7 @@ describe('JumpAreaFinder', () => {
 
       // then
       assert.deepEqual(result, {
-        lines: [[5, 15]]
+        lines: [[5, 15]],
       });
     });
 
@@ -50,8 +50,8 @@ describe('JumpAreaFinder', () => {
         selection: {
           isEmpty: false,
           anchor: { line: 15 },
-          active: { line: 5 }
-        }
+          active: { line: 5 },
+        },
       };
 
       // when
@@ -59,7 +59,7 @@ describe('JumpAreaFinder', () => {
 
       // then
       assert.deepEqual(result, {
-        lines: [[5, 15]]
+        lines: [[5, 15]],
       });
     });
   });
@@ -69,7 +69,7 @@ describe('JumpAreaFinder', () => {
       // given
       editorMock = {
         selection: { isEmpty: true },
-        visibleRanges: []
+        visibleRanges: [],
       };
 
       try {
@@ -90,9 +90,9 @@ describe('JumpAreaFinder', () => {
         visibleRanges: [
           {
             start: { line: 5 },
-            end: { line: 10 }
-          }
-        ]
+            end: { line: 10 },
+          },
+        ],
       };
 
       // when
@@ -100,7 +100,7 @@ describe('JumpAreaFinder', () => {
 
       // then
       assert.deepEqual(result, {
-        lines: [[5, 10]]
+        lines: [[5, 10]],
       });
     });
   });

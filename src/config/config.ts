@@ -33,7 +33,7 @@ export class Config {
     'w',
     'x',
     'y',
-    'z'
+    'z',
   ];
   public placeholder = new PlaceholderConfig();
   public highlight = new HighlightConfig();
@@ -50,24 +50,24 @@ export function buildConfig(cfg: WorkspaceConfiguration) {
     color: cfg.get('placeholder.color', '#333'),
     upperCase: cfg.get('placeholder.upperCase', false),
     fontWeight: cfg.get('placeholder.fontWeight', '500'),
-    border: cfg.get('placeholder.border', 'none')
+    border: cfg.get('placeholder.border', 'none'),
   };
 
   config.highlight = {
     backgroundColor: cfg.get(
       'highlight.backgroundColor',
-      'rgba(124,240,10,0.5)'
-    )
+      'rgba(124,240,10,0.5)',
+    ),
   };
 
   config.finder = {
     pattern: cfg.get('finder.pattern', `[ ,-.{_(\"'<\\[\t]`),
     skipSelection: cfg.get('finder.skipSelection', false),
-    onlyInitialLetter: cfg.get('finder.onlyInitialLetter', true)
+    onlyInitialLetter: cfg.get('finder.onlyInitialLetter', true),
   };
 
   config.dim = {
-    enabled: cfg.get('dim.enabled', true)
+    enabled: cfg.get('dim.enabled', true),
   };
 
   config.scroll = {

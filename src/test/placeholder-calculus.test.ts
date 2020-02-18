@@ -19,8 +19,8 @@ describe('PlaceHolderCalculus', () => {
           count: 3,
           highlightCount: 0,
           indexes: {
-            0: [0, 1, 2]
-          }
+            0: [0, 1, 2],
+          },
         });
 
         assert.equal(placeholders.length, 3);
@@ -35,8 +35,8 @@ describe('PlaceHolderCalculus', () => {
           count: 4,
           highlightCount: 0,
           indexes: {
-            0: [0, 1, 2, 3]
-          }
+            0: [0, 1, 2, 3],
+          },
         });
 
         assert.equal(placeholders.length, 4);
@@ -52,8 +52,8 @@ describe('PlaceHolderCalculus', () => {
           count: 5,
           highlightCount: 0,
           indexes: {
-            0: [0, 1, 2, 3, 4]
-          }
+            0: [0, 1, 2, 3, 4],
+          },
         });
 
         assert.equal(placeholders.length, 5);
@@ -70,8 +70,8 @@ describe('PlaceHolderCalculus', () => {
           count: 6,
           highlightCount: 0,
           indexes: {
-            0: [0, 1, 2, 3, 4, 5]
-          }
+            0: [0, 1, 2, 3, 4, 5],
+          },
         });
 
         assert.equal(placeholders.length, 6);
@@ -89,8 +89,8 @@ describe('PlaceHolderCalculus', () => {
           count: 7,
           highlightCount: 0,
           indexes: {
-            0: [0, 1, 2, 3, 4, 5, 6]
-          }
+            0: [0, 1, 2, 3, 4, 5, 6],
+          },
         });
 
         assert.equal(placeholders.length, 7);
@@ -109,8 +109,8 @@ describe('PlaceHolderCalculus', () => {
           count: 8,
           highlightCount: 0,
           indexes: {
-            0: [0, 1, 2, 3, 4, 5, 6, 7]
-          }
+            0: [0, 1, 2, 3, 4, 5, 6, 7],
+          },
         });
 
         assert.equal(placeholders.length, 8);
@@ -130,8 +130,8 @@ describe('PlaceHolderCalculus', () => {
           count: 9,
           highlightCount: 0,
           indexes: {
-            0: [0, 1, 2, 3, 4, 5, 6, 7, 8]
-          }
+            0: [0, 1, 2, 3, 4, 5, 6, 7, 8],
+          },
         });
 
         assert.equal(placeholders.length, 9);
@@ -152,8 +152,8 @@ describe('PlaceHolderCalculus', () => {
           count: 10,
           highlightCount: 0,
           indexes: {
-            0: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-          }
+            0: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+          },
         });
 
         assert.equal(placeholders.length, 9);
@@ -174,8 +174,8 @@ describe('PlaceHolderCalculus', () => {
           count: 3,
           highlightCount: 0,
           indexes: {
-            0: [-1, -1, -1]
-          }
+            0: [-1, -1, -1],
+          },
         });
 
         assert.equal(placeholders.length, 0);
@@ -186,8 +186,8 @@ describe('PlaceHolderCalculus', () => {
           count: 3,
           highlightCount: 0,
           indexes: {
-            0: [0, -1, 2]
-          }
+            0: [0, -1, 2],
+          },
         });
 
         assert.equal(placeholders.length, 2);
@@ -201,8 +201,8 @@ describe('PlaceHolderCalculus', () => {
           count: 3,
           highlightCount: 0,
           indexes: {
-            0: [-1, -1, 2]
-          }
+            0: [-1, -1, 2],
+          },
         });
 
         assert.equal(placeholders.length, 1);
@@ -218,9 +218,9 @@ describe('PlaceHolderCalculus', () => {
       const ranges = sut.getPlaceholderHoles(
         [
           { ...placeholder, line: 0, character: 21 },
-          { ...placeholder, line: 2, character: 5 }
+          { ...placeholder, line: 2, character: 5 },
         ],
-        50
+        50,
       );
 
       assert.equal(ranges.length, 3);
@@ -247,10 +247,10 @@ describe('PlaceHolderCalculus', () => {
       const ranges = sut.getPlaceholderHoles(
         [
           { ...placeholder, line: 0, character: 21 },
-          { ...placeholder, line: 2, character: 5 }
+          { ...placeholder, line: 2, character: 5 },
         ],
         50,
-        5
+        5,
       );
 
       assert.equal(ranges.length, 3);

@@ -1,8 +1,8 @@
 import { find, head } from 'ramda';
-import { Disposable, TextEditor, window } from 'vscode';
-
+import { commands, Disposable, TextEditor, window } from 'vscode';
 import { AreaIndexFinder } from './area-index-finder';
 import { Config } from './config/config';
+import { asyncDebounce } from './debounce';
 import { InlineInput } from './inline-input';
 import { JumpAreaFinder } from './jump-area-finder';
 import { CancelReason } from './models/cancel-reason';
@@ -167,16 +167,20 @@ export class Jumper {
         } catch (error) {
           // let's try to recalculate placeholders if we change visible range
           if (error === CancelReason.ChangedVisibleRanges) {
-            try {
-              const placeholder = await this.buildPlaceholdersForChar(
-                editor,
-                char,
-                jumpKind
-              );
-              resolve(placeholder);
-            } catch (error) {
-              reject(error);
-            }
+            const debounced = await asyncDebounce(async () => {
+              try {
+                const placeholder = await this.buildPlaceholdersForChar(
+                  editor,
+                  char,
+                  jumpKind
+                );
+                resolve(placeholder);
+              } catch (error) {
+                reject(error);
+              }
+            }, 500);
+
+            await debounced();
           } else {
             reject(error);
           }
@@ -322,12 +326,11 @@ export class Jumper {
           const placeholder = findPlaceholder(char)(placeholders);
 
           if (!!placeholder) {
-
             const resolvedPlaceholder = await this.resolvePlaceholderOrChildren(
               placeholder,
-              editor,
+              editor
             );
-    
+
             resolve([resolvedPlaceholder]);
             messageDisposable.dispose();
 

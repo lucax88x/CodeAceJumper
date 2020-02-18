@@ -36,7 +36,7 @@ describe('AreaIndexFinder', () => {
       assert.deepEqual(result, {
         count: 0,
         highlightCount: 0,
-        indexes: { 0: [] }
+        indexes: { 0: [] },
       });
     });
 
@@ -59,7 +59,7 @@ describe('AreaIndexFinder', () => {
         assert.deepEqual(result, {
           count: 1,
           highlightCount: 0,
-          indexes: { 0: [], 1: [6], 2: [] }
+          indexes: { 0: [], 1: [6], 2: [] },
         });
       });
 
@@ -74,7 +74,7 @@ describe('AreaIndexFinder', () => {
         assert.deepEqual(result, {
           count: 1,
           highlightCount: 0,
-          indexes: { 0: [6] }
+          indexes: { 0: [6] },
         });
       });
 
@@ -89,7 +89,7 @@ describe('AreaIndexFinder', () => {
         assert.deepEqual(result, {
           count: 1,
           highlightCount: 0,
-          indexes: { 0: [6] }
+          indexes: { 0: [6] },
         });
       });
 
@@ -106,7 +106,7 @@ describe('AreaIndexFinder', () => {
         assert.deepEqual(result, {
           count: 1,
           highlightCount: 0,
-          indexes: { 1: [6] }
+          indexes: { 1: [6] },
         });
       });
 
@@ -123,7 +123,7 @@ describe('AreaIndexFinder', () => {
         assert.deepEqual(result, {
           count: 11,
           highlightCount: 0,
-          indexes: { 0: [1, 4, 7, 10, 13, 16, 19, 22, 25, 28, 31] }
+          indexes: { 0: [1, 4, 7, 10, 13, 16, 19, 22, 25, 28, 31] },
         });
       });
 
@@ -132,7 +132,7 @@ describe('AreaIndexFinder', () => {
         const editor = editorBuilder
           .withLines(
             `public abstract class my-amazing-class (private absolute: string, public _abs: !Abs)`,
-            `{ if(_abs) { return "abs"; else { return 'absolute' } } }`
+            `{ if(_abs) { return "abs"; else { return 'absolute' } } }`,
           )
           .build();
 
@@ -143,7 +143,7 @@ describe('AreaIndexFinder', () => {
         assert.deepEqual(result, {
           count: 7,
           highlightCount: 0,
-          indexes: { 0: [7, 25, 48, 74], 1: [6, 21, 42] }
+          indexes: { 0: [7, 25, 48, 74], 1: [6, 21, 42] },
         });
       });
     });
@@ -167,7 +167,7 @@ describe('AreaIndexFinder', () => {
         assert.deepEqual(result, {
           count: 3,
           highlightCount: 0,
-          indexes: { 0: [], 1: [2, 6], 2: [2] }
+          indexes: { 0: [], 1: [2, 6], 2: [2] },
         });
       });
 
@@ -182,7 +182,7 @@ describe('AreaIndexFinder', () => {
         assert.deepEqual(result, {
           count: 1,
           highlightCount: 0,
-          indexes: { 0: [2] }
+          indexes: { 0: [2] },
         });
       });
 
@@ -197,7 +197,7 @@ describe('AreaIndexFinder', () => {
         assert.deepEqual(result, {
           count: 1,
           highlightCount: 0,
-          indexes: { 0: [2] }
+          indexes: { 0: [2] },
         });
       });
 
@@ -214,7 +214,7 @@ describe('AreaIndexFinder', () => {
         assert.deepEqual(result, {
           count: 1,
           highlightCount: 0,
-          indexes: { 1: [2] }
+          indexes: { 1: [2] },
         });
       });
 
@@ -223,7 +223,7 @@ describe('AreaIndexFinder', () => {
         const editor = editorBuilder
           .withLines(
             `public abstract class my-amazing-class (private absolute: string, public _abs: !Abs)`,
-            `{ if(_abs) { return "abs"; else { return 'absolute' } } }`
+            `{ if(_abs) { return "abs"; else { return 'absolute' } } }`,
           )
           .build();
 
@@ -236,8 +236,8 @@ describe('AreaIndexFinder', () => {
           highlightCount: 0,
           indexes: {
             0: [7, 12, 18, 25, 27, 35, 44, 48, 74, 80],
-            1: [6, 21, 42]
-          }
+            1: [6, 21, 42],
+          },
         });
       });
 
@@ -250,22 +250,25 @@ describe('AreaIndexFinder', () => {
             'empty',
             'empty',
             'empty',
-            'myAbsoluteMethod'
+            'myAbsoluteMethod',
           )
           .build();
 
         // when
         const result = sut.findByChar(
           editor,
-          new JumpArea([[0, 1], [5, 5]]),
-          'a'
+          new JumpArea([
+            [0, 1],
+            [5, 5],
+          ]),
+          'a',
         );
 
         // then
         assert.deepEqual(result, {
           count: 3,
           highlightCount: 0,
-          indexes: { 0: [], 1: [2, 6], 5: [2] }
+          indexes: { 0: [], 1: [2, 6], 5: [2] },
         });
       });
     });
@@ -278,7 +281,7 @@ describe('AreaIndexFinder', () => {
       const previousLineIndexes: LineIndexes = {
         count: 1,
         highlightCount: 0,
-        indexes: { 0: [0] }
+        indexes: { 0: [0] },
       };
 
       // when
@@ -288,7 +291,7 @@ describe('AreaIndexFinder', () => {
       assert.deepEqual(result, {
         count: 0,
         highlightCount: 1,
-        indexes: { 0: [] }
+        indexes: { 0: [] },
       });
     });
 
@@ -298,7 +301,7 @@ describe('AreaIndexFinder', () => {
       const previousLineIndexes: LineIndexes = {
         count: 3,
         highlightCount: 0,
-        indexes: { 0: [0, 8, 16] }
+        indexes: { 0: [0, 8, 16] },
       };
 
       // when
@@ -308,7 +311,7 @@ describe('AreaIndexFinder', () => {
       assert.deepEqual(result, {
         count: 3,
         highlightCount: 1,
-        indexes: { 0: [0, 8, 16] }
+        indexes: { 0: [0, 8, 16] },
       });
     });
 
@@ -318,7 +321,7 @@ describe('AreaIndexFinder', () => {
       const previousLineIndexes: LineIndexes = {
         count: 1,
         highlightCount: 0,
-        indexes: { 0: [7] }
+        indexes: { 0: [7] },
       };
 
       // when
@@ -328,7 +331,7 @@ describe('AreaIndexFinder', () => {
       assert.deepEqual(result, {
         count: 0,
         highlightCount: 1,
-        indexes: { 0: [-1] }
+        indexes: { 0: [-1] },
       });
     });
 
@@ -338,7 +341,7 @@ describe('AreaIndexFinder', () => {
       const previousLineIndexes: LineIndexes = {
         count: 3,
         highlightCount: 0,
-        indexes: { 0: [0, 7, 15] }
+        indexes: { 0: [0, 7, 15] },
       };
 
       // when
@@ -348,7 +351,7 @@ describe('AreaIndexFinder', () => {
       assert.deepEqual(result, {
         count: 1,
         highlightCount: 1,
-        indexes: { 0: [-1, 7, -1] }
+        indexes: { 0: [-1, 7, -1] },
       });
     });
   });
