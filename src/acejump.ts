@@ -25,6 +25,9 @@ export class AceJump {
             new Position(placeholder.line, placeholder.character),
             new Position(placeholder.line, placeholder.character)
           );
+
+          await this.jumper.scrollToLine(placeholder.line);
+          
           // tslint:disable-next-line:no-empty
         } catch (_) {}
       })
@@ -41,6 +44,9 @@ export class AceJump {
             new Position(placeholder.line, placeholder.character),
             new Position(placeholder.line, placeholder.character)
           );
+
+          await this.jumper.scrollToLine(placeholder.line);
+
           // tslint:disable-next-line:no-empty
         } catch (_) {}
       })
@@ -60,6 +66,9 @@ export class AceJump {
             ),
             new Position(placeholder.line, placeholder.character + 1)
           );
+
+          await this.jumper.scrollToLine(placeholder.line);
+          
           // tslint:disable-next-line:no-empty
         } catch (_) {}
       })

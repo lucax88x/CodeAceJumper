@@ -4,6 +4,7 @@ import { DimConfig } from './dim-config';
 import { FinderConfig } from './finder-config';
 import { HighlightConfig } from './highlight-config';
 import { PlaceholderConfig } from './placeholder-config';
+import { ScrollConfig } from './scroll-config';
 
 export class Config {
   public characters = [
@@ -38,6 +39,7 @@ export class Config {
   public highlight = new HighlightConfig();
   public finder = new FinderConfig();
   public dim = new DimConfig();
+  public scroll = new ScrollConfig();
 }
 
 export function buildConfig(cfg: WorkspaceConfiguration) {
@@ -66,6 +68,10 @@ export function buildConfig(cfg: WorkspaceConfiguration) {
 
   config.dim = {
     enabled: cfg.get('dim.enabled', true)
+  };
+
+  config.scroll = {
+    mode: cfg.get('scroll.mode', 'center'),
   };
 
   return config;

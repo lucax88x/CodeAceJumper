@@ -101,6 +101,11 @@
         "aceJump.dim.enabled": {
           "type": "boolean",
           "default": true
+        },
+        "aceJump.scroll.mode": {
+          "type": "string",
+          "enum": ["none", "center", "top"],
+          "default": "center"
         }
       }
     }

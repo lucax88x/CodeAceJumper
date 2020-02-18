@@ -73,6 +73,25 @@ export class Jumper {
     this.areaIndexFinder.refreshConfig(config);
   }
 
+  public scrollToLine = async (line: number) => {
+    switch (this.config.scroll.mode) {
+      case 'center':
+        await commands.executeCommand('revealLine', {
+          lineNumber: line,
+          at: 'center'
+        });
+        break;
+      case 'top':
+        await commands.executeCommand('revealLine', {
+          lineNumber: line,
+          at: 'top'
+        });
+        break;
+      default:
+        break;
+    }
+  };
+
   private askForInitialChar(jumpKind: JumpKind, editor: TextEditor) {
     return new Promise<Placeholder>(async (resolve, reject) => {
       try {
@@ -180,6 +199,8 @@ export class Jumper {
         );
         this.placeHolderDecorator.dimEditor(editor, placeholderHoles);
       }
+
+      this.placeHolderDecorator.removeDecorations(editor);
       this.placeHolderDecorator.removeHighlights(editor);
       this.placeHolderDecorator.addDecorations(editor, placeholders);
 
@@ -210,12 +231,11 @@ export class Jumper {
 
         const resolvedPlaceholder = await this.resolvePlaceholderOrChildren(
           placeholder,
-          editor,
+          editor
         );
         resolve(resolvedPlaceholder);
 
         messageDisposable.dispose();
-
       } catch (error) {
         this.placeHolderDecorator.removeDecorations(editor);
         this.placeHolderDecorator.removeHighlights(editor);
@@ -229,7 +249,7 @@ export class Jumper {
 
   private async resolvePlaceholderOrChildren(
     placeholder: Placeholder,
-    editor: TextEditor,
+    editor: TextEditor
   ) {
     return new Promise<Placeholder>(async (resolve, reject) => {
       if (placeholder.childrens.length > 1) {
