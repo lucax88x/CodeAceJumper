@@ -6,7 +6,7 @@ import {
   Range,
   TextEditor,
   TextEditorDecorationType,
-  window
+  window,
 } from 'vscode';
 import { Config } from './config/config';
 import { Placeholder } from './models/placeholder';
@@ -21,11 +21,11 @@ export class PlaceHolderDecorator {
     this.config = config;
   }
 
-  public addDecorations(editor: TextEditor, placeholders: Placeholder[]) {
+  public addDecorations(editor: TextEditor, placeholders: Placeholder[], offset = 0) {
     for (const placeholder of placeholders) {
       const range = new Range(
-        new Position(placeholder.line, placeholder.character),
-        new Position(placeholder.line, placeholder.character + 1)
+        new Position(placeholder.line, placeholder.character + offset),
+        new Position(placeholder.line, placeholder.character + offset + 1),
       );
 
       const decorationType = window.createTextEditorDecorationType({
@@ -38,21 +38,25 @@ export class PlaceHolderDecorator {
           backgroundColor: this.config.placeholder.backgroundColor,
           color: this.config.placeholder.color,
           border: this.config.placeholder.border,
-          fontWeight: this.config.placeholder.fontWeight
-        }
+          fontWeight: this.config.placeholder.fontWeight,
+        },
       });
       editor.setDecorations(decorationType, [range]);
       this.decorations.push(decorationType);
+
+      for (const children of placeholder.childrens) {
+        this.addDecorations(editor, [children], offset + 1);
+      }
     }
   }
 
   public addHighlights(
     editor: TextEditor,
     placeholders: Placeholder[],
-    highlightCount: number
+    highlightCount: number,
   ) {
     const type: DecorationRenderOptions = {
-      textDecoration: `none; background-color: ${this.config.highlight.backgroundColor}`
+      textDecoration: `none; background-color: ${this.config.highlight.backgroundColor}`,
     };
 
     const options = map<Placeholder, DecorationOptions>(
@@ -61,10 +65,10 @@ export class PlaceHolderDecorator {
           placeholder.line,
           placeholder.character + 1,
           placeholder.line,
-          placeholder.character + 1 + highlightCount
-        )
+          placeholder.character + 1 + highlightCount,
+        ),
       }),
-      placeholders
+      placeholders,
     );
 
     this.highlight = window.createTextEditorDecorationType(type);
@@ -76,7 +80,7 @@ export class PlaceHolderDecorator {
     this.undimEditor(editor);
 
     const options: DecorationRenderOptions = {
-      textDecoration: `none; filter: grayscale(1);`
+      textDecoration: `none; filter: grayscale(1);`,
     };
 
     this.dim = window.createTextEditorDecorationType(options);
@@ -88,8 +92,8 @@ export class PlaceHolderDecorator {
       toAddRanges.push(
         new Range(
           new Position(0, 0),
-          new Position(editor.document.lineCount, Number.MAX_VALUE)
-        )
+          new Position(editor.document.lineCount, Number.MAX_VALUE),
+        ),
       );
     }
 

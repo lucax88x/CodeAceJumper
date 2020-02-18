@@ -13,6 +13,9 @@ import { Placeholder } from './models/placeholder';
 import { PlaceHolderCalculus } from './placeholder-calculus';
 import { PlaceHolderDecorator } from './placeholder-decorator';
 
+const findPlaceholder = (char: string) =>
+  find<Placeholder>(plc => plc.placeholder === char.toLowerCase());
+
 export class Jumper {
   private config: Config;
   private placeholderCalculus = new PlaceHolderCalculus();
@@ -499,6 +502,3 @@ export class Jumper {
     }
   }
 }
-
-const findPlaceholder = (char: string) =>
-  find<Placeholder>(plc => plc.placeholder === char.toLowerCase());
