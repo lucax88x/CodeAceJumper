@@ -65,6 +65,45 @@ export class Jumper {
     });
   }
 
+  public jumpToLine(): Promise<JumpResult> {
+    if (!!this.isJumping) {
+      this.setMessage('Canceled', 2000);
+      return Promise.reject(new Error('Jumping in progress'));
+    }
+
+    this.isJumping = true;
+
+    return new Promise<JumpResult>(async (resolve, reject) => {
+      const editor = window.activeTextEditor;
+
+      if (!editor) {
+        reject(new Error('No active editor'));
+        this.isJumping = false;
+        return;
+      }
+
+      try {
+        const placeholder = await this.buildPlaceholdersForLines(editor);
+
+        this.setMessage('Jumped!', 2000);
+
+        this.isJumping = false;
+        resolve({ editor, placeholder });
+      } catch (error) {
+        this.isJumping = false;
+
+        if (error instanceof Error) {
+          this.setMessage('Canceled', 2000);
+          reject(error);
+        } else {
+          const message = this.buildMessage(error);
+          this.setMessage(message, 2000);
+          reject(new Error(message));
+        }
+      }
+    });
+  }
+
   public refreshConfig(config: Config) {
     this.config = config;
     this.placeholderCalculus.refreshConfig(config);
@@ -78,13 +117,13 @@ export class Jumper {
       case 'center':
         await commands.executeCommand('revealLine', {
           lineNumber: line,
-          at: 'center'
+          at: 'center',
         });
         break;
       case 'top':
         await commands.executeCommand('revealLine', {
           lineNumber: line,
-          at: 'top'
+          at: 'top',
         });
         break;
       default:
@@ -109,7 +148,7 @@ export class Jumper {
         const result = await this.buildPlaceholdersForChar(
           editor,
           char,
-          jumpKind
+          jumpKind,
         );
         resolve(result);
       } catch (error) {
@@ -121,7 +160,7 @@ export class Jumper {
   private buildPlaceholdersForChar(
     editor: TextEditor,
     char: string,
-    jumpKind: JumpKind
+    jumpKind: JumpKind,
   ) {
     return new Promise<Placeholder>(async (resolve, reject) => {
       const area = this.jumpAreaFinder.findArea(editor);
@@ -134,7 +173,7 @@ export class Jumper {
       }
 
       let placeholders: Placeholder[] = this.placeholderCalculus.buildPlaceholders(
-        lineIndexes
+        lineIndexes,
       );
 
       if (placeholders.length === 0) {
@@ -151,14 +190,14 @@ export class Jumper {
             placeholders = await this.recursivelyRestrict(
               editor,
               placeholders,
-              lineIndexes
+              lineIndexes,
             );
           }
 
           if (placeholders.length > 1) {
             const jumpedPlaceholder = await this.recursivelyJumpTo(
               editor,
-              placeholders
+              placeholders,
             );
             resolve(jumpedPlaceholder);
           } else {
@@ -172,7 +211,7 @@ export class Jumper {
                 const placeholder = await this.buildPlaceholdersForChar(
                   editor,
                   char,
-                  jumpKind
+                  jumpKind,
                 );
                 resolve(placeholder);
               } catch (error) {
@@ -189,6 +228,52 @@ export class Jumper {
     });
   }
 
+  private buildPlaceholdersForLines(editor: TextEditor) {
+    return new Promise<Placeholder>(async (resolve, reject) => {
+      const area = this.jumpAreaFinder.findArea(editor);
+
+      const lineIndexes = this.areaIndexFinder.findByLines(area);
+
+      if (lineIndexes.count <= 0) {
+        reject(CancelReason.NoMatches);
+        return;
+      }
+
+      const placeholders: Placeholder[] = this.placeholderCalculus.buildPlaceholders(
+        lineIndexes,
+      );
+
+      if (placeholders.length === 0) {
+        reject(CancelReason.NoMatches);
+        return;
+      }
+
+      try {
+        const jumpedPlaceholder = await this.recursivelyJumpTo(
+          editor,
+          placeholders,
+        );
+        resolve(jumpedPlaceholder);
+      } catch (error) {
+        // let's try to recalculate placeholders if we change visible range
+        if (error === CancelReason.ChangedVisibleRanges) {
+          const debounced = await asyncDebounce(async () => {
+            try {
+              const placeholder = await this.buildPlaceholdersForLines(editor);
+              resolve(placeholder);
+            } catch (error) {
+              reject(error);
+            }
+          }, 500);
+
+          await debounced();
+        } else {
+          reject(error);
+        }
+      }
+    });
+  }
+
   /**
    * recursively creates placeholders in supplied editor and waits for user input for jumping
    * @param editor
@@ -199,7 +284,7 @@ export class Jumper {
       if (this.config.dim.enabled) {
         const placeholderHoles = this.placeholderCalculus.getPlaceholderHoles(
           placeholders,
-          editor.document.lineCount
+          editor.document.lineCount,
         );
         this.placeHolderDecorator.dimEditor(editor, placeholderHoles);
       }
@@ -235,7 +320,7 @@ export class Jumper {
 
         const resolvedPlaceholder = await this.resolvePlaceholderOrChildren(
           placeholder,
-          editor
+          editor,
         );
         resolve(resolvedPlaceholder);
 
@@ -253,14 +338,14 @@ export class Jumper {
 
   private async resolvePlaceholderOrChildren(
     placeholder: Placeholder,
-    editor: TextEditor
+    editor: TextEditor,
   ) {
     return new Promise<Placeholder>(async (resolve, reject) => {
       if (placeholder.childrens.length > 1) {
         try {
           const innerPlaceholder = await this.recursivelyJumpTo(
             editor,
-            placeholder.childrens
+            placeholder.childrens,
           );
           resolve(innerPlaceholder);
         } catch (error) {
@@ -281,14 +366,14 @@ export class Jumper {
   private recursivelyRestrict(
     editor: TextEditor,
     placeholders: Placeholder[],
-    lineIndexes: LineIndexes
+    lineIndexes: LineIndexes,
   ) {
     return new Promise<Placeholder[]>(async (resolve, reject) => {
       if (this.config.dim.enabled) {
         const placeholderHoles = this.placeholderCalculus.getPlaceholderHoles(
           placeholders,
           editor.document.lineCount,
-          lineIndexes.highlightCount
+          lineIndexes.highlightCount,
         );
         this.placeHolderDecorator.dimEditor(editor, placeholderHoles);
       }
@@ -297,7 +382,7 @@ export class Jumper {
       this.placeHolderDecorator.addHighlights(
         editor,
         placeholders,
-        lineIndexes.highlightCount
+        lineIndexes.highlightCount,
       );
 
       const messageDisposable = this.setMessage('Next char', 5000);
@@ -317,7 +402,7 @@ export class Jumper {
         const restrictedLineIndexes = this.areaIndexFinder.restrictByChar(
           editor,
           lineIndexes,
-          char
+          char,
         );
 
         // we failed to restrict
@@ -328,7 +413,7 @@ export class Jumper {
           if (!!placeholder) {
             const resolvedPlaceholder = await this.resolvePlaceholderOrChildren(
               placeholder,
-              editor
+              editor,
             );
 
             resolve([resolvedPlaceholder]);
@@ -338,7 +423,7 @@ export class Jumper {
           } else {
             // we keep the existing placeholders and try again
             resolve(
-              await this.recursivelyRestrict(editor, placeholders, lineIndexes)
+              await this.recursivelyRestrict(editor, placeholders, lineIndexes),
             );
             messageDisposable.dispose();
             return;
@@ -346,7 +431,7 @@ export class Jumper {
         }
 
         const restrictedPlaceholders: Placeholder[] = this.placeholderCalculus.buildPlaceholders(
-          restrictedLineIndexes
+          restrictedLineIndexes,
         );
 
         if (restrictedPlaceholders.length === 0) {
@@ -362,8 +447,8 @@ export class Jumper {
               await this.recursivelyRestrict(
                 editor,
                 restrictedPlaceholders,
-                restrictedLineIndexes
-              )
+                restrictedLineIndexes,
+              ),
             );
             messageDisposable.dispose();
           } catch (error) {

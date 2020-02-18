@@ -75,6 +75,29 @@ export class AreaIndexFinder {
     return lineIndexes;
   }
 
+
+  /**
+   * find indexes for each line
+   * @param editor
+   * @param area
+   */
+  public findByLines(
+    area: JumpArea
+  ): LineIndexes {
+    const lineIndexes = new LineIndexes();
+
+    for (const areaLine of area.lines) {
+      for (let i = areaLine[0]; i <= areaLine[1]; i++) {
+
+        lineIndexes.count = 1;
+        // always first visible character!
+        lineIndexes.indexes[i] = [0];
+      }
+    }
+
+    return lineIndexes;
+  }
+
   /**
    * find indexes on the line where our char is matching
    * @param line

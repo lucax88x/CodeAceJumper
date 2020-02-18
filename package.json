@@ -3,7 +3,7 @@
   "displayName": "Code Ace Jumper",
   "description": "Visual Studio Code Ace Jump",
   "icon": "images/ace-jumper.png",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "publisher": "lucax88x",
   "homepage": "https://github.com/lucax88x/CodeAceJumper",
   "license": "https://github.com/lucax88x/CodeAceJumper/license.md",
@@ -12,7 +12,9 @@
     "AceJump",
     "EasyMotion",
     "emacs",
-    "vim"
+    "vim",
+    "jumpy",
+    "keyboard"
   ],
   "repository": {
     "type": "git",
@@ -45,6 +47,10 @@
       {
         "command": "extension.aceJump.multiChar",
         "title": "AceJump: MultiChar"
+      },
+      {
+        "command": "extension.aceJump.line",
+        "title": "AceJump: Line"
       },
       {
         "command": "extension.aceJump.selection",

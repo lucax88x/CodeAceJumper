@@ -12,6 +12,10 @@ This extensions provides you with easy Ace Jump feature for Visual Studio Code. 
 
 ![example gif](https://media.giphy.com/media/IzubTB1OPhaMUckWZb/giphy.gif)
 
+- `extension.aceJump.line` allows us to show placeholder for each visible line so we can jump directly to the line
+
+![example gif](https://media.giphy.com/media/VF63dhXmQggquKwFYn/giphy.gif)
+
 - `extension.aceJump.selection` allows us to refine the placeholders by providing more characters. When one matches it automatically jumps, otherwise you can escape and then jump by matching remaining placeholders.
 
 ## Keyboard shortcuts
@@ -26,6 +30,10 @@ You may set keyboard shortcuts for invoking Code Ace Jumper by entering values i
 {
     "key": "your key",
     "command": "extension.aceJump.multiChar"
+},
+{
+    "key": "your key",
+    "command": "extension.aceJump.line"
 },
 {
     "key": "your key",

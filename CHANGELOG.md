@@ -112,3 +112,8 @@ added ', " and < in the pattern
   ![video](https://media.giphy.com/media/jUQixLErR27iPssBYq/giphy.gif)
 - implemented [#174](https://github.com/lucax88x/CodeAceJumper/issues/174)
 - fixed [164](https://github.com/lucax88x/CodeAceJumper/issues/164) which is the reason of the breaking change
+
+## [3.1.0]
+
+- implemented [#162](https://github.com/lucax88x/CodeAceJumper/issues/162)
+  ![video](https://media.giphy.com/media/VF63dhXmQggquKwFYn/giphy.gif)
