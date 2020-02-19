@@ -166,6 +166,6 @@
   "dependencies": {
     "lodash": "^4.17.15",
     "ramda": "^0.26.1",
-    "xmlbuilder": "^13.0.2"
+    "xmlbuilder": "^14.0.0"
   }
 }
