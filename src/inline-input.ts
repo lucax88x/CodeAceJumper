@@ -97,7 +97,7 @@ export class InlineInput {
     }
   };
 
-  private cancel = () => {
+  public cancel = () => {
     this.cancelWithReason(CancelReason.Cancel);
   };
 

@@ -1,5 +1,5 @@
 import { find, head } from 'ramda';
-import { commands, Disposable, TextEditor, window } from 'vscode';
+import { commands, Disposable, TextEditor, window, Selection, Position } from 'vscode';
 import { AreaIndexFinder } from './area-index-finder';
 import { Config } from './config/config';
 import { asyncDebounce } from './debounce';
@@ -23,9 +23,12 @@ export class Jumper {
   private jumpAreaFinder = new JumpAreaFinder();
   private areaIndexFinder = new AreaIndexFinder();
 
-  private isJumping = false;
+  public isJumping = false;
+  private input: InlineInput;
+  private inSelectionMode: boolean;
 
-  public jump(jumpKind: JumpKind): Promise<JumpResult> {
+  public jump(jumpKind: JumpKind, inSelectionMode: boolean): Promise<JumpResult> {
+    this.inSelectionMode = inSelectionMode;
     if (!!this.isJumping) {
       this.setMessage('Canceled', 2000);
       return Promise.reject(new Error('Jumping in progress'));
@@ -50,6 +53,25 @@ export class Jumper {
         this.setMessage('Jumped!', 2000);
 
         messaggeDisposable.dispose();
+
+        if (this.inSelectionMode) {
+          const isBackwardJump = editor.selection.active.line > placeholder.line || editor.selection.active.character > placeholder.character;
+          const offset = isBackwardJump || !this.config.finder.includeEndCharInSelection ? 0 : 1;
+          editor.selection = new Selection(
+            new Position(
+              editor.selection.active.line,
+              editor.selection.active.character,
+            ),
+            new Position(placeholder.line, placeholder.character + offset),
+          );
+        } else {
+          editor.selection = new Selection(
+            new Position(placeholder.line, placeholder.character),
+            new Position(placeholder.line, placeholder.character),
+          );
+        }
+        await this.scrollToLine(placeholder.line);
+
         this.isJumping = false;
         resolve({ editor, placeholder });
       } catch (error) {
@@ -68,10 +90,14 @@ export class Jumper {
     });
   }
 
-  public jumpToLine(): Promise<JumpResult> {
-    if (!!this.isJumping) {
-      this.setMessage('Canceled', 2000);
-      return Promise.reject(new Error('Jumping in progress'));
+  public jumpToLine(inSelectionMode: boolean | null): Promise<JumpResult> {
+    if (inSelectionMode !== null) {
+      // if null, reuse the selectionMode from last call
+      this.inSelectionMode = inSelectionMode;
+    }
+    if (!!this.input) {
+      // we cancel any open InlineInput (e.g. from an interrupted call to jump())
+      this.input.cancel();
     }
 
     this.isJumping = true;
@@ -89,6 +115,22 @@ export class Jumper {
         const placeholder = await this.buildPlaceholdersForLines(editor);
 
         this.setMessage('Jumped!', 2000);
+
+        if (this.inSelectionMode) {
+          editor.selection = new Selection(
+            new Position(
+              editor.selection.active.line,
+              editor.selection.active.character,
+            ),
+            new Position(placeholder.line, placeholder.character),
+          );
+        } else {
+          editor.selection = new Selection(
+            new Position(placeholder.line, placeholder.character),
+            new Position(placeholder.line, placeholder.character),
+          );
+        }
+        await this.scrollToLine(placeholder.line);
 
         this.isJumping = false;
         resolve({ editor, placeholder });
@@ -137,7 +179,8 @@ export class Jumper {
   private askForInitialChar(jumpKind: JumpKind, editor: TextEditor) {
     return new Promise<Placeholder>(async (resolve, reject) => {
       try {
-        let char = await new InlineInput().show();
+        this.input = new InlineInput()
+        let char = await this.input.show();
 
         if (!char) {
           reject(CancelReason.EmptyValue);
