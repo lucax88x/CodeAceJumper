@@ -278,7 +278,7 @@ export class Jumper {
     return new Promise<Placeholder>(async (resolve, reject) => {
       const area = this.jumpAreaFinder.findArea(editor);
 
-      const lineIndexes = this.areaIndexFinder.findByLines(area);
+      const lineIndexes = this.areaIndexFinder.findByLines(editor, area);
 
       if (lineIndexes.count <= 0) {
         reject(CancelReason.NoMatches);
