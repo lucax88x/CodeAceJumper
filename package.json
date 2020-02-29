@@ -104,6 +104,10 @@
           "type": "boolean",
           "default": true
         },
+        "aceJump.finder.includeEndCharInSelection": {
+          "type": "boolean",
+          "default": true
+        },
         "aceJump.dim.enabled": {
           "type": "boolean",
           "default": true

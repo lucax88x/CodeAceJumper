@@ -75,12 +75,14 @@ export class AceJump {
             JumpKind.Normal,
           );
 
+          const isBackwardJump = editor.selection.active.line > placeholder.line || editor.selection.active.character > placeholder.character;
+          const offset = isBackwardJump || !workspace.getConfiguration('aceJump').finder.includeEndCharInSelection ? 0 : 1;
           editor.selection = new Selection(
             new Position(
               editor.selection.active.line,
               editor.selection.active.character,
             ),
-            new Position(placeholder.line, placeholder.character + 1),
+            new Position(placeholder.line, placeholder.character + offset),
           );
 
           await this.jumper.scrollToLine(placeholder.line);
