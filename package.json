@@ -120,6 +120,10 @@
             "top"
           ],
           "default": "center"
+        },
+        "aceJump.finder.jumpToLineEndings": {
+          "type": "boolean",
+          "default": false
         }
       }
     }

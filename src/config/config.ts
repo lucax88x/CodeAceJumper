@@ -65,6 +65,7 @@ export function buildConfig(cfg: WorkspaceConfiguration) {
     skipSelection: cfg.get('finder.skipSelection', false),
     onlyInitialLetter: cfg.get('finder.onlyInitialLetter', true),
     includeEndCharInSelection: cfg.get('finder.includeEndCharInSelection', true),
+    jumpToLineEndings: cfg.get('finder.jumpToLineEndings', true),
   };
 
   config.dim = {

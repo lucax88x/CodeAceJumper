@@ -1,8 +1,6 @@
 import {
   commands,
   ExtensionContext,
-  Position,
-  Selection,
   workspace,
 } from 'vscode';
 import { buildConfig } from './config/config';
@@ -16,16 +14,7 @@ export class AceJump {
     context.subscriptions.push(
       commands.registerCommand('extension.aceJump', async () => {
         try {
-          const { editor, placeholder } = await this.jumper.jump(
-            JumpKind.Normal,
-          );
-
-          editor.selection = new Selection(
-            new Position(placeholder.line, placeholder.character),
-            new Position(placeholder.line, placeholder.character),
-          );
-
-          await this.jumper.scrollToLine(placeholder.line);
+          await this.jumper.jump(JumpKind.Normal, false);
 
           // tslint:disable-next-line:no-empty
         } catch (_) {}
@@ -35,57 +24,29 @@ export class AceJump {
     context.subscriptions.push(
       commands.registerCommand('extension.aceJump.multiChar', async () => {
         try {
-          const { editor, placeholder } = await this.jumper.jump(
-            JumpKind.MultiChar,
-          );
-
-          editor.selection = new Selection(
-            new Position(placeholder.line, placeholder.character),
-            new Position(placeholder.line, placeholder.character),
-          );
-
-          await this.jumper.scrollToLine(placeholder.line);
+          await this.jumper.jump(JumpKind.MultiChar, false);
 
           // tslint:disable-next-line:no-empty
         } catch (_) {}
       }),
     );
 
-      context.subscriptions.push(
-        commands.registerCommand('extension.aceJump.line', async () => {
-          try {
-            const { editor, placeholder } = await this.jumper.jumpToLine();
-  
-            editor.selection = new Selection(
-              new Position(placeholder.line, placeholder.character),
-              new Position(placeholder.line, placeholder.character),
-            );
-  
-            await this.jumper.scrollToLine(placeholder.line);
-  
-            // tslint:disable-next-line:no-empty
-          } catch (_) {}
-        }),
-      );
+    context.subscriptions.push(
+      commands.registerCommand('extension.aceJump.line', async () => {
+        try {
+          // if we interrupt a jump (isJumping still true), re-use its selectionMode
+          const selectionMode = this.jumper.isJumping ? null : false;
+          await this.jumper.jumpToLine(selectionMode);
+
+          // tslint:disable-next-line:no-empty
+        } catch (_) {}
+      }),
+    );
 
     context.subscriptions.push(
       commands.registerCommand('extension.aceJump.selection', async () => {
         try {
-          const { editor, placeholder } = await this.jumper.jump(
-            JumpKind.Normal,
-          );
-
-          const isBackwardJump = editor.selection.active.line > placeholder.line || editor.selection.active.character > placeholder.character;
-          const offset = isBackwardJump || !workspace.getConfiguration('aceJump').finder.includeEndCharInSelection ? 0 : 1;
-          editor.selection = new Selection(
-            new Position(
-              editor.selection.active.line,
-              editor.selection.active.character,
-            ),
-            new Position(placeholder.line, placeholder.character + offset),
-          );
-
-          await this.jumper.scrollToLine(placeholder.line);
+          await this.jumper.jump(JumpKind.Normal, true);
 
           // tslint:disable-next-line:no-empty
         } catch (_) {}

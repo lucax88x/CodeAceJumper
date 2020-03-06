@@ -3,4 +3,5 @@ export class FinderConfig {
   public skipSelection = false;
   public onlyInitialLetter = true;
   public includeEndCharInSelection = true;
+  public jumpToLineEndings = false;
 }

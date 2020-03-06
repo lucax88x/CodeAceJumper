@@ -82,16 +82,23 @@ export class AreaIndexFinder {
    * @param area
    */
   public findByLines(
+    editor: TextEditor,
     area: JumpArea
   ): LineIndexes {
     const lineIndexes = new LineIndexes();
 
     for (const areaLine of area.lines) {
       for (let i = areaLine[0]; i <= areaLine[1]; i++) {
-
-        lineIndexes.count = 1;
-        // always first visible character!
-        lineIndexes.indexes[i] = [0];
+        const endIndex = editor.document.lineAt(i).range.end.character;
+        if (this.config.finder.jumpToLineEndings && endIndex > 0) {
+          lineIndexes.count = 2;
+          // add beginning and end of line
+          lineIndexes.indexes[i] = [0, endIndex];
+        } else {
+          lineIndexes.count = 1;
+          // always first visible character!
+          lineIndexes.indexes[i] = [0];
+        }
       }
     }
 
