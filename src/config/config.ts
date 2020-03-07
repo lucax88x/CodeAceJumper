@@ -64,7 +64,10 @@ export function buildConfig(cfg: WorkspaceConfiguration) {
     pattern: cfg.get('finder.pattern', `[ ,-.{_(\"'<\\[\t]`),
     skipSelection: cfg.get('finder.skipSelection', false),
     onlyInitialLetter: cfg.get('finder.onlyInitialLetter', true),
-    includeEndCharInSelection: cfg.get('finder.includeEndCharInSelection', true),
+    includeEndCharInSelection: cfg.get(
+      'finder.includeEndCharInSelection',
+      true,
+    ),
     jumpToLineEndings: cfg.get('finder.jumpToLineEndings', true),
   };
 
