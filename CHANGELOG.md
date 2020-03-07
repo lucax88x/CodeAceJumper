@@ -117,3 +117,8 @@ added ', " and < in the pattern
 
 - implemented [#162](https://github.com/lucax88x/CodeAceJumper/issues/162)
   ![video](https://media.giphy.com/media/VF63dhXmQggquKwFYn/giphy.gif)
+
+## [3.3.0]
+
+- contains [#187](https://github.com/lucax88x/CodeAceJumper/pull/187)
+- contains [#189](https://github.com/lucax88x/CodeAceJumper/pull/189)
