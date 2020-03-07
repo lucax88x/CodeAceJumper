@@ -181,7 +181,7 @@ describe('PlaceHolderCalculus', () => {
         assert.equal(placeholders.length, 0);
       });
 
-      it.only('one row with 2 letters and a -1 in the middle will give "a c"', () => {
+      it('one row with 2 letters and a -1 in the middle will give "a c"', () => {
         const placeholders = sut.buildPlaceholders({
           count: 3,
           highlightCount: 0,

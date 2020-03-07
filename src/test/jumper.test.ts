@@ -372,7 +372,7 @@ describe('Jumper', () => {
           'f', // non matching restrict char
           'l', // we try to match second char
           'escape', // we escape
-          'b', // we try to jump to placeholder
+          'c', // we try to jump to placeholder
         );
 
       // when
@@ -384,8 +384,8 @@ describe('Jumper', () => {
 
       assert.deepEqual(placeholder, {
         childrens: [],
-        index: 1,
-        placeholder: 'b',
+        index: 2,
+        placeholder: 'c',
         line: 3,
         character: 13,
       });
@@ -416,7 +416,7 @@ describe('Jumper', () => {
         .withCommands(
           'a', // we try to match a
           'l', // we restrict with l
-          'b', // we jump to placeholder b
+          'c', // we jump to placeholder b
         );
 
       // when
@@ -428,8 +428,8 @@ describe('Jumper', () => {
 
       assert.deepEqual(placeholder, {
         childrens: [],
-        index: 1,
-        placeholder: 'b',
+        index: 2,
+        placeholder: 'c',
         line: 3,
         character: 13,
       });

@@ -21,21 +21,23 @@ export class PlaceHolderCalculus {
     let breakCycles = false;
 
     for (const key in lineIndexes.indexes) {
-      if (lineIndexes.hasOwnProperty(key)) {
+      if (!lineIndexes.indexes.hasOwnProperty(key)) {
         continue;
       }
       const line = parseInt(key, 10);
       const lineIndex = lineIndexes.indexes[key];
-      const lineIndexWithoutNegativeIndexes = filter(i => i >= 0, lineIndex);
 
-      for (let i = 0; i < lineIndexWithoutNegativeIndexes.length; i++) {
+      if (!lineIndex) {
+        continue;
+      }
+
+      for (let i = 0; i < lineIndex.length; i++) {
         if (count + 1 > Math.pow(this.config.characters.length, 2)) {
           breakCycles = true;
           break;
         }
 
-        const characterIndex = lineIndexWithoutNegativeIndexes[i];
-
+        const characterIndex = lineIndex[i];
 
         if (count >= this.config.characters.length) {
           for (let y = candidate; y < placeholders.length; y++) {
@@ -43,10 +45,14 @@ export class PlaceHolderCalculus {
 
             const previousIndex = movingPlaceholder.index - 1;
 
+            if (!map[previousIndex]) {
+              continue;
+            }
+
             if (map[previousIndex].length < this.config.characters.length) {
               map[movingPlaceholder.index] = reject(
                 item => item === movingPlaceholder,
-                map[movingPlaceholder.index]
+                map[movingPlaceholder.index],
               );
 
               movingPlaceholder.index = previousIndex;
@@ -140,7 +146,7 @@ export class PlaceHolderCalculus {
   public getPlaceholderHoles(
     placeholders: Placeholder[],
     lineCount: number,
-    highlightCount = -1
+    highlightCount = -1,
   ): Range[] {
     const ranges: Range[] = [];
     let previousLine = 0;
@@ -151,21 +157,20 @@ export class PlaceHolderCalculus {
       ranges.push(
         new Range(
           new Position(previousLine, previousCharacter + 1),
-          new Position(placeholder.line, placeholder.character)
-        )
+          new Position(placeholder.line, placeholder.character),
+        ),
       );
 
       previousLine = placeholder.line;
       previousCharacter =
-        placeholder.character +
-        (highlightCount === -1 ? 0 : highlightCount);
+        placeholder.character + (highlightCount === -1 ? 0 : highlightCount);
     }
 
     ranges.push(
       new Range(
         new Position(previousLine, previousCharacter + 1),
-        new Position(lineCount, Number.MAX_VALUE)
-      )
+        new Position(lineCount, Number.MAX_VALUE),
+      ),
     );
 
     return ranges;
