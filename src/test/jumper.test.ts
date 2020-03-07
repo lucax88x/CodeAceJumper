@@ -43,7 +43,7 @@ describe('Jumper', () => {
 
         try {
           // when
-          await sut.jump(jumpKind);
+          await sut.jump(jumpKind, false);
 
           throw new Error('should have thrown exception');
         } catch (error) {
@@ -60,7 +60,7 @@ describe('Jumper', () => {
 
         try {
           // when
-          await sut.jump(jumpKind);
+          await sut.jump(jumpKind, false);
 
           throw new Error('should have thrown exception');
         } catch (error) {
@@ -80,7 +80,7 @@ describe('Jumper', () => {
 
         try {
           // when
-          await sut.jump(jumpKind);
+          await sut.jump(jumpKind, false);
 
           throw new Error('should have thrown exception');
         } catch (error) {
@@ -97,7 +97,7 @@ describe('Jumper', () => {
 
         try {
           // when
-          await sut.jump(jumpKind);
+          await sut.jump(jumpKind, false);
 
           throw new Error('should have thrown exception');
         } catch (error) {
@@ -118,7 +118,7 @@ describe('Jumper', () => {
           .withCommands('a');
 
         // when
-        const { placeholder } = await sut.jump(jumpKind);
+        const { placeholder } = await sut.jump(jumpKind, false);
 
         // then
         assert.deepEqual(placeholder, {
@@ -147,7 +147,7 @@ describe('Jumper', () => {
 
       try {
         // when
-        await sut.jump(JumpKind.Normal);
+        await sut.jump(JumpKind.Normal, false);
 
         throw new Error('should have thrown exception');
       } catch (error) {
@@ -174,7 +174,7 @@ describe('Jumper', () => {
 
       try {
         // when
-        await sut.jump(JumpKind.Normal);
+        await sut.jump(JumpKind.Normal, false);
 
         throw new Error('should have thrown exception');
       } catch (error) {
@@ -200,7 +200,7 @@ describe('Jumper', () => {
         .withCommands('a', 'b');
 
       // when
-      const { placeholder } = await sut.jump(JumpKind.Normal);
+      const { placeholder } = await sut.jump(JumpKind.Normal, false);
 
       // then
       scenario.hasDimmedEditor(1);
@@ -234,11 +234,11 @@ describe('Jumper', () => {
         .withCommands('a', 'b', 'f');
 
       // when
-      const { placeholder } = await sut.jump(JumpKind.Normal);
+      const { placeholder } = await sut.jump(JumpKind.Normal, false);
 
       // then
       scenario.hasDimmedEditor(2);
-      scenario.hasCreatedPlaceholders(80);
+      scenario.hasCreatedPlaceholders(121);
 
       assert.deepEqual(placeholder, {
         childrens: [],
@@ -267,7 +267,7 @@ describe('Jumper', () => {
         .withCommands('a', 'b');
 
       // when
-      const { placeholder } = await sut.jump(JumpKind.Normal);
+      const { placeholder } = await sut.jump(JumpKind.Normal, false);
 
       // then
       scenario.hasDimmedEditor(1);
@@ -302,7 +302,7 @@ describe('Jumper', () => {
 
       try {
         // when
-        await sut.jump(JumpKind.MultiChar);
+        await sut.jump(JumpKind.MultiChar, false);
 
         throw new Error('should have thrown exception');
       } catch (error) {
@@ -330,16 +330,14 @@ describe('Jumper', () => {
         .withCommands(
           'a', // we try to match a
           'b', // we try to match second char
-          'escape', // we escape
-          'a', // we try to jump to placeholder
         );
 
       // when
-      const { placeholder } = await sut.jump(JumpKind.MultiChar);
+      const { placeholder } = await sut.jump(JumpKind.MultiChar, false);
 
       // then
       scenario.hasDimmedEditor(1);
-      scenario.hasCreatedPlaceholders(6);
+      scenario.hasCreatedPlaceholders(3);
 
       assert.deepEqual(placeholder, {
         childrens: [],
@@ -378,18 +376,18 @@ describe('Jumper', () => {
         );
 
       // when
-      const { placeholder } = await sut.jump(JumpKind.MultiChar);
+      const { placeholder } = await sut.jump(JumpKind.MultiChar, false);
 
       // then
       scenario.hasDimmedEditor(5);
-      scenario.hasCreatedPlaceholders(24);
+      scenario.hasCreatedPlaceholders(13);
 
       assert.deepEqual(placeholder, {
         childrens: [],
         index: 1,
         placeholder: 'b',
         line: 3,
-        character: 0,
+        character: 13,
       });
 
       scenario.hasStatusBarMessages(
@@ -418,20 +416,20 @@ describe('Jumper', () => {
         .withCommands(
           'a', // we try to match a
           'l', // we restrict with l
-          'c', // we jump to placeholder c
+          'b', // we jump to placeholder b
         );
 
       // when
-      const { placeholder } = await sut.jump(JumpKind.MultiChar);
+      const { placeholder } = await sut.jump(JumpKind.MultiChar, false);
 
       // then
       scenario.hasDimmedEditor(2);
-      scenario.hasCreatedPlaceholders(10);
+      scenario.hasCreatedPlaceholders(5);
 
       assert.deepEqual(placeholder, {
         childrens: [],
-        index: 2,
-        placeholder: 'c',
+        index: 1,
+        placeholder: 'b',
         line: 3,
         character: 13,
       });

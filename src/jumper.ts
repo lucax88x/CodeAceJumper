@@ -1,5 +1,12 @@
 import { find, head } from 'ramda';
-import { commands, Disposable, TextEditor, window, Selection, Position } from 'vscode';
+import {
+  commands,
+  Disposable,
+  TextEditor,
+  window,
+  Selection,
+  Position,
+} from 'vscode';
 import { AreaIndexFinder } from './area-index-finder';
 import { Config } from './config/config';
 import { asyncDebounce } from './debounce';
@@ -17,18 +24,23 @@ const findPlaceholder = (char: string) =>
   find<Placeholder>(plc => plc.placeholder === char.toLowerCase());
 
 export class Jumper {
+  public isJumping = false;
+
   private config: Config;
   private placeholderCalculus = new PlaceHolderCalculus();
   private placeHolderDecorator = new PlaceHolderDecorator();
   private jumpAreaFinder = new JumpAreaFinder();
   private areaIndexFinder = new AreaIndexFinder();
 
-  public isJumping = false;
   private input: InlineInput;
-  private inSelectionMode: boolean;
+  private isInSelectionMode: boolean;
 
-  public jump(jumpKind: JumpKind, inSelectionMode: boolean): Promise<JumpResult> {
-    this.inSelectionMode = inSelectionMode;
+  public jump(
+    jumpKind: JumpKind,
+    isInSelectionMode: boolean,
+  ): Promise<JumpResult> {
+    this.isInSelectionMode = isInSelectionMode;
+
     if (!!this.isJumping) {
       this.setMessage('Canceled', 2000);
       return Promise.reject(new Error('Jumping in progress'));
@@ -54,9 +66,14 @@ export class Jumper {
 
         messaggeDisposable.dispose();
 
-        if (this.inSelectionMode) {
-          const isBackwardJump = editor.selection.active.line > placeholder.line || editor.selection.active.character > placeholder.character;
-          const offset = isBackwardJump || !this.config.finder.includeEndCharInSelection ? 0 : 1;
+        if (this.isInSelectionMode) {
+          const isBackwardJump =
+            editor.selection.active.line > placeholder.line ||
+            editor.selection.active.character > placeholder.character;
+          const offset =
+            isBackwardJump || !this.config.finder.includeEndCharInSelection
+              ? 0
+              : 1;
           editor.selection = new Selection(
             new Position(
               editor.selection.active.line,
@@ -90,10 +107,10 @@ export class Jumper {
     });
   }
 
-  public jumpToLine(inSelectionMode: boolean | null): Promise<JumpResult> {
-    if (inSelectionMode !== null) {
+  public jumpToLine(isInSelectionMode: boolean | null): Promise<JumpResult> {
+    if (isInSelectionMode !== null) {
       // if null, reuse the selectionMode from last call
-      this.inSelectionMode = inSelectionMode;
+      this.isInSelectionMode = isInSelectionMode;
     }
     if (!!this.input) {
       // we cancel any open InlineInput (e.g. from an interrupted call to jump())
@@ -116,7 +133,7 @@ export class Jumper {
 
         this.setMessage('Jumped!', 2000);
 
-        if (this.inSelectionMode) {
+        if (this.isInSelectionMode) {
           editor.selection = new Selection(
             new Position(
               editor.selection.active.line,
@@ -179,7 +196,7 @@ export class Jumper {
   private askForInitialChar(jumpKind: JumpKind, editor: TextEditor) {
     return new Promise<Placeholder>(async (resolve, reject) => {
       try {
-        this.input = new InlineInput()
+        this.input = new InlineInput();
         let char = await this.input.show();
 
         if (!char) {
@@ -209,67 +226,71 @@ export class Jumper {
     jumpKind: JumpKind,
   ) {
     return new Promise<Placeholder>(async (resolve, reject) => {
-      const area = this.jumpAreaFinder.findArea(editor);
+      try {
+        const area = this.jumpAreaFinder.findArea(editor);
 
-      const lineIndexes = this.areaIndexFinder.findByChar(editor, area, char);
+        const lineIndexes = this.areaIndexFinder.findByChar(editor, area, char);
 
-      if (lineIndexes.count <= 0) {
-        reject(CancelReason.NoMatches);
-        return;
-      }
+        if (lineIndexes.count <= 0) {
+          reject(CancelReason.NoMatches);
+          return;
+        }
 
-      let placeholders: Placeholder[] = this.placeholderCalculus.buildPlaceholders(
-        lineIndexes,
-      );
+        let placeholders: Placeholder[] = this.placeholderCalculus.buildPlaceholders(
+          lineIndexes,
+        );
 
-      if (placeholders.length === 0) {
-        reject(CancelReason.NoMatches);
-        return;
-      }
+        if (placeholders.length === 0) {
+          reject(CancelReason.NoMatches);
+          return;
+        }
 
-      if (placeholders.length === 1) {
-        const placeholder = head(placeholders);
-        resolve(placeholder);
-      } else {
-        try {
-          if (jumpKind === JumpKind.MultiChar) {
-            placeholders = await this.recursivelyRestrict(
-              editor,
-              placeholders,
-              lineIndexes,
-            );
-          }
+        if (placeholders.length === 1) {
+          const placeholder = head(placeholders);
+          resolve(placeholder);
+        } else {
+          try {
+            if (jumpKind === JumpKind.MultiChar) {
+              placeholders = await this.recursivelyRestrict(
+                editor,
+                placeholders,
+                lineIndexes,
+              );
+            }
 
-          if (placeholders.length > 1) {
-            const jumpedPlaceholder = await this.recursivelyJumpTo(
-              editor,
-              placeholders,
-            );
-            resolve(jumpedPlaceholder);
-          } else {
-            resolve(head(placeholders));
-          }
-        } catch (error) {
-          // let's try to recalculate placeholders if we change visible range
-          if (error === CancelReason.ChangedVisibleRanges) {
-            const debounced = await asyncDebounce(async () => {
-              try {
-                const placeholder = await this.buildPlaceholdersForChar(
-                  editor,
-                  char,
-                  jumpKind,
-                );
-                resolve(placeholder);
-              } catch (error) {
-                reject(error);
-              }
-            }, 500);
+            if (placeholders.length > 1) {
+              const jumpedPlaceholder = await this.recursivelyJumpTo(
+                editor,
+                placeholders,
+              );
+              resolve(jumpedPlaceholder);
+            } else {
+              resolve(head(placeholders));
+            }
+          } catch (error) {
+            // let's try to recalculate placeholders if we change visible range
+            if (error === CancelReason.ChangedVisibleRanges) {
+              const debounced = await asyncDebounce(async () => {
+                try {
+                  const placeholder = await this.buildPlaceholdersForChar(
+                    editor,
+                    char,
+                    jumpKind,
+                  );
+                  resolve(placeholder);
+                } catch (error) {
+                  reject(error);
+                }
+              }, 500);
 
-            await debounced();
-          } else {
-            reject(error);
+              await debounced();
+            } else {
+              reject(error);
+            }
           }
         }
+      } catch (error) {
+        reject(error);
       }
     });
   }

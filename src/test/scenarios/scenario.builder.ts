@@ -1,8 +1,7 @@
 import * as assert from 'assert';
-import { filter, map, sum } from 'ramda';
+import { filter, map } from 'ramda';
 import * as sinon from 'sinon';
 import { commands, DecorationOptions, Range, TextEditor, window } from 'vscode';
-
 import { RecursivePartial } from '../recursive-partial';
 
 export class ScenarioBuilder {
@@ -26,7 +25,7 @@ export class ScenarioBuilder {
     this.statusSpy = this.sandbox.spy(window, 'setStatusBarMessage');
     this.createDecorationSpy = this.sandbox.spy(
       window,
-      'createTextEditorDecorationType'
+      'createTextEditorDecorationType',
     );
   }
 
@@ -54,9 +53,9 @@ export class ScenarioBuilder {
   public withEditor() {
     this.editorMock = {
       document: {
-        lineCount: 0
+        lineCount: 0,
       },
-      setDecorations: this.setDecorationsSpy = this.sandbox.spy()
+      setDecorations: this.setDecorationsSpy = this.sandbox.spy(),
     };
     return this;
   }
@@ -64,13 +63,13 @@ export class ScenarioBuilder {
   public withNoVisibleRanges() {
     this.editorMock = {
       selection: {
-        isEmpty: true
+        isEmpty: true,
       },
       document: {
-        lineCount: 0
+        lineCount: 0,
       },
       setDecorations: this.setDecorationsSpy = this.sandbox.spy(),
-      visibleRanges: []
+      visibleRanges: [],
     };
     return this;
   }
@@ -84,15 +83,15 @@ export class ScenarioBuilder {
 
     this.editorMock = {
       selection: {
-        isEmpty: true
+        isEmpty: true,
       },
       visibleRanges: [{ start: { line: 1 }, end: { line: lines.length } }],
       document: {
         getText: () => 'my long text',
         lineAt: lineAtMock,
-        lineCount: lines.length
+        lineCount: lines.length,
       },
-      setDecorations: this.setDecorationsSpy = this.sandbox.spy()
+      setDecorations: this.setDecorationsSpy = this.sandbox.spy(),
     };
     return this;
   }
@@ -110,38 +109,26 @@ export class ScenarioBuilder {
   }
 
   public hasCreatedPlaceholders(count: number) {
-    const notRemoveDecorationCalls = filter<SinonCall>(
-      call => call.args[1].length !== 0
-    );
-    // dim is called setting only ranges and no options
-    const dimDecorationCalls = filter<SinonCall>(call =>
-      call.args[1][0].hasOwnProperty('range')
+    const placeholderCalls = this.filterByPlaceholder(
+      this.createDecorationSpy.getCalls(),
     );
 
-    const sumCalls = dimDecorationCalls(
-      notRemoveDecorationCalls(this.setDecorationsSpy.getCalls())
-    );
-
-    const createdPlaceholders = sum(map(c => c.args[1].length, sumCalls));
-
-    assert.equal(createdPlaceholders, count);
+    assert.equal(placeholderCalls.length, count);
   }
 
   public hasDimmedEditor(count: number) {
-    const notRemoveDecorationCalls = filter<SinonCall>(
-      call => call.args[1].length !== 0
-    );
-    // dim is called setting only ranges and no options
-    const nonDimDecorationCalls = filter<SinonCall>(
-      call => !call.args[1][0].hasOwnProperty('range')
-    );
-
-    const dimmedCalls = nonDimDecorationCalls(
-      notRemoveDecorationCalls(this.setDecorationsSpy.getCalls())
-    );
+    const dimmedCalls = this.filterByDim(this.createDecorationSpy.getCalls());
 
     assert.equal(dimmedCalls.length, count);
   }
+
+  private filterByPlaceholder = filter<SinonCall>(call => {
+    return call.args[0]['letterSpacing'] === '-16px';
+  });
+
+  private filterByDim = filter<SinonCall>(call => {
+    return call.args[0]['textDecoration'] === 'none; filter: grayscale(1);';
+  });
 
   public hasStatusBarMessages(...statuses: string[]) {
     const allArgs = map(call => call.args[0], this.statusSpy.getCalls());

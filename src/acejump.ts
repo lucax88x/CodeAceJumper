@@ -15,7 +15,6 @@ export class AceJump {
       commands.registerCommand('extension.aceJump', async () => {
         try {
           await this.jumper.jump(JumpKind.Normal, false);
-
           // tslint:disable-next-line:no-empty
         } catch (_) {}
       }),
@@ -25,7 +24,6 @@ export class AceJump {
       commands.registerCommand('extension.aceJump.multiChar', async () => {
         try {
           await this.jumper.jump(JumpKind.MultiChar, false);
-
           // tslint:disable-next-line:no-empty
         } catch (_) {}
       }),
@@ -37,7 +35,6 @@ export class AceJump {
           // if we interrupt a jump (isJumping still true), re-use its selectionMode
           const selectionMode = this.jumper.isJumping ? null : false;
           await this.jumper.jumpToLine(selectionMode);
-
           // tslint:disable-next-line:no-empty
         } catch (_) {}
       }),
@@ -47,7 +44,6 @@ export class AceJump {
       commands.registerCommand('extension.aceJump.selection', async () => {
         try {
           await this.jumper.jump(JumpKind.Normal, true);
-
           // tslint:disable-next-line:no-empty
         } catch (_) {}
       }),
