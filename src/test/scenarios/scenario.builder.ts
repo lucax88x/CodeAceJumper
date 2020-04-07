@@ -78,7 +78,9 @@ export class ScenarioBuilder {
     const lineAtMock = sinon.stub();
 
     for (let i = 0; i < lines.length; i++) {
-      lineAtMock.withArgs(i + 1).returns({ text: lines[i] });
+      lineAtMock
+        .withArgs(i + 1)
+        .returns({ text: lines[i], range: { end: { character: 99 } } });
     }
 
     this.editorMock = {
