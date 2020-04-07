@@ -15,6 +15,7 @@ export class PlaceHolderDecorator {
   private config: Config;
   private dim: TextEditorDecorationType;
   private decorations: TextEditorDecorationType[] = [];
+  private lineEndDecorations: Record<number, [string, TextEditorDecorationType]> = {};
   private highlight: TextEditorDecorationType;
 
   public refreshConfig(config: Config) {
@@ -23,18 +24,33 @@ export class PlaceHolderDecorator {
 
   public addDecorations(editor: TextEditor, placeholders: Placeholder[], offset = 0) {
     for (const placeholder of placeholders) {
-      const range = new Range(
+      let range = new Range(
         new Position(placeholder.line, placeholder.character + offset),
         new Position(placeholder.line, placeholder.character + offset + 1),
       );
+      const lineLength = editor.document.lineAt(placeholder.line).range.end.character;
+      let placeholderChar = placeholder.placeholder;
+
+      if (range.start.character >= lineLength) {
+        // always start range on line-end (as line-end + 1 would fail)
+        range = new Range(
+          new Position(placeholder.line, lineLength),
+          new Position(placeholder.line, lineLength + 1),
+        );
+        // if a placeholder already exists at line-end, concat the placeholder chars
+        if (!!this.lineEndDecorations[placeholder.line]) {
+          placeholderChar += this.lineEndDecorations[placeholder.line][0];
+          this.lineEndDecorations[placeholder.line][1].dispose();
+        }
+      }
 
       const decorationType = window.createTextEditorDecorationType({
         letterSpacing: '-16px',
         opacity: '0',
         before: {
           contentText: this.config.placeholder.upperCase
-            ? placeholder.placeholder.toUpperCase()
-            : placeholder.placeholder,
+            ? placeholderChar.toUpperCase()
+            : placeholderChar,
           backgroundColor: this.config.placeholder.backgroundColor,
           color: this.config.placeholder.color,
           border: this.config.placeholder.border,
@@ -43,6 +59,10 @@ export class PlaceHolderDecorator {
       });
       editor.setDecorations(decorationType, [range]);
       this.decorations.push(decorationType);
+      if (range.start.character == lineLength) {
+        // remember placeholders at line-end for each line
+        this.lineEndDecorations[placeholder.line] = [placeholderChar, decorationType];
+      }
 
       for (const children of placeholder.childrens) {
         this.addDecorations(editor, [children], offset + 1);
@@ -107,6 +127,7 @@ export class PlaceHolderDecorator {
     }, this.decorations);
 
     this.decorations = [];
+    this.lineEndDecorations = {};
   }
 
   public removeHighlights(editor: TextEditor) {
