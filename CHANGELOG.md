@@ -122,3 +122,7 @@ added ', " and < in the pattern
 
 - contains [#187](https://github.com/lucax88x/CodeAceJumper/pull/187)
 - contains [#189](https://github.com/lucax88x/CodeAceJumper/pull/189)
+
+## [3.3.1]
+
+- fixed [#196](https://github.com/lucax88x/CodeAceJumper/issues/196)
