@@ -37,9 +37,11 @@ export class PlaceHolderDecorator {
           new Position(placeholder.line, lineLength),
           new Position(placeholder.line, lineLength + 1),
         );
-        // if a placeholder already exists at line-end, concat the placeholder chars
+        // if a placeholder already exists at line-end, add the new char
+        // at the correct offset (creating a multi-char placeholder)
         if (!!this.lineEndDecorations[placeholder.line]) {
-          placeholderChar += this.lineEndDecorations[placeholder.line][0];
+          const phCharPrevious = this.lineEndDecorations[placeholder.line][0];
+          placeholderChar = [phCharPrevious.slice(0, offset), placeholderChar, phCharPrevious.slice(offset)].join('')
           this.lineEndDecorations[placeholder.line][1].dispose();
         }
       }
