@@ -126,3 +126,7 @@ added ', " and < in the pattern
 ## [3.3.1]
 
 - fixed [#196](https://github.com/lucax88x/CodeAceJumper/issues/196)
+
+## [3.3.2]
+
+- fixed [#228](https://github.com/lucax88x/CodeAceJumper/issues/228)
